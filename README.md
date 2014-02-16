@@ -14,7 +14,7 @@ It was build with the following points in mind:
 
 ## Screenshots
 
-![SCPageViewController](https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif)
+https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif
 
 ## Usage
 
