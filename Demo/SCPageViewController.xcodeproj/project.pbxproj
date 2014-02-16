@@ -1,0 +1,383 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		18623FFE18B0063D00FFE998 /* colorful_umbrellas.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */; };
+		187E412718A968E0003D8C70 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412618A968E0003D8C70 /* Foundation.framework */; };
+		187E412918A968E0003D8C70 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412818A968E0003D8C70 /* CoreGraphics.framework */; };
+		187E412B18A968E0003D8C70 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412A18A968E0003D8C70 /* UIKit.framework */; };
+		187E413318A968E0003D8C70 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E413218A968E0003D8C70 /* main.m */; };
+		187E413718A968E0003D8C70 /* SCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E413618A968E0003D8C70 /* SCAppDelegate.m */; };
+		187E41C618A96A4E003D8C70 /* UIColor+RandomColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41BB18A96A4E003D8C70 /* UIColor+RandomColors.m */; };
+		187E41C718A96A4E003D8C70 /* UIView+Shadows.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41BD18A96A4E003D8C70 /* UIView+Shadows.m */; };
+		187E41C818A96A4E003D8C70 /* SCMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41BF18A96A4E003D8C70 /* SCMainViewController.m */; };
+		187E41C918A96A4E003D8C70 /* SCMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 187E41C018A96A4E003D8C70 /* SCMainViewController.xib */; };
+		187E41CC18A96A4E003D8C70 /* SCRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41C518A96A4E003D8C70 /* SCRootViewController.m */; };
+		187E41CE18A96D2B003D8C70 /* SCRootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */; };
+		1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */; };
+		1894AA2018AFC5CB009CD0EC /* MOScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */; };
+		1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */; };
+		1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */; };
+		1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colorful_umbrellas.jpg; sourceTree = "<group>"; };
+		187E412318A968E0003D8C70 /* SCPageViewController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SCPageViewController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		187E412618A968E0003D8C70 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		187E412818A968E0003D8C70 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		187E412A18A968E0003D8C70 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		187E412E18A968E0003D8C70 /* SCPageViewController-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SCPageViewController-Info.plist"; sourceTree = "<group>"; };
+		187E413218A968E0003D8C70 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		187E413418A968E0003D8C70 /* SCPageViewController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SCPageViewController-Prefix.pch"; sourceTree = "<group>"; };
+		187E413518A968E0003D8C70 /* SCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCAppDelegate.h; sourceTree = "<group>"; };
+		187E413618A968E0003D8C70 /* SCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCAppDelegate.m; sourceTree = "<group>"; };
+		187E414518A968E0003D8C70 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		187E41BA18A96A4E003D8C70 /* UIColor+RandomColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+RandomColors.h"; sourceTree = "<group>"; };
+		187E41BB18A96A4E003D8C70 /* UIColor+RandomColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+RandomColors.m"; sourceTree = "<group>"; };
+		187E41BC18A96A4E003D8C70 /* UIView+Shadows.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Shadows.h"; sourceTree = "<group>"; };
+		187E41BD18A96A4E003D8C70 /* UIView+Shadows.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Shadows.m"; sourceTree = "<group>"; };
+		187E41BE18A96A4E003D8C70 /* SCMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCMainViewController.h; sourceTree = "<group>"; };
+		187E41BF18A96A4E003D8C70 /* SCMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCMainViewController.m; sourceTree = "<group>"; };
+		187E41C018A96A4E003D8C70 /* SCMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SCMainViewController.xib; sourceTree = "<group>"; };
+		187E41C418A96A4E003D8C70 /* SCRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCRootViewController.h; sourceTree = "<group>"; };
+		187E41C518A96A4E003D8C70 /* SCRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCRootViewController.m; sourceTree = "<group>"; };
+		187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SCRootViewController.xib; sourceTree = "<group>"; };
+		1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewController.h; sourceTree = "<group>"; };
+		1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewController.m; sourceTree = "<group>"; };
+		1894AA1E18AFC5CB009CD0EC /* MOScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOScrollView.h; sourceTree = "<group>"; };
+		1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOScrollView.m; sourceTree = "<group>"; };
+		1894AA2218AFC9F8009CD0EC /* SCParallaxPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCParallaxPageLayouter.h; sourceTree = "<group>"; };
+		1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCParallaxPageLayouter.m; sourceTree = "<group>"; };
+		1894AA2618AFC9F8009CD0EC /* SCSlidingPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCSlidingPageLayouter.h; sourceTree = "<group>"; };
+		1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCSlidingPageLayouter.m; sourceTree = "<group>"; };
+		1894AA2818AFC9F8009CD0EC /* SCPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouter.h; sourceTree = "<group>"; };
+		1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageLayouter.m; sourceTree = "<group>"; };
+		1894AA2A18AFC9F8009CD0EC /* SCPageLayouterProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouterProtocol.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		187E412018A968E0003D8C70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187E412918A968E0003D8C70 /* CoreGraphics.framework in Frameworks */,
+				187E412B18A968E0003D8C70 /* UIKit.framework in Frameworks */,
+				187E412718A968E0003D8C70 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		187E411A18A968E0003D8C70 = {
+			isa = PBXGroup;
+			children = (
+				1894AA1A18AFC4C5009CD0EC /* SCPageViewController */,
+				187E412C18A968E0003D8C70 /* Demo */,
+				187E412518A968E0003D8C70 /* Frameworks */,
+				187E412418A968E0003D8C70 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		187E412418A968E0003D8C70 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				187E412318A968E0003D8C70 /* SCPageViewController.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		187E412518A968E0003D8C70 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				187E412618A968E0003D8C70 /* Foundation.framework */,
+				187E412818A968E0003D8C70 /* CoreGraphics.framework */,
+				187E412A18A968E0003D8C70 /* UIKit.framework */,
+				187E414518A968E0003D8C70 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		187E412C18A968E0003D8C70 /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				187E413518A968E0003D8C70 /* SCAppDelegate.h */,
+				187E413618A968E0003D8C70 /* SCAppDelegate.m */,
+				187E41C418A96A4E003D8C70 /* SCRootViewController.h */,
+				187E41C518A96A4E003D8C70 /* SCRootViewController.m */,
+				187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */,
+				187E41BE18A96A4E003D8C70 /* SCMainViewController.h */,
+				187E41BF18A96A4E003D8C70 /* SCMainViewController.m */,
+				187E41C018A96A4E003D8C70 /* SCMainViewController.xib */,
+				187E41B918A96A4E003D8C70 /* Helpers */,
+				187E412D18A968E0003D8C70 /* Supporting Files */,
+			);
+			name = Demo;
+			path = SCPageViewController;
+			sourceTree = "<group>";
+		};
+		187E412D18A968E0003D8C70 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */,
+				187E412E18A968E0003D8C70 /* SCPageViewController-Info.plist */,
+				187E413218A968E0003D8C70 /* main.m */,
+				187E413418A968E0003D8C70 /* SCPageViewController-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		187E41B918A96A4E003D8C70 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				187E41BA18A96A4E003D8C70 /* UIColor+RandomColors.h */,
+				187E41BB18A96A4E003D8C70 /* UIColor+RandomColors.m */,
+				187E41BC18A96A4E003D8C70 /* UIView+Shadows.h */,
+				187E41BD18A96A4E003D8C70 /* UIView+Shadows.m */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		1894AA1A18AFC4C5009CD0EC /* SCPageViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1894AA2118AFC9F8009CD0EC /* Layouters */,
+				1894AA1E18AFC5CB009CD0EC /* MOScrollView.h */,
+				1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */,
+				1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */,
+				1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */,
+			);
+			name = SCPageViewController;
+			path = ../SCPageViewController;
+			sourceTree = "<group>";
+		};
+		1894AA2118AFC9F8009CD0EC /* Layouters */ = {
+			isa = PBXGroup;
+			children = (
+				1894AA2A18AFC9F8009CD0EC /* SCPageLayouterProtocol.h */,
+				1894AA2818AFC9F8009CD0EC /* SCPageLayouter.h */,
+				1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */,
+				1894AA2218AFC9F8009CD0EC /* SCParallaxPageLayouter.h */,
+				1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */,
+				1894AA2618AFC9F8009CD0EC /* SCSlidingPageLayouter.h */,
+				1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */,
+			);
+			path = Layouters;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		187E412218A968E0003D8C70 /* SCPageViewController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 187E415518A968E0003D8C70 /* Build configuration list for PBXNativeTarget "SCPageViewController" */;
+			buildPhases = (
+				187E411F18A968E0003D8C70 /* Sources */,
+				187E412018A968E0003D8C70 /* Frameworks */,
+				187E412118A968E0003D8C70 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SCPageViewController;
+			productName = SCPageViewController;
+			productReference = 187E412318A968E0003D8C70 /* SCPageViewController.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		187E411B18A968E0003D8C70 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = SC;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Stefan Ceriu";
+			};
+			buildConfigurationList = 187E411E18A968E0003D8C70 /* Build configuration list for PBXProject "SCPageViewController" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 187E411A18A968E0003D8C70;
+			productRefGroup = 187E412418A968E0003D8C70 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				187E412218A968E0003D8C70 /* SCPageViewController */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		187E412118A968E0003D8C70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187E41C918A96A4E003D8C70 /* SCMainViewController.xib in Resources */,
+				18623FFE18B0063D00FFE998 /* colorful_umbrellas.jpg in Resources */,
+				187E41CE18A96D2B003D8C70 /* SCRootViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		187E411F18A968E0003D8C70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187E413718A968E0003D8C70 /* SCAppDelegate.m in Sources */,
+				187E41C618A96A4E003D8C70 /* UIColor+RandomColors.m in Sources */,
+				1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */,
+				1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */,
+				1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */,
+				187E413318A968E0003D8C70 /* main.m in Sources */,
+				1894AA2018AFC5CB009CD0EC /* MOScrollView.m in Sources */,
+				187E41C818A96A4E003D8C70 /* SCMainViewController.m in Sources */,
+				187E41C718A96A4E003D8C70 /* UIView+Shadows.m in Sources */,
+				1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */,
+				187E41CC18A96A4E003D8C70 /* SCRootViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		187E415318A968E0003D8C70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		187E415418A968E0003D8C70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		187E415618A968E0003D8C70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SCPageViewController/SCPageViewController-Prefix.pch";
+				INFOPLIST_FILE = "SCPageViewController/SCPageViewController-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		187E415718A968E0003D8C70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SCPageViewController/SCPageViewController-Prefix.pch";
+				INFOPLIST_FILE = "SCPageViewController/SCPageViewController-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		187E411E18A968E0003D8C70 /* Build configuration list for PBXProject "SCPageViewController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				187E415318A968E0003D8C70 /* Debug */,
+				187E415418A968E0003D8C70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		187E415518A968E0003D8C70 /* Build configuration list for PBXNativeTarget "SCPageViewController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				187E415618A968E0003D8C70 /* Debug */,
+				187E415718A968E0003D8C70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 187E411B18A968E0003D8C70 /* Project object */;
+}

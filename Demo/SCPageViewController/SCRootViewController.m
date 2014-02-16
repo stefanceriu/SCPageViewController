@@ -1,0 +1,97 @@
+//
+//  SCRootViewController.m
+//  SCPageViewController
+//
+//  Created by Stefan Ceriu on 15/02/2014.
+//  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
+//
+
+#import "SCRootViewController.h"
+#import "SCPageViewController.h"
+#import "SCMainViewController.h"
+
+#import "SCPageLayouter.h"
+#import "SCSlidingPageLayouter.h"
+#import "SCParallaxPageLayouter.h"
+
+#import "UIView+Shadows.h"
+
+@interface SCRootViewController () <SCPageViewControllerDataSource, SCPageViewControllerDelegate, SCMainViewControllerDelegate>
+
+@property (nonatomic, strong) SCPageViewController *pageViewController;
+
+@end
+
+@implementation SCRootViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.pageViewController = [[SCPageViewController alloc] init];
+    [self.pageViewController setDataSource:self];
+    [self.pageViewController setDelegate:self];
+    
+    [self.pageViewController willMoveToParentViewController:self];
+    [self.pageViewController.view setFrame:self.view.bounds];
+    [self.view addSubview:self.pageViewController.view];
+    [self addChildViewController:self.pageViewController];
+    
+    [self mainViewController:nil didSelectLayouter:SCPageLayouterTypeParallax];
+}
+
+#pragma mark - SCPageViewControllerDataSource
+
+- (NSUInteger)numberOfPagesInPageViewController:(SCPageViewController *)pageViewController
+{
+    return 10;
+}
+
+- (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex
+{
+    SCMainViewController *mainViewController = [[SCMainViewController alloc] init];
+    [mainViewController setDelegate:self];
+    return mainViewController;
+}
+
+#pragma mark - SCPageViewControllerDelegate
+
+- (void)pageViewController:(SCPageViewController *)pageViewController didShowViewController:(SCMainViewController *)controller atIndex:(NSUInteger)index
+{
+    [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %d", index]];
+    [controller.view castShadowWithPosition:SCShadowEdgeAll];
+}
+
+- (void)pageViewController:(SCPageViewController *)pageViewController didNavigateToOffset:(CGPoint)offset
+{
+    for(SCMainViewController *menuViewController in pageViewController.visibleViewControllers) {
+        [menuViewController.visiblePercentageLabel setText:[NSString stringWithFormat:@"%.2f%%", [pageViewController visiblePercentageForViewController:menuViewController]]];
+    }
+}
+
+#pragma mark - SCMainViewControllerDelegate
+
+- (void)mainViewController:(SCMainViewController *)mainViewController didSelectLayouter:(SCPageLayouterType)type
+{
+    static NSDictionary *typeToLayouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        typeToLayouter = (@{
+                            @(SCPageLayouterTypePlain)     : [SCPageLayouter class],
+                            @(SCPageLayouterTypeSliding)   : [SCSlidingPageLayouter class],
+                            @(SCPageLayouterTypeParallax)  : [SCParallaxPageLayouter class],
+                            });
+    });
+    
+    id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(type)] alloc] init];
+    [self.pageViewController setLayouter:pageLayouter];
+}
+
+#pragma mark - Rotation Handling
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
+}
+
+@end
