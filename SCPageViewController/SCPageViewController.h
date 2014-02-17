@@ -163,7 +163,7 @@
                    atIndex:(NSUInteger)index;
 
 
-/** Delegate method that the Stack calls when a view controller is hidden
+/** Delegate method that the pageController calls when a view controller is hidden
  * @param pageViewController The calling PageViewController
  * @param controller The view controller that was hidden
  * @param index The position where the view controller resides
@@ -177,7 +177,7 @@
                    atIndex:(NSUInteger)index;
 
 
-/** Delegate method that the Stack calls when its scrollView scrolls
+/** Delegate method that the pageController calls when its scrollView scrolls
  * @param stackViewController The calling StackViewController
  * @param offset The current offset in the Stack's scrollView
  *
@@ -185,5 +185,14 @@
 - (void)pageViewController:(SCPageViewController *)pageViewController
        didNavigateToOffset:(CGPoint)offset;
 
+
+/** Delegate method that the pageController calls when its scrollView rests
+ * on a page
+ * @param stackViewController The calling StackViewController
+ * @param pageIndex The index of the page
+ *
+ */
+- (void)pageViewController:(SCPageViewController *)pageViewController
+  didNavigateToPageAtIndex:(NSUInteger)pageIndex;
 
 @end

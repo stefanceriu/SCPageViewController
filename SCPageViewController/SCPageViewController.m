@@ -26,7 +26,13 @@
 @end
 
 @implementation SCPageViewController
+@dynamic bounces;
+@dynamic touchRefusalArea;
 @dynamic showsScrollIndicators;
+@dynamic minimumNumberOfTouches;
+@dynamic maximumNumberOfTouches;
+@dynamic scrollEnabled;
+
 
 - (void)viewDidLoad
 {
@@ -293,6 +299,29 @@
     
     if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToOffset:)]) {
         [self.delegate pageViewController:self didNavigateToOffset:self.scrollView.contentOffset];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+        [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if(decelerate == NO) {
+        if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+            [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
+        }
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+        [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
     }
 }
 
