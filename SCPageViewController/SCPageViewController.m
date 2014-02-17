@@ -252,9 +252,6 @@
             [viewController.view setFrame:nextFrame];
         }
     }];
-    
-    
-    NSLog(@"%@", self.visibleViewControllers);
 }
 
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods

@@ -207,18 +207,18 @@ const static int maximumSteps = 10;
     }
 }
 
-double cubicFunctionValue(double a, double b, double c, double d, double x) {
+static double cubicFunctionValue(double a, double b, double c, double d, double x) {
     
     return (a*x*x*x)+(b*x*x)+(c*x)+d;
 }
 
-double cubicDerivativeValue(double a, double b, double c, double __unused d, double x) {
+static double cubicDerivativeValue(double a, double b, double c, double __unused d, double x) {
     
     // derivation of the cubic (a*x*x*x)+(b*x*x)+(c*x)+d
     return (3*a*x*x)+(2*b*x)+c;
 }
 
-double rootOfCubic(double a, double b, double c, double d, double startPoint) {
+static double rootOfCubic(double a, double b, double c, double d, double startPoint) {
     
     // we use 0 as start point as the root will be in the interval [0,1]
     double x = startPoint;
@@ -235,7 +235,7 @@ double rootOfCubic(double a, double b, double c, double d, double startPoint) {
     return x;
 }
 
-double timingFunctionValue(CAMediaTimingFunction *function, double x) {
+static double timingFunctionValue(CAMediaTimingFunction *function, double x) {
     
     float a[2];
     float b[2];
