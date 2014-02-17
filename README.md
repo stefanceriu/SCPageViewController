@@ -14,7 +14,7 @@ It was build with the following points in mind:
 
 ## Screenshots
 
-https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif
+![Parallax+Sliding+Plain](https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif)
 
 ## Usage
 
