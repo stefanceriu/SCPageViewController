@@ -20,7 +20,7 @@
 		187E41CC18A96A4E003D8C70 /* SCRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41C518A96A4E003D8C70 /* SCRootViewController.m */; };
 		187E41CE18A96D2B003D8C70 /* SCRootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */; };
 		1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */; };
-		1894AA2018AFC5CB009CD0EC /* MOScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */; };
+		1894AA2018AFC5CB009CD0EC /* SCPageViewControllerScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */; };
 		1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */; };
 		1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */; };
 		1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */; };
@@ -50,8 +50,8 @@
 		187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SCRootViewController.xib; sourceTree = "<group>"; };
 		1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewController.h; sourceTree = "<group>"; };
 		1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewController.m; sourceTree = "<group>"; };
-		1894AA1E18AFC5CB009CD0EC /* MOScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOScrollView.h; sourceTree = "<group>"; };
-		1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOScrollView.m; sourceTree = "<group>"; };
+		1894AA1E18AFC5CB009CD0EC /* SCPageViewControllerScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewControllerScrollView.h; sourceTree = "<group>"; };
+		1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewControllerScrollView.m; sourceTree = "<group>"; };
 		1894AA2218AFC9F8009CD0EC /* SCParallaxPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCParallaxPageLayouter.h; sourceTree = "<group>"; };
 		1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCParallaxPageLayouter.m; sourceTree = "<group>"; };
 		1894AA2618AFC9F8009CD0EC /* SCSlidingPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCSlidingPageLayouter.h; sourceTree = "<group>"; };
@@ -148,8 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				1894AA2118AFC9F8009CD0EC /* Layouters */,
-				1894AA1E18AFC5CB009CD0EC /* MOScrollView.h */,
-				1894AA1F18AFC5CB009CD0EC /* MOScrollView.m */,
+				1894AA1E18AFC5CB009CD0EC /* SCPageViewControllerScrollView.h */,
+				1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */,
 				1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */,
 				1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */,
 			);
@@ -243,7 +243,7 @@
 				1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */,
 				1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */,
 				187E413318A968E0003D8C70 /* main.m in Sources */,
-				1894AA2018AFC5CB009CD0EC /* MOScrollView.m in Sources */,
+				1894AA2018AFC5CB009CD0EC /* SCPageViewControllerScrollView.m in Sources */,
 				187E41C818A96A4E003D8C70 /* SCMainViewController.m in Sources */,
 				187E41C718A96A4E003D8C70 /* UIView+Shadows.m in Sources */,
 				1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */,

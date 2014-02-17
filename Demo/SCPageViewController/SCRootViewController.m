@@ -84,6 +84,9 @@
     });
     
     id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(type)] alloc] init];
+    
+    //[pageLayouter setNavigationType:SCPageLayouterNavigationTypeVertical];
+    
     [self.pageViewController setLayouter:pageLayouter];
 }
 

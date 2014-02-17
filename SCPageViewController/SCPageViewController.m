@@ -7,12 +7,12 @@
 //
 
 #import "SCPageViewController.h"
-#import "MOScrollView.h"
+#import "SCPageViewControllerScrollView.h"
 #import "SCPageLayouterProtocol.h"
 
 @interface SCPageViewController () <UIScrollViewDelegate>
 
-@property (nonatomic, strong) MOScrollView *scrollView;
+@property (nonatomic, strong) SCPageViewControllerScrollView *scrollView;
 
 @property (nonatomic, assign) NSUInteger currentPage;
 @property (nonatomic, assign) NSUInteger numberOfPages;
@@ -34,7 +34,7 @@
     
     [self.view setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     
-    self.scrollView = [[MOScrollView alloc] initWithFrame:self.view.bounds];
+    self.scrollView = [[SCPageViewControllerScrollView alloc] initWithFrame:self.view.bounds];
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.pagingEnabled = YES;
     self.scrollView.showsVerticalScrollIndicator = NO;
@@ -204,8 +204,6 @@
         return [@(firstPageIndex) compare:@(secondPageIndex)];
     }];
     
-    CGRectEdge edge = [self edgeFromOffset:self.scrollView.contentOffset];
-    
     [sortedPages enumerateObjectsUsingBlock:^(UIViewController *viewController, NSUInteger idx, BOOL *stop) {
         
         NSUInteger pageIndex = [self.pageIndexes[@(viewController.hash)] unsignedIntegerValue];
@@ -227,7 +225,7 @@
             }
         }
         
-        remainder = CGRectSubtract(remainder, intersection, edge);
+        remainder = [self subtractRect:intersection fromRect:remainder withEdge:[self edgeFromOffset:self.scrollView.contentOffset]];
         
         // Finally, trigger appearance callbacks and new frame
         if(visible && ![self.visibleControllers containsObject:viewController]) {
@@ -254,6 +252,9 @@
             [viewController.view setFrame:nextFrame];
         }
     }];
+    
+    
+    NSLog(@"%@", self.visibleViewControllers);
 }
 
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods
@@ -307,7 +308,7 @@
 
 #pragma mark - Helpers
 
-CGRect CGRectSubtract(CGRect r1, CGRect r2, CGRectEdge edge)
+- (CGRect)subtractRect:(CGRect)r2 fromRect:(CGRect)r1 withEdge:(CGRectEdge)edge
 {
     CGRect intersection = CGRectIntersection(r1, r2);
     if (CGRectIsNull(intersection)) {
@@ -325,7 +326,7 @@ CGRect CGRectSubtract(CGRect r1, CGRect r2, CGRectEdge edge)
 {
     CGRectEdge edge = -1;
     
-    if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
+    if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
         if(offset.x >= 0.0f) {
             edge = CGRectMinXEdge;
         } else if(offset.x < 0.0f) {

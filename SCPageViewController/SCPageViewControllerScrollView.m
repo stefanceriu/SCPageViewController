@@ -37,13 +37,13 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import "MOScrollView.h"
+#import "SCPageViewControllerScrollView.h"
 
 // constants used for Newton approximation of cubic function root
 const static double approximationTolerance = 0.00000001;
 const static int maximumSteps = 10;
 
-@interface MOScrollView ()
+@interface SCPageViewControllerScrollView ()
 
 // display link used to trigger event to scroll the view
 @property (nonatomic, strong) CADisplayLink *displayLink;
@@ -65,7 +65,7 @@ const static int maximumSteps = 10;
 
 @end
 
-@implementation MOScrollView
+@implementation SCPageViewControllerScrollView
 
 - (id)initWithFrame:(CGRect)frame
 {

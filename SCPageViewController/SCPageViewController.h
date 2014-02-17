@@ -34,6 +34,13 @@
  */
 @property (nonatomic, weak) id<SCPageViewControllerDelegate> delegate;
 
+
+/**
+ * The current page in the page view controller
+ */
+@property (nonatomic, readonly) NSUInteger currentPage;
+
+
 /**
  * An array of currently visible view controllers in the page view controller
  */

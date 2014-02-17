@@ -44,7 +44,7 @@
  *  timing function to animate setContentOffset.
  *
  */
-@interface MOScrollView : UIScrollView
+@interface SCPageViewControllerScrollView : UIScrollView
 
 @property (nonatomic, strong) UIBezierPath *touchRefusalArea;
 
