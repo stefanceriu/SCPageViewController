@@ -18,6 +18,28 @@
 - (void)reloadData;
 
 /**
+ * @param pageIndex The page index to navigate to
+ * @param animated Whether the transition will be animated
+ */
+- (void)navigateToPageAtIndex:(NSUInteger)pageIndex
+                     animated:(BOOL)animated
+                   completion:(void(^)())completion;
+
+
+/**
+ * @return Float value representing the visible percentage
+ * @param viewController The view controller for which to fetch the
+ * visible percentage
+ *
+ * A view controller is visible when any part of it is visible (within the
+ * PageController's scrollView bounds and not covered by any other view)
+ *
+ * Ranges from 0.0f to 1.0f
+ */
+- (CGFloat)visiblePercentageForViewController:(UIViewController *)viewController;
+
+
+/**
  * The currently used layouter
  */
 @property (nonatomic, strong) id<SCPageLayouterProtocol> layouter;
@@ -45,26 +67,6 @@
  * An array of currently visible view controllers in the page view controller
  */
 @property (nonatomic, readonly) NSArray *visibleViewControllers;
-
-
-/**
- * @param pageIndex The page index to navigate to
- * @param animated Whether the transition will be animated
- */
-- (void)navigateToPageAtIndex:(NSUInteger)pageIndex animated:(BOOL)animated;
-
-
-/**
- * @return Float value representing the visible percentage
- * @param viewController The view controller for which to fetch the
- * visible percentage
- *
- * A view controller is visible when any part of it is visible (within the
- * PageController's scrollView bounds and not covered by any other view)
- *
- * Ranges from 0.0f to 1.0f
- */
-- (CGFloat)visiblePercentageForViewController:(UIViewController *)viewController;
 
 
 /** UIBezierPath inside which the pageController's scrollView doesn't respond to touch
@@ -105,6 +107,17 @@
 @property (nonatomic, assign) BOOL pagingEnabled;
 
 
+/** A Boolean value that determines whether the user can freely scroll between
+ * pages
+ *
+ * When set to true the PageController's scrollView bounces on every page. Navigating
+ * through more than 1 page will require multiple swipes.
+ *
+ * Default value is set to false
+ */
+@property (nonatomic, assign) BOOL continuousNavigationEnabled;
+
+
 /** The minimum number of fingers that can be touching the view for this gesture to be recognized.
  *
  * Default value is set to 1
@@ -117,6 +130,35 @@
  * Default value is set to NSUIntegerMax
  */
 @property (nonatomic, assign) NSUInteger maximumNumberOfTouches;
+
+
+/** The number of pages to preload and add to the page view controller before the current page
+ *
+ * Default value is set to 1
+ */
+@property (nonatomic, assign) NSUInteger numberOfPagesPreloadedBeforeCurrentPage;
+
+
+/** The number of pages to preload and add to the page view controller after the current page
+ *
+ * Default value is set to 1
+ */
+@property (nonatomic, assign) NSUInteger numberOfPagesPreloadedAfterCurrentPage;
+
+
+/** Timing function used when navigating beteen pages
+ *
+ * Default value is set to kCAMediaTimingFunctionLinear
+ */
+@property (nonatomic, strong) CAMediaTimingFunction *timingFunction;
+
+
+/** Animation duration used when navigating beteen pages
+ *
+ * Default value is set to 0.25f
+ */
+@property (nonatomic, assign) NSTimeInterval animationDuration;
+
 
 @end
 

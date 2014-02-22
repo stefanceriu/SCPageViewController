@@ -37,14 +37,14 @@
     [self.view addSubview:self.pageViewController.view];
     [self addChildViewController:self.pageViewController];
     
-    [self mainViewController:nil didSelectLayouter:SCPageLayouterTypeParallax];
+    [self mainViewController:nil didSelectLayouter:SCPageLayouterTypePlain];
 }
 
 #pragma mark - SCPageViewControllerDataSource
 
 - (NSUInteger)numberOfPagesInPageViewController:(SCPageViewController *)pageViewController
 {
-    return 10;
+    return 5;
 }
 
 - (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex
@@ -84,7 +84,6 @@
     });
     
     id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(type)] alloc] init];
-    
     //[pageLayouter setNavigationType:SCPageLayouterNavigationTypeVertical];
     
     [self.pageViewController setLayouter:pageLayouter];

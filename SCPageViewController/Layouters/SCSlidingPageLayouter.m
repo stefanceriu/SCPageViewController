@@ -9,32 +9,24 @@
 #import "SCSlidingPageLayouter.h"
 
 @implementation SCSlidingPageLayouter
-@synthesize navigationType;
 
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
                               withIndex:(NSUInteger)index
                           contentOffset:(CGPoint)contentOffset
+                             finalFrame:(CGRect)finalFrame
                    inPageViewController:(SCPageViewController *)pageViewController
 {
-    CGRect frame = pageViewController.view.bounds;
-    
-    if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        frame.origin.y = index * CGRectGetHeight(pageViewController.view.bounds);
-    } else {
-        frame.origin.x = index * CGRectGetWidth(pageViewController.view.bounds);
-    }
-    
     if(index == 0) {
-        return frame;
+        return finalFrame;
     }
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        frame.origin.y = MAX(frame.origin.y - frame.size.height, MIN(CGRectGetMaxY(frame) - CGRectGetHeight(frame), CGRectGetHeight(pageViewController.view.bounds) - CGRectGetHeight(frame) + contentOffset.y));
+        finalFrame.origin.y = MAX(finalFrame.origin.y - finalFrame.size.height, MIN(CGRectGetMaxY(finalFrame) - CGRectGetHeight(finalFrame), CGRectGetHeight(pageViewController.view.bounds) - CGRectGetHeight(finalFrame) + contentOffset.y));
     } else {
-        frame.origin.x = MAX(frame.origin.x - frame.size.width, MIN(CGRectGetMaxX(frame) - CGRectGetWidth(frame), CGRectGetWidth(pageViewController.view.bounds) - CGRectGetWidth(frame) + contentOffset.x));
+        finalFrame.origin.x = MAX(finalFrame.origin.x - finalFrame.size.width, MIN(CGRectGetMaxX(finalFrame) - CGRectGetWidth(finalFrame), CGRectGetWidth(pageViewController.view.bounds) - CGRectGetWidth(finalFrame) + contentOffset.x));
     }
     
-    return frame;
+    return finalFrame;
 }
 
 @end

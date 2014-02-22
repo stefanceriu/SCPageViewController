@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
-#import "SCPageLayouterProtocol.h"
+#import "SCPageLayouter.h"
 
-@interface SCParallaxPageLayouter : NSObject <SCPageLayouterProtocol>
+@interface SCParallaxPageLayouter : SCPageLayouter
 
 @end

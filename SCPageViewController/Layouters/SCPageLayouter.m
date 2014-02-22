@@ -10,21 +10,38 @@
 
 @implementation SCPageLayouter
 @synthesize navigationType;
+@synthesize paddingBetweenPages;
 
-- (CGRect)currentFrameForViewController:(UIViewController *)viewController
-                              withIndex:(NSUInteger)index
-                          contentOffset:(CGPoint)contentOffset
-                   inPageViewController:(SCPageViewController *)pageViewController;
+- (id)init
+{
+    if(self = [super init]) {
+        self.paddingBetweenPages = 20.0f;
+    }
+    
+    return self;
+}
+
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
+              inPageViewController:(SCPageViewController *)pageViewController
 {
     CGRect frame = pageViewController.view.bounds;
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
         frame.origin.y = index * CGRectGetHeight(pageViewController.view.bounds);
     } else {
-        frame.origin.x = index * CGRectGetWidth(pageViewController.view.bounds);
+        frame.origin.x = index * (CGRectGetWidth(pageViewController.view.bounds) + self.paddingBetweenPages);
     }
     
     return frame;
+}
+
+- (CGRect)currentFrameForViewController:(UIViewController *)viewController
+                              withIndex:(NSUInteger)index
+                          contentOffset:(CGPoint)contentOffset
+                             finalFrame:(CGRect)finalFrame
+                   inPageViewController:(SCPageViewController *)pageViewController;
+{
+    return finalFrame;
 }
 
 @end

@@ -21,7 +21,27 @@ typedef enum {
 
 @protocol SCPageLayouterProtocol <NSObject>
 
+/** Defines the direction the pages are layed out
+ *
+ * Defaults to horizontal layouting
+ */
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
+
+/** Defines the padding between each page */
+@property (nonatomic, assign) CGFloat paddingBetweenPages;
+
+
+/** Returns the final frame for the given view controller
+ *
+ * @param index The index of the view controller in the Stack's children array
+ * @param pageViewController The calling PageViewController
+ *
+ * @return The frame for the viewController's view
+ *
+ */
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
+              inPageViewController:(SCPageViewController *)pageViewController;
+
 
 /** Returns the intermediate frame for the given view controller and current
  * offset
@@ -37,6 +57,7 @@ typedef enum {
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
                               withIndex:(NSUInteger)index
                           contentOffset:(CGPoint)contentOffset
+                             finalFrame:(CGRect)finalFrame
                    inPageViewController:(SCPageViewController *)pageViewController;
 
 

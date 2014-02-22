@@ -9,34 +9,26 @@
 #import "SCParallaxPageLayouter.h"
 
 @implementation SCParallaxPageLayouter
-@synthesize navigationType;
 
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
                               withIndex:(NSUInteger)index
                           contentOffset:(CGPoint)contentOffset
+                             finalFrame:(CGRect)finalFrame
                    inPageViewController:(SCPageViewController *)pageViewController
 {
-    CGRect frame = pageViewController.view.bounds;
-    
-    if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        frame.origin.y = index * CGRectGetHeight(pageViewController.view.bounds);
-    } else {
-        frame.origin.x = index * CGRectGetWidth(pageViewController.view.bounds);
-    }
-    
     if(index == 0) {
-        return frame;
+        return finalFrame;
     }
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        CGFloat ratio = 1.0f - (CGRectGetMinY(frame) - contentOffset.y) / (CGRectGetHeight(frame) + CGRectGetHeight(frame)/2);
-        frame.origin.y = (CGRectGetMinY(frame) - CGRectGetHeight(frame)) + CGRectGetHeight(frame) * MAX(0.0f, MIN(1.0f, ratio));
+        CGFloat ratio = 1.0f - (CGRectGetMinY(finalFrame) - contentOffset.y) / (CGRectGetHeight(finalFrame) + CGRectGetHeight(finalFrame)/2);
+        finalFrame.origin.y = (CGRectGetMinY(finalFrame) - CGRectGetHeight(finalFrame)) + CGRectGetHeight(finalFrame) * MAX(0.0f, MIN(1.0f, ratio));
     } else {
-        CGFloat ratio = 1.0f - (CGRectGetMinX(frame) - contentOffset.x) / (CGRectGetWidth(frame) + CGRectGetWidth(frame)/2);
-        frame.origin.x = (CGRectGetMinX(frame) - CGRectGetWidth(frame)) + CGRectGetWidth(frame) * MAX(0.0f, MIN(1.0f, ratio));
+        CGFloat ratio = 1.0f - (CGRectGetMinX(finalFrame) - contentOffset.x) / (CGRectGetWidth(finalFrame) + CGRectGetWidth(finalFrame)/2);
+        finalFrame.origin.x = (CGRectGetMinX(finalFrame) - CGRectGetWidth(finalFrame)) + CGRectGetWidth(finalFrame) * MAX(0.0f, MIN(1.0f, ratio));
     }
     
-    return frame;
+    return finalFrame;
 }
 
 @end
