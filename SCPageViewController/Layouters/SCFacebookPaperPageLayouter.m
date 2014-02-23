@@ -17,6 +17,7 @@ static const CGFloat verticalInset = 256.0f;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize contentInsets;
+@synthesize navigationConstraintType;
 
 
 - (id)init
@@ -28,6 +29,9 @@ static const CGFloat verticalInset = 256.0f;
         self.numberOfPagesToPreloadAfterCurrentPage  = 2;
         
         self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 384);
+        
+        // Not working properly atm.
+        self.navigationConstraintType = 0;
     }
     
     return self;

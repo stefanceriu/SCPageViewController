@@ -19,10 +19,23 @@ typedef enum {
     SCPageLayouterNavigationTypeVertical,
 } SCPageLayouterNavigationType;
 
+/** Navigation contraint types that can be used used when continuous
+ * navigation is disabled
+ */
+typedef enum {
+    SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on steps only when unfolding the stack*/
+    SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on steps only when folding the stack*/
+} SCPageLayouterNavigationContraintType;
+
+
 @protocol SCPageLayouterProtocol <NSObject>
 
 /** Defines the direction the pages are layed out */
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
+
+
+/** Defines the direction the pages are layed out */
+@property (nonatomic, assign) SCPageLayouterNavigationContraintType navigationConstraintType;
 
 
 /** Defines the spacing between each page */

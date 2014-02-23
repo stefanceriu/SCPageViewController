@@ -14,6 +14,7 @@
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize contentInsets;
+@synthesize navigationConstraintType;
 
 - (id)init
 {
@@ -22,6 +23,8 @@
         
         self.numberOfPagesToPreloadBeforeCurrentPage = 1;
         self.numberOfPagesToPreloadAfterCurrentPage  = 1;
+        
+        self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
     }
     
     return self;

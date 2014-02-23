@@ -174,6 +174,8 @@
     } else {
         [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, 0)];
     }
+    
+    [self updateBoundsUsingNavigationContraints];
 }
 
 - (void)tilePages
@@ -421,6 +423,50 @@
     }
 }
 
+// Sets the insets to the next navigation steps based on the current state
+- (void)updateBoundsUsingNavigationContraints
+{
+    if(self.continuousNavigationEnabled) {
+        return;
+    }
+    
+    UIEdgeInsets insets = UIEdgeInsetsZero;
+    
+    
+    CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage == 0 ? 0 : self.currentPage - 1)  inPageViewController:self];
+    
+    
+    if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeReverse) {
+        switch (self.layouter.navigationType) {
+            case SCPageLayouterNavigationTypeVertical: {
+                insets.top = -[self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, -1.0f) contentOffset:self.scrollView.contentOffset paginating:NO].y;
+                break;
+            }
+            case SCPageLayouterNavigationTypeHorizontal: {
+                insets.left = -[self nextStepOffsetForFrame:frame velocity:CGPointMake(-1.0f, 0.0f) contentOffset:self.scrollView.contentOffset paginating:NO].x;
+                break;
+            }
+        }
+    }
+    
+    frame = [self.layouter finalFrameForPageAtIndex:MIN(self.currentPage + 1, self.numberOfPages - 1) inPageViewController:self];
+    
+    if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeForward) {
+        switch (self.layouter.navigationType) {
+            case SCPageLayouterNavigationTypeVertical: {
+                insets.bottom = - (self.scrollView.contentSize.height - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, 1.0f) contentOffset:self.scrollView.contentOffset paginating:NO].y) + self.layouter.interItemSpacing);
+                break;
+            }
+            case SCPageLayouterNavigationTypeHorizontal: {
+                insets.right = - (self.scrollView.contentSize.width - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(1.0f, 0.0f) contentOffset:self.scrollView.contentOffset paginating:NO].x) + self.layouter.interItemSpacing);
+                break;
+            }
+        }
+    }
+    
+    [self.scrollView setContentInset:insets];
+}
+
 - (CGPoint)nextStepOffsetForFrame:(CGRect)finalFrame
                          velocity:(CGPoint)velocity
                     contentOffset:(CGPoint)contentOffset
@@ -484,6 +530,8 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    [self updateBoundsUsingNavigationContraints];
+    
     if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
         [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
     }
@@ -492,6 +540,9 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if(decelerate == NO) {
+        
+        [self updateBoundsUsingNavigationContraints];
+        
         if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
             [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
         }
@@ -500,6 +551,8 @@
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
+    [self updateBoundsUsingNavigationContraints];
+    
     if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
         [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
     }
