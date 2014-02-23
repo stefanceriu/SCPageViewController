@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		18623FFE18B0063D00FFE998 /* colorful_umbrellas.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */; };
+		1877A41F18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1877A41E18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m */; };
 		187E412718A968E0003D8C70 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412618A968E0003D8C70 /* Foundation.framework */; };
 		187E412918A968E0003D8C70 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412818A968E0003D8C70 /* CoreGraphics.framework */; };
 		187E412B18A968E0003D8C70 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E412A18A968E0003D8C70 /* UIKit.framework */; };
@@ -28,6 +29,8 @@
 
 /* Begin PBXFileReference section */
 		18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colorful_umbrellas.jpg; sourceTree = "<group>"; };
+		1877A41D18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCFacebookPaperPageLayouter.h; sourceTree = "<group>"; };
+		1877A41E18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCFacebookPaperPageLayouter.m; sourceTree = "<group>"; };
 		187E412318A968E0003D8C70 /* SCPageViewController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SCPageViewController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		187E412618A968E0003D8C70 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		187E412818A968E0003D8C70 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -167,6 +170,8 @@
 				1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */,
 				1894AA2618AFC9F8009CD0EC /* SCSlidingPageLayouter.h */,
 				1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */,
+				1877A41D18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.h */,
+				1877A41E18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m */,
 			);
 			path = Layouters;
 			sourceTree = "<group>";
@@ -239,6 +244,7 @@
 			files = (
 				187E413718A968E0003D8C70 /* SCAppDelegate.m in Sources */,
 				187E41C618A96A4E003D8C70 /* UIColor+RandomColors.m in Sources */,
+				1877A41F18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m in Sources */,
 				1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */,
 				1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */,
 				1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */,

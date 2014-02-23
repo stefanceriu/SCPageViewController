@@ -1,27 +1,33 @@
 //
-//  SCPageLayouter.m
+//  SCFacebookPaperPageLayouter.m
 //  SCPageViewController
 //
-//  Created by Stefan Ceriu on 15/02/2014.
+//  Created by Stefan Ceriu on 23/02/2014.
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
-#import "SCPageLayouter.h"
+#import "SCFacebookPaperPageLayouter.h"
 
-@implementation SCPageLayouter
-@synthesize navigationType;
+static const CGFloat horizontalInset = 192.0f;
+static const CGFloat verticalInset = 256.0f;
+
+@implementation SCFacebookPaperPageLayouter
 @synthesize interItemSpacing;
+@synthesize navigationType;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize contentInsets;
 
+
 - (id)init
 {
     if(self = [super init]) {
-        self.interItemSpacing = 50.0f;
+        self.interItemSpacing = 20.0f;
         
-        self.numberOfPagesToPreloadBeforeCurrentPage = 1;
-        self.numberOfPagesToPreloadAfterCurrentPage  = 1;
+        self.numberOfPagesToPreloadBeforeCurrentPage = 2;
+        self.numberOfPagesToPreloadAfterCurrentPage  = 2;
+        
+        self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 384);
     }
     
     return self;
@@ -30,12 +36,15 @@
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
               inPageViewController:(SCPageViewController *)pageViewController
 {
-    CGRect frame = pageViewController.view.bounds;
+    CGRect frame = CGRectInset(pageViewController.view.bounds, horizontalInset, verticalInset);
+    frame.origin = CGPointZero;
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
         frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
+        frame.origin.x = CGRectGetWidth(pageViewController.view.bounds) - CGRectGetWidth(frame);
     } else {
         frame.origin.x = index * (CGRectGetWidth(frame) + self.interItemSpacing);
+        frame.origin.y = CGRectGetHeight(pageViewController.view.bounds) - CGRectGetHeight(frame);
     }
     
     return frame;
@@ -49,5 +58,6 @@
 {
     return finalFrame;
 }
+
 
 @end

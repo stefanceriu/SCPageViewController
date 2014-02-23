@@ -10,6 +10,7 @@ typedef enum {
     SCPageLayouterTypePlain,
     SCPageLayouterTypeSliding,
     SCPageLayouterTypeParallax,
+    SCPageLayouterTypeFacebookPaper,
     SCPageLayouterTypeCount
 } SCPageLayouterType;
 

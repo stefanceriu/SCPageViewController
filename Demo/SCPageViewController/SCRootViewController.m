@@ -13,6 +13,7 @@
 #import "SCPageLayouter.h"
 #import "SCSlidingPageLayouter.h"
 #import "SCParallaxPageLayouter.h"
+#import "SCFacebookPaperPageLayouter.h"
 
 @interface SCRootViewController () <SCPageViewControllerDataSource, SCPageViewControllerDelegate, SCMainViewControllerDelegate>
 
@@ -74,16 +75,17 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         typeToLayouter = (@{
-                            @(SCPageLayouterTypePlain)     : [SCPageLayouter class],
-                            @(SCPageLayouterTypeSliding)   : [SCSlidingPageLayouter class],
-                            @(SCPageLayouterTypeParallax)  : [SCParallaxPageLayouter class],
+                            @(SCPageLayouterTypePlain)          : [SCPageLayouter class],
+                            @(SCPageLayouterTypeSliding)        : [SCSlidingPageLayouter class],
+                            @(SCPageLayouterTypeParallax)       : [SCParallaxPageLayouter class],
+                            @(SCPageLayouterTypeFacebookPaper)  : [SCFacebookPaperPageLayouter class],
                             });
     });
     
     id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(type)] alloc] init];
     //[pageLayouter setNavigationType:SCPageLayouterNavigationTypeVertical];
     
-    [self.pageViewController setLayouter:pageLayouter];
+    [self.pageViewController setLayouter:pageLayouter animated:YES completion:nil];
 }
 
 #pragma mark - Rotation Handling

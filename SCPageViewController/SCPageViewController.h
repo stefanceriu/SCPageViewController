@@ -39,10 +39,14 @@
 - (CGFloat)visiblePercentageForViewController:(UIViewController *)viewController;
 
 
-/**
- * The currently used layouter
- */
-@property (nonatomic, strong) id<SCPageLayouterProtocol> layouter;
+/** Pass the layouter the pageController should use for the pages */
+- (void)setLayouter:(id<SCPageLayouterProtocol>)layoyter
+           animated:(BOOL)animated
+         completion:(void(^)())completion;
+
+
+/** Currently used layouter */
+@property (nonatomic, readonly) id<SCPageLayouterProtocol> layouter;
 
 
 /**
@@ -61,6 +65,12 @@
  * The current page in the page view controller
  */
 @property (nonatomic, readonly) NSUInteger currentPage;
+
+
+/**
+ * An array of currently loaded view controllers in the page view controller
+ */
+@property (nonatomic, readonly) NSArray *loadedViewControllers;
 
 
 /**
@@ -130,20 +140,6 @@
  * Default value is set to NSUIntegerMax
  */
 @property (nonatomic, assign) NSUInteger maximumNumberOfTouches;
-
-
-/** The number of pages to preload and add to the page view controller before the current page
- *
- * Default value is set to 1
- */
-@property (nonatomic, assign) NSUInteger numberOfPagesPreloadedBeforeCurrentPage;
-
-
-/** The number of pages to preload and add to the page view controller after the current page
- *
- * Default value is set to 1
- */
-@property (nonatomic, assign) NSUInteger numberOfPagesPreloadedAfterCurrentPage;
 
 
 /** Timing function used when navigating beteen pages

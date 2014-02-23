@@ -21,14 +21,19 @@ typedef enum {
 
 @protocol SCPageLayouterProtocol <NSObject>
 
-/** Defines the direction the pages are layed out
- *
- * Defaults to horizontal layouting
- */
+/** Defines the direction the pages are layed out */
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
+
 
 /** Defines the spacing between each page */
 @property (nonatomic, assign) CGFloat interItemSpacing;
+
+
+/** Defines the empty space useds before and after pages 
+ * Based on the navigationType the pageController only uses a pair (top/bottom,
+ * left/right)
+ */
+@property (nonatomic, assign) UIEdgeInsets contentInsets;
 
 
 /** Returns the final frame for the given view controller
@@ -59,6 +64,14 @@ typedef enum {
                           contentOffset:(CGPoint)contentOffset
                              finalFrame:(CGRect)finalFrame
                    inPageViewController:(SCPageViewController *)pageViewController;
+
+
+/** The number of pages to preload and add to the page view controller before the current page */
+@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadBeforeCurrentPage;
+
+
+/** The number of pages to preload and add to the page view controller after the current page */
+@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadAfterCurrentPage;
 
 
 @end

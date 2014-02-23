@@ -7,29 +7,15 @@
 //
 
 #import "SCMainViewController.h"
-#import "UIView+Shadows.h"
 
 @interface SCMainViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, weak) IBOutlet UILabel *pageNumberLabel;
 @property (nonatomic, weak) IBOutlet UILabel *visiblePercentageLabel;
 
-@property (nonatomic, assign) SCShadowEdge currentShadowEdge;
-
 @end
 
 @implementation SCMainViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.currentShadowEdge = SCShadowEdgeAll;
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [self.view castShadowWithPosition:self.currentShadowEdge];
-}
 
 #pragma mark - UITableViewDataSource
 
@@ -55,6 +41,7 @@
                         @(SCPageLayouterTypePlain)              : @"Plain",
                         @(SCPageLayouterTypeSliding)            : @"Sliding",
                         @(SCPageLayouterTypeParallax)           : @"Parallax",
+                        @(SCPageLayouterTypeFacebookPaper)      : @"Facebook/Paper",
                         });
     });
     
@@ -72,19 +59,6 @@
     if([self.delegate respondsToSelector:@selector(mainViewController:didSelectLayouter:)]) {
         [self.delegate mainViewController:self didSelectLayouter:indexPath.row];
     }
-}
-
-#pragma mark - Rotation
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    self.currentShadowEdge = SCShadowEdgeNone;
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    self.currentShadowEdge = SCShadowEdgeAll;
-    [self.view setNeedsLayout];
 }
 
 @end

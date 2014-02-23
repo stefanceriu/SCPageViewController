@@ -16,6 +16,8 @@
 
 @property (nonatomic, strong) SCPageViewControllerScrollView *scrollView;
 
+@property (nonatomic, strong) id<SCPageLayouterProtocol> layouter;
+
 @property (nonatomic, assign) NSUInteger currentPage;
 @property (nonatomic, assign) NSUInteger numberOfPages;
 
@@ -45,9 +47,6 @@
         self.visibleControllers = [NSMutableArray array];
         self.pageIndexes = [NSMutableDictionary dictionary];
         self.visiblePercentages = [NSMutableDictionary dictionary];
-        
-        self.numberOfPagesPreloadedBeforeCurrentPage = 1;
-        self.numberOfPagesPreloadedAfterCurrentPage = 1;
         self.pagingEnabled = YES;
         
         self.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
@@ -69,6 +68,7 @@
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
     self.scrollView.delegate = self;
+    self.scrollView.clipsToBounds = NO;
     
     [self.view addSubview:self.scrollView];
     
@@ -77,12 +77,38 @@
 
 - (void)viewWillLayoutSubviews
 {
+    [self updateContentSize];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
-    [self updateContentSize];
 }
 
 #pragma mark - Public Methods
+
+- (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
+           animated:(BOOL)animated
+         completion:(void (^)())completion
+{
+    if([_layouter isEqual:layouter]) {
+        return;
+    }
+    
+    _layouter = layouter;
+    
+    [self blockContentOffset];
+    [UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
+        
+        [self updateContentSize];
+        [self tilePages];
+        [self updateFramesAndTriggerAppearanceCallbacks];
+        
+    } completion:^(BOOL finished) {
+        [self unblockContentOffset];
+        
+        if(completion) {
+            completion();
+        }
+    }];
+}
 
 - (void)reloadData
 {
@@ -94,9 +120,9 @@
     
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
     
+    [self updateContentSize];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
-    [self updateContentSize];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
@@ -110,6 +136,11 @@
     } else {
         [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:self.animationDuration completion:completion];
     }
+}
+
+- (NSArray *)loadedViewControllers
+{
+    return [self.loadedControllers copy];
 }
 
 - (NSArray *)visibleViewControllers
@@ -138,9 +169,9 @@
     CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
     
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        [self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame))];
+        [self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame) + self.layouter.contentInsets.top + self.layouter.contentInsets.bottom)];
     } else {
-        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame), 0)];
+        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, 0)];
     }
 }
 
@@ -148,11 +179,11 @@
 {
     self.currentPage = [self calculateCurrentPage];
     
-    NSInteger firstNeededPageIndex = self.currentPage - self.numberOfPagesPreloadedBeforeCurrentPage;
+    NSInteger firstNeededPageIndex = self.currentPage - [self.layouter numberOfPagesToPreloadBeforeCurrentPage];
     firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
     
     
-    NSInteger lastNeededPageIndex  = self.currentPage + self.numberOfPagesPreloadedAfterCurrentPage;
+    NSInteger lastNeededPageIndex  = self.currentPage + [self.layouter numberOfPagesToPreloadAfterCurrentPage];
     lastNeededPageIndex  = MIN(lastNeededPageIndex, ((int)self.numberOfPages - 1));
     
     NSMutableSet *removedPages = [NSMutableSet set];
@@ -193,17 +224,33 @@
 
 - (NSUInteger)calculateCurrentPage
 {
-	int page;
-    if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        page = self.scrollView.contentOffset.y / CGRectGetHeight(self.view.bounds) + 0.5f;
-    } else {
-        page = self.scrollView.contentOffset.x / CGRectGetWidth(self.view.bounds) + 0.5f;
+	for(int pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+        CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+        
+        CGRect adjustedFrame = CGRectOffset(CGRectInset(frame,-self.layouter.interItemSpacing/2, 0),
+                                            self.layouter.interItemSpacing/2, 0);
+        
+        CGPoint adjustedOffset = CGPointZero;
+        
+        switch (self.layouter.navigationType) {
+            case SCPageLayouterNavigationTypeVertical:
+                adjustedOffset.y = self.scrollView.contentOffset.y + CGRectGetHeight(self.scrollView.bounds)/2;
+                adjustedOffset.x = adjustedFrame.origin.x;
+                break;
+            case SCPageLayouterNavigationTypeHorizontal:
+                adjustedOffset.x = self.scrollView.contentOffset.x + CGRectGetWidth(self.scrollView.bounds)/2;
+                adjustedOffset.y = adjustedFrame.origin.y;
+                break;
+            default:
+                break;
+        }
+        
+        if(CGRectContainsPoint(adjustedFrame, adjustedOffset)) {
+            return pageIndex;
+        }
     }
     
-	page = MIN(page, self.numberOfPages - 1);
-	page = MAX(page, 0);
-    
-    return page;
+    return self.currentPage;
 }
 
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index
@@ -301,10 +348,20 @@
     for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
         
         CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+        CGRect adjustedFrame = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, 0), self.layouter.interItemSpacing/2, 0);
         
-        CGRect frameWithPadding = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, 0), self.layouter.interItemSpacing/2, 0);
+        switch (self.layouter.navigationType) {
+            case SCPageLayouterNavigationTypeVertical:
+                targetContentOffset->x = adjustedFrame.origin.x;
+                break;
+            case SCPageLayouterNavigationTypeHorizontal:
+                targetContentOffset->y = adjustedFrame.origin.y;
+                break;
+            default:
+                break;
+        }
         
-        if(CGRectContainsPoint(frameWithPadding, *targetContentOffset)) {
+        if(CGRectContainsPoint(adjustedFrame, *targetContentOffset)) {
             
             // If the velocity is zero then jump to the closest navigation step
             if(CGPointEqualToPoint(CGPointZero, velocity)) {
@@ -433,14 +490,14 @@
     // Bouncing target content offset when fix.
     // When trying to adjust content offset while bouncing the velocity drops down to almost nothing.
     // Seems to be an internal UIScrollView issue
-    if(self.scrollView.contentOffset.y < 0.0f) {
-        targetContentOffset->y = 0.0f;
-    } else if(self.scrollView.contentOffset.x < 0.0f) {
-        targetContentOffset->x = 0.0f;
-    } else if(self.scrollView.contentOffset.y > ABS(self.scrollView.contentSize.height - CGRectGetHeight(self.scrollView.bounds))) {
-        targetContentOffset->y = self.scrollView.contentSize.height - CGRectGetHeight(self.scrollView.bounds);
-    } else if(self.scrollView.contentOffset.x > ABS(self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds))) {
-        targetContentOffset->x = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds);
+    if(self.scrollView.contentOffset.y < -self.layouter.contentInsets.top) {
+        targetContentOffset->y = -self.layouter.contentInsets.top;
+    } else if(self.scrollView.contentOffset.x < -self.layouter.contentInsets.left) {
+        targetContentOffset->x = -self.layouter.contentInsets.left;
+    } else if(self.scrollView.contentOffset.y > ABS((self.scrollView.contentSize.height + self.layouter.contentInsets.bottom) - CGRectGetHeight(self.scrollView.bounds))) {
+        targetContentOffset->y = (self.scrollView.contentSize.height + self.layouter.contentInsets.bottom) - CGRectGetHeight(self.scrollView.bounds);
+    } else if(self.scrollView.contentOffset.x > ABS((self.scrollView.contentSize.width + self.layouter.contentInsets.right) - CGRectGetWidth(self.scrollView.bounds))) {
+        targetContentOffset->x = (self.scrollView.contentSize.width + self.layouter.contentInsets.right) - CGRectGetWidth(self.scrollView.bounds);
     }
     // Normal pagination
     else {
@@ -451,6 +508,18 @@
 #pragma mark - Rotation
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self blockContentOffset];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self unblockContentOffset];
+}
+
+#pragma mark - Content Offset Blocking
+
+- (void)blockContentOffset
 {
     self.isRotating = YES;
     [self updateContentSize];
@@ -471,7 +540,7 @@
     }
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+- (void)unblockContentOffset
 {
     [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
     self.isRotating = NO;

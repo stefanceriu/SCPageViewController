@@ -10,6 +10,15 @@
 
 @implementation SCSlidingPageLayouter
 
+- (id)init
+{
+    if(self = [super init]) {
+        self.interItemSpacing = 0.0f;
+    }
+    
+    return self;
+}
+
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
                               withIndex:(NSUInteger)index
                           contentOffset:(CGPoint)contentOffset
@@ -21,9 +30,9 @@
     }
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        finalFrame.origin.y = MAX(finalFrame.origin.y - finalFrame.size.height, MIN(CGRectGetMaxY(finalFrame) - CGRectGetHeight(finalFrame), CGRectGetHeight(pageViewController.view.bounds) - CGRectGetHeight(finalFrame) + contentOffset.y));
+        finalFrame.origin.y = MAX(finalFrame.origin.y - finalFrame.size.height, MIN(CGRectGetMaxY(finalFrame) - CGRectGetHeight(finalFrame), contentOffset.y));
     } else {
-        finalFrame.origin.x = MAX(finalFrame.origin.x - finalFrame.size.width, MIN(CGRectGetMaxX(finalFrame) - CGRectGetWidth(finalFrame), CGRectGetWidth(pageViewController.view.bounds) - CGRectGetWidth(finalFrame) + contentOffset.x));
+        finalFrame.origin.x = MAX(finalFrame.origin.x - finalFrame.size.width, MIN(CGRectGetMaxX(finalFrame) - CGRectGetWidth(finalFrame), contentOffset.x));
     }
     
     return finalFrame;
