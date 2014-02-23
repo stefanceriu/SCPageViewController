@@ -14,8 +14,6 @@
 #import "SCSlidingPageLayouter.h"
 #import "SCParallaxPageLayouter.h"
 
-#import "UIView+Shadows.h"
-
 @interface SCRootViewController () <SCPageViewControllerDataSource, SCPageViewControllerDelegate, SCMainViewControllerDelegate>
 
 @property (nonatomic, strong) SCPageViewController *pageViewController;
@@ -59,7 +57,6 @@
 - (void)pageViewController:(SCPageViewController *)pageViewController didShowViewController:(SCMainViewController *)controller atIndex:(NSUInteger)index
 {
     [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %d", index]];
-    [controller.view castShadowWithPosition:SCShadowEdgeAll];
 }
 
 - (void)pageViewController:(SCPageViewController *)pageViewController didNavigateToOffset:(CGPoint)offset

@@ -10,12 +10,12 @@
 
 @implementation SCPageLayouter
 @synthesize navigationType;
-@synthesize paddingBetweenPages;
+@synthesize interItemSpacing;
 
 - (id)init
 {
     if(self = [super init]) {
-        self.paddingBetweenPages = 20.0f;
+        self.interItemSpacing = 50.0f;
     }
     
     return self;
@@ -29,7 +29,7 @@
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
         frame.origin.y = index * CGRectGetHeight(pageViewController.view.bounds);
     } else {
-        frame.origin.x = index * (CGRectGetWidth(pageViewController.view.bounds) + self.paddingBetweenPages);
+        frame.origin.x = index * (CGRectGetWidth(pageViewController.view.bounds) + self.interItemSpacing);
     }
     
     return frame;

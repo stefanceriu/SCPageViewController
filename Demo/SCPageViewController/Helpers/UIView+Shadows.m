@@ -15,6 +15,11 @@ static const CGFloat shadowSize = 10;
 
 - (void)castShadowWithPosition:(SCShadowEdge)position;
 {
+    if(position == SCShadowEdgeNone) {
+        self.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectZero].CGPath;
+        return;
+    }
+    
     CGRect shadowRect = self.bounds;
     
     if(position & SCShadowEdgeTop) {

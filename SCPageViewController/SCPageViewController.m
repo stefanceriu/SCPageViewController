@@ -25,6 +25,8 @@
 @property (nonatomic, strong) NSMutableDictionary *pageIndexes;
 @property (nonatomic, strong) NSMutableDictionary *visiblePercentages;
 
+@property (nonatomic, assign) BOOL isRotating;
+
 @end
 
 @implementation SCPageViewController
@@ -75,9 +77,9 @@
 
 - (void)viewWillLayoutSubviews
 {
-    [self updateContentSize];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
+    [self updateContentSize];
 }
 
 #pragma mark - Public Methods
@@ -91,9 +93,10 @@
     }
     
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
-    [self updateContentSize];
+    
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
+    [self updateContentSize];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
@@ -127,6 +130,11 @@
 
 - (void)updateContentSize
 {
+    if(self.isRotating) {
+        [self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        return;
+    }
+    
     CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
     
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
@@ -294,7 +302,9 @@
         
         CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
         
-        if(CGRectContainsPoint(frame, *targetContentOffset)) {
+        CGRect frameWithPadding = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, 0), self.layouter.interItemSpacing/2, 0);
+        
+        if(CGRectContainsPoint(frameWithPadding, *targetContentOffset)) {
             
             // If the velocity is zero then jump to the closest navigation step
             if(CGPointEqualToPoint(CGPointZero, velocity)) {
@@ -342,11 +352,10 @@
 {
     CGPoint nextStepOffset = CGPointZero;
     
-    // If no navigation step is found use the view controller's bounds
     if(velocity.y > 0.0f) {
-        nextStepOffset.y = CGRectGetMaxY(finalFrame) + [self.layouter paddingBetweenPages];
+        nextStepOffset.y = CGRectGetMaxY(finalFrame) + [self.layouter interItemSpacing];
     } else if(velocity.x > 0.0f) {
-        nextStepOffset.x = CGRectGetMaxX(finalFrame) + [self.layouter paddingBetweenPages];
+        nextStepOffset.x = CGRectGetMaxX(finalFrame) + [self.layouter interItemSpacing];
     }
     
     else if(velocity.y < 0.0f) {
@@ -436,16 +445,37 @@
     // Normal pagination
     else {
         [self adjustTargetContentOffset:targetContentOffset withVelocity:velocity];
-        [self.scrollView setContentOffset:*targetContentOffset withTimingFunction:self.timingFunction duration:self.animationDuration completion:nil];
-        *targetContentOffset = self.scrollView.contentOffset;
     }
 }
 
 #pragma mark - Rotation
 
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    [self.scrollView setContentOffset:CGPointMake(self.view.bounds.size.width * self.currentPage, 0) animated:YES];
+    self.isRotating = YES;
+    [self updateContentSize];
+    [self.scrollView addObserver:self forKeyPath:@"contentSize" options:0 context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if(self.isRotating) {
+        
+        CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
+        
+        if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
+            [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame))];
+        } else {
+            [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0)];
+        }
+    }
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
+    self.isRotating = NO;
+    [self updateContentSize];
 }
 
 #pragma mark - Helpers

@@ -27,8 +27,8 @@ typedef enum {
  */
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
 
-/** Defines the padding between each page */
-@property (nonatomic, assign) CGFloat paddingBetweenPages;
+/** Defines the spacing between each page */
+@property (nonatomic, assign) CGFloat interItemSpacing;
 
 
 /** Returns the final frame for the given view controller
