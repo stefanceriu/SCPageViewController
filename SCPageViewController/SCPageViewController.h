@@ -156,6 +156,13 @@
 @property (nonatomic, assign) NSTimeInterval animationDuration;
 
 
+/** The pageViewController's scroll view deceleration rate
+ *
+ * Defaults to UIScrollViewDecelerationRateFast
+ */
+@property (nonatomic, assign) CGFloat decelerationRate;
+
+
 @end
 
 

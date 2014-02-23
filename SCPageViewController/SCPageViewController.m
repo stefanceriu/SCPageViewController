@@ -38,6 +38,7 @@
 @dynamic minimumNumberOfTouches;
 @dynamic maximumNumberOfTouches;
 @dynamic scrollEnabled;
+@dynamic decelerationRate;
 
 - (id)init
 {
@@ -273,6 +274,13 @@
 {
     __block CGRect remainder = self.scrollView.bounds;
     
+    if(remainder.origin.x < 0.0f || remainder.origin.y < 0.0f) {
+        remainder.size.width += remainder.origin.x;
+        remainder.size.height += remainder.origin.y;
+        remainder.origin.x = 0.0f;
+        remainder.origin.y = 0.0f;
+    }
+    
     NSArray *sortedPages = [self.loadedControllers sortedArrayUsingComparator:^NSComparisonResult(UIViewController *obj1, UIViewController *obj2) {
         NSUInteger firstPageIndex = [self.pageIndexes[@(obj1.hash)] unsignedIntegerValue];
         NSUInteger secondPageIndex = [self.pageIndexes[@(obj2.hash)] unsignedIntegerValue];
@@ -302,7 +310,19 @@
             }
         }
         
-        remainder = [self subtractRect:intersection fromRect:remainder withEdge:[self edgeFromOffset:self.scrollView.contentOffset]];
+        CGRectEdge edge = -1;
+        switch (self.layouter.navigationType) {
+            case SCPageLayouterNavigationTypeVertical:
+                edge = CGRectMinYEdge;
+                break;
+            case SCPageLayouterNavigationTypeHorizontal:
+                edge = CGRectMinXEdge;
+                break;
+            default:
+                break;
+        }
+        
+        remainder = [self subtractRect:intersection fromRect:remainder withEdge:edge];
         
         // Finally, trigger appearance callbacks and new frame
         if(visible && ![self.visibleControllers containsObject:viewController]) {
@@ -561,29 +581,6 @@
     CGRect remainder, throwaway;
     CGRectDivide(r1, &throwaway, &remainder, chopAmount, edge);
     return remainder;
-}
-
-- (CGRectEdge)edgeFromOffset:(CGPoint)offset
-{
-    CGRectEdge edge = -1;
-    
-    if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
-        if(offset.x >= 0.0f) {
-            edge = CGRectMinXEdge;
-        } else if(offset.x < 0.0f) {
-            edge = CGRectMaxXEdge;
-        }
-    }
-    
-    if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        if(offset.y >= 0.0f) {
-            edge = CGRectMinYEdge;
-        } else if(offset.y < 0.0f) {
-            edge = CGRectMaxYEdge;
-        }
-    }
-    
-    return edge;
 }
 
 @end

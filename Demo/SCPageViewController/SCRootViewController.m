@@ -36,6 +36,10 @@
     [self.view addSubview:self.pageViewController.view];
     [self addChildViewController:self.pageViewController];
     
+//    [self.pageViewController setPagingEnabled:NO];
+//    [self.pageViewController setContinuousNavigationEnabled:YES];
+//    [self.pageViewController setDecelerationRate:UIScrollViewDecelerationRateNormal];
+    
     [self mainViewController:nil didSelectLayouter:SCPageLayouterTypePlain];
 }
 
