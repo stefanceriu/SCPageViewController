@@ -27,7 +27,7 @@
 @property (nonatomic, strong) NSMutableDictionary *pageIndexes;
 @property (nonatomic, strong) NSMutableDictionary *visiblePercentages;
 
-@property (nonatomic, assign) BOOL isRotating;
+@property (nonatomic, assign) BOOL isContentOffsetBlocked;
 
 @end
 
@@ -78,7 +78,7 @@
 
 - (void)viewWillLayoutSubviews
 {
-    [self updateContentSize];
+    [self updateBoundsUsingDefaultContraints];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
 }
@@ -98,7 +98,7 @@
     [self blockContentOffset];
     [UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
         
-        [self updateContentSize];
+        [self updateBoundsUsingDefaultContraints];
         [self tilePages];
         [self updateFramesAndTriggerAppearanceCallbacks];
         
@@ -121,7 +121,7 @@
     
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
     
-    [self updateContentSize];
+    [self updateBoundsUsingDefaultContraints];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
 }
@@ -159,24 +159,6 @@
 }
 
 #pragma mark - Page Management
-
-- (void)updateContentSize
-{
-    if(self.isRotating) {
-        [self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-        return;
-    }
-    
-    CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
-    
-    if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        [self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame) + self.layouter.contentInsets.top + self.layouter.contentInsets.bottom)];
-    } else {
-        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, 0)];
-    }
-    
-    [self updateBoundsUsingNavigationContraints];
-}
 
 - (void)tilePages
 {
@@ -423,7 +405,28 @@
     }
 }
 
-// Sets the insets to the next navigation steps based on the current state
+#pragma mark - Navigational Constraints
+
+- (void)updateBoundsUsingDefaultContraints
+{
+    if(self.isContentOffsetBlocked) {
+        [self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        return;
+    }
+    
+    CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
+    
+    [self.scrollView setContentInset:UIEdgeInsetsZero];
+    
+    if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
+        [self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame) + self.layouter.contentInsets.top + self.layouter.contentInsets.bottom)];
+    } else {
+        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, 0)];
+    }
+    
+    [self updateBoundsUsingNavigationContraints];
+}
+
 - (void)updateBoundsUsingNavigationContraints
 {
     if(self.continuousNavigationEnabled) {
@@ -455,10 +458,12 @@
         switch (self.layouter.navigationType) {
             case SCPageLayouterNavigationTypeVertical: {
                 insets.bottom = - (self.scrollView.contentSize.height - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, 1.0f) contentOffset:self.scrollView.contentOffset paginating:NO].y) + self.layouter.interItemSpacing);
+                insets.bottom += self.layouter.contentInsets.bottom;
                 break;
             }
             case SCPageLayouterNavigationTypeHorizontal: {
                 insets.right = - (self.scrollView.contentSize.width - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(1.0f, 0.0f) contentOffset:self.scrollView.contentOffset paginating:NO].x) + self.layouter.interItemSpacing);
+                insets.right += self.layouter.contentInsets.right;
                 break;
             }
         }
@@ -466,6 +471,8 @@
     
     [self.scrollView setContentInset:insets];
 }
+
+#pragma mark - Step calculations
 
 - (CGPoint)nextStepOffsetForFrame:(CGRect)finalFrame
                          velocity:(CGPoint)velocity
@@ -594,14 +601,14 @@
 
 - (void)blockContentOffset
 {
-    self.isRotating = YES;
-    [self updateContentSize];
+    self.isContentOffsetBlocked = YES;
+    [self updateBoundsUsingDefaultContraints];
     [self.scrollView addObserver:self forKeyPath:@"contentSize" options:0 context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if(self.isRotating) {
+    if(self.isContentOffsetBlocked) {
         
         CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
         
@@ -616,8 +623,8 @@
 - (void)unblockContentOffset
 {
     [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
-    self.isRotating = NO;
-    [self updateContentSize];
+    self.isContentOffsetBlocked = NO;
+    [self updateBoundsUsingDefaultContraints];
 }
 
 #pragma mark - Helpers

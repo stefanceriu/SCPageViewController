@@ -23,6 +23,7 @@ typedef enum {
  * navigation is disabled
  */
 typedef enum {
+    SCPageLayouterNavigationContraintTypeNone = 0,
     SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on steps only when unfolding the stack*/
     SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on steps only when folding the stack*/
 } SCPageLayouterNavigationContraintType;
