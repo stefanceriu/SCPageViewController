@@ -187,7 +187,7 @@
     }
     [self.loadedControllers minusSet:removedPages];
     
-    for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
+    for (NSUInteger index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
         
         if (![self isDisplayingPageForIndex:index]) {
             UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];;
@@ -209,7 +209,7 @@
 
 - (NSUInteger)calculateCurrentPage
 {
-	for(int pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
         CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
         
         CGRect adjustedFrame = CGRectOffset(CGRectInset(frame,-self.layouter.interItemSpacing/2, 0),
@@ -410,7 +410,10 @@
 - (void)updateBoundsUsingDefaultContraints
 {
     if(self.isContentOffsetBlocked) {
-        [self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        [UIView animateWithDuration:self.animationDuration animations:^{
+            [self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        }];
+        
         return;
     }
     
@@ -429,7 +432,8 @@
 
 - (void)updateBoundsUsingNavigationContraints
 {
-    if(self.continuousNavigationEnabled) {
+    
+    if(self.continuousNavigationEnabled || self.isContentOffsetBlocked) {
         return;
     }
     

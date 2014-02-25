@@ -30,7 +30,6 @@ static const CGFloat verticalInset = 256.0f;
         
         self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 384);
         
-        // Not working properly atm.
         self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
     }
     
