@@ -209,13 +209,15 @@
             [self.pageIndexes setObject:@(index) forKey:@(page.hash)];
             
             [page willMoveToParentViewController:self];
-            [self addChildViewController:page];
             
             if(index > self.currentPage) {
                 [self.scrollView insertSubview:page.view atIndex:0];
             } else {
                 [self.scrollView addSubview:page.view];
             }
+            
+            [self addChildViewController:page];
+            [page didMoveToParentViewController:self];
         }
     }
 }
