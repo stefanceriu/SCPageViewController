@@ -95,6 +95,10 @@
     
     _layouter = layouter;
     
+    if(!self.isViewLoaded) {
+        return; // Will attempt tiling on viewDidLoad
+    }
+    
     [self blockContentOffset];
     [UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
         
@@ -118,6 +122,11 @@
         [controller.view removeFromSuperview];
         [controller removeFromParentViewController];
     }
+    
+    [self.loadedControllers removeAllObjects];
+    [self.visibleControllers removeAllObjects];
+    [self.visiblePercentages removeAllObjects];
+    [self.pageIndexes removeAllObjects];
     
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
     
@@ -162,6 +171,10 @@
 
 - (void)tilePages
 {
+    if(self.numberOfPages == 0) {
+        return;
+    }
+    
     self.currentPage = [self calculateCurrentPage];
     
     NSInteger firstNeededPageIndex = self.currentPage - [self.layouter numberOfPagesToPreloadBeforeCurrentPage];
@@ -241,7 +254,7 @@
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index
 {
     BOOL foundPage = NO;
-    for (UIViewController *page in self.loadedControllers) {
+    for (UIViewController *page in self.visibleControllers) {
         
         NSUInteger pageIndex = [self.pageIndexes[@(page.hash)] unsignedIntegerValue];
         if (pageIndex == index) {
