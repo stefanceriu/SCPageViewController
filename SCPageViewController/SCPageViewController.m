@@ -142,9 +142,9 @@
     CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
     
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) withTimingFunction:self.timingFunction duration:self.animationDuration completion:completion];
+        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:completion];
     } else {
-        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:self.animationDuration completion:completion];
+        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:completion];
     }
 }
 
