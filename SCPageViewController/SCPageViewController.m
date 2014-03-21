@@ -256,7 +256,7 @@
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index
 {
     BOOL foundPage = NO;
-    for (UIViewController *page in self.visibleControllers) {
+    for (UIViewController *page in self.loadedControllers) {
         
         NSUInteger pageIndex = [self.pageIndexes[@(page.hash)] unsignedIntegerValue];
         if (pageIndex == index) {
@@ -439,7 +439,7 @@
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
         [self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame) + self.layouter.contentInsets.top + self.layouter.contentInsets.bottom)];
     } else {
-        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, 0)];
+        [self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame) + self.layouter.contentInsets.left + self.layouter.contentInsets.right, CGRectGetHeight(self.view.bounds) + self.layouter.contentInsets.top + self.layouter.contentInsets.bottom)];
     }
     
     [self updateBoundsUsingNavigationContraints];
@@ -546,12 +546,16 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self tilePages];
-    [self updateFramesAndTriggerAppearanceCallbacks];
+    if([self.layouter respondsToSelector:@selector(pageViewController:didNavigateToOffset:)]) {
+        [self.layouter pageViewController:self didNavigateToOffset:self.scrollView.contentOffset];
+    }
     
     if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToOffset:)]) {
         [self.delegate pageViewController:self didNavigateToOffset:self.scrollView.contentOffset];
     }
+    
+    [self tilePages];
+    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView

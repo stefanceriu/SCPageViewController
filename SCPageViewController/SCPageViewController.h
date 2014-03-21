@@ -193,7 +193,7 @@
 
 @optional
 
-/** Delegate method that the Stack calls when a view controller becomes visible
+/** Delegate method that the PageViewController calls when a view controller becomes visible
  *
  * @param pageViewController The calling PageViewController
  * @param controller The view controller that became visible
@@ -223,8 +223,8 @@
 
 
 /** Delegate method that the pageController calls when its scrollView scrolls
- * @param stackViewController The calling StackViewController
- * @param offset The current offset in the Stack's scrollView
+ * @param pageViewController The calling PageViewController
+ * @param offset The current offset in the PageViewController's scrollView
  *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
@@ -233,7 +233,7 @@
 
 /** Delegate method that the pageController calls when its scrollView rests
  * on a page
- * @param stackViewController The calling StackViewController
+ * @param pageViewController The calling PageViewController
  * @param pageIndex The index of the page
  *
  */

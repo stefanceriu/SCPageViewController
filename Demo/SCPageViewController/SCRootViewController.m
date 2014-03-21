@@ -61,7 +61,7 @@
 
 - (void)pageViewController:(SCPageViewController *)pageViewController didShowViewController:(SCMainViewController *)controller atIndex:(NSUInteger)index
 {
-    [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %d", index]];
+    [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %ld", (unsigned long)index]];
 }
 
 - (void)pageViewController:(SCPageViewController *)pageViewController didNavigateToOffset:(CGPoint)offset

@@ -24,8 +24,8 @@ typedef enum {
  */
 typedef enum {
     SCPageLayouterNavigationContraintTypeNone = 0,
-    SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on steps only when unfolding the stack*/
-    SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on steps only when folding the stack*/
+    SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
+    SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
 } SCPageLayouterNavigationContraintType;
 
 
@@ -50,9 +50,17 @@ typedef enum {
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 
 
+/** The number of pages to preload and add to the page view controller before the current page */
+@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadBeforeCurrentPage;
+
+
+/** The number of pages to preload and add to the page view controller after the current page */
+@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadAfterCurrentPage;
+
+
 /** Returns the final frame for the given view controller
  *
- * @param index The index of the view controller in the Stack's children array
+ * @param index The index of the view controller in the PageViewController's children array
  * @param pageViewController The calling PageViewController
  *
  * @return The frame for the viewController's view
@@ -80,12 +88,14 @@ typedef enum {
                    inPageViewController:(SCPageViewController *)pageViewController;
 
 
-/** The number of pages to preload and add to the page view controller before the current page */
-@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadBeforeCurrentPage;
+@optional
 
-
-/** The number of pages to preload and add to the page view controller after the current page */
-@property (nonatomic, assign) NSUInteger numberOfPagesToPreloadAfterCurrentPage;
-
+/** Method that the pageController calls when its scrollView scrolls
+ * @param pageViewController The calling PageViewController
+ * @param offset The current offset in the PageViewController's scrollView
+ *
+ */
+- (void)pageViewController:(SCPageViewController *)pageViewController
+       didNavigateToOffset:(CGPoint)offset;
 
 @end
