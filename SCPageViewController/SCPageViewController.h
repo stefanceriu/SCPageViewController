@@ -18,7 +18,7 @@
 - (void)reloadData;
 
 /**
- * Reloads and re-layouts all the pages in the page view controller
+ * Reloads and re-layouts the page at the given index
  */
 - (void)reloadPageAtIndex:(NSUInteger)index;
 

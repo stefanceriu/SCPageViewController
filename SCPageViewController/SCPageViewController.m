@@ -157,7 +157,9 @@
     [self.visiblePercentages removeObjectForKey:@([controller hash])];
     [self.pageIndexes removeObjectForKey:@([controller hash])];
     
+    [self updateBoundsUsingDefaultContraints];
     [self tilePages];
+    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
