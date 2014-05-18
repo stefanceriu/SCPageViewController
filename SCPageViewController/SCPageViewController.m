@@ -128,11 +128,36 @@
     [self.visiblePercentages removeAllObjects];
     [self.pageIndexes removeAllObjects];
     
+    [self.scrollView setContentOffset:CGPointZero];
+    
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
     
     [self updateBoundsUsingDefaultContraints];
     [self tilePages];
     [self updateFramesAndTriggerAppearanceCallbacks];
+}
+
+- (void)reloadPageAtIndex:(NSUInteger)index
+{
+    UIViewController *controller;
+    
+    for (UIViewController *page in self.loadedControllers) {
+        if ([self.pageIndexes[@(page.hash)] unsignedIntegerValue] == index) {
+            controller = page;
+            break;
+        }
+    }
+    
+    [self willMoveToParentViewController:nil];
+    [controller.view removeFromSuperview];
+    [controller removeFromParentViewController];
+    
+    [self.loadedControllers removeObject:controller];
+    [self.visibleControllers removeObject:controller];
+    [self.visiblePercentages removeObjectForKey:@([controller hash])];
+    [self.pageIndexes removeObjectForKey:@([controller hash])];
+    
+    [self tilePages];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex

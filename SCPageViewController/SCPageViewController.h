@@ -18,6 +18,11 @@
 - (void)reloadData;
 
 /**
+ * Reloads and re-layouts all the pages in the page view controller
+ */
+- (void)reloadPageAtIndex:(NSUInteger)index;
+
+/**
  * @param pageIndex The page index to navigate to
  * @param animated Whether the transition will be animated
  */
