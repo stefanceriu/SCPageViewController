@@ -166,12 +166,25 @@
                      animated:(BOOL)animated
                    completion:(void(^)())completion
 {
+    void(^animationFinishedBlock)() = ^{
+        
+        [self updateBoundsUsingNavigationContraints];
+        
+        if(!animated && [self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+            [self.delegate pageViewController:self didNavigateToPageAtIndex:pageIndex];
+        }
+        
+        if(completion) {
+            completion();
+        }
+    };
+    
     CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
     
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:completion];
+        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
     } else {
-        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:completion];
+        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
     }
 }
 
