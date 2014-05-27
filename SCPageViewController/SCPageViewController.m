@@ -166,6 +166,10 @@
                      animated:(BOOL)animated
                    completion:(void(^)())completion
 {
+    if(pageIndex >= self.numberOfPages) {
+        return;
+    }
+    
     void(^animationFinishedBlock)() = ^{
         
         [self updateBoundsUsingNavigationContraints];
