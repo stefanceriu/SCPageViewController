@@ -128,9 +128,9 @@
     [self.visiblePercentages removeAllObjects];
     [self.pageIndexes removeAllObjects];
     
-    [self.scrollView setContentOffset:CGPointZero];
-    
     self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
+    
+    [self.scrollView setContentOffset:CGPointZero];
     
     [self updateBoundsUsingDefaultContraints];
     [self tilePages];
