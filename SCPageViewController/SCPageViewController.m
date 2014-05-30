@@ -578,7 +578,7 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    return [[self.scrollView class] instanceMethodSignatureForSelector:aSelector];
+    return [SCPageViewControllerScrollView instanceMethodSignatureForSelector:aSelector];
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
