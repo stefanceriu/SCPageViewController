@@ -148,7 +148,7 @@
         }
     }
     
-    [self willMoveToParentViewController:nil];
+    [controller willMoveToParentViewController:nil];
     [controller.view removeFromSuperview];
     [controller removeFromParentViewController];
     
