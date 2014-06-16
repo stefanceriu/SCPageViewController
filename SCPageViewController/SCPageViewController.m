@@ -242,12 +242,17 @@
             [page removeFromParentViewController];
         }
     }
+    
     [self.loadedControllers minusSet:removedPages];
     
     for (NSUInteger index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
         
         if (![self isDisplayingPageForIndex:index]) {
-            UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];;
+            UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
+            
+            if(page == nil) {
+                continue;
+            }
             
             [self.loadedControllers addObject:page];
             [self.pageIndexes setObject:@(index) forKey:@(page.hash)];
