@@ -238,7 +238,9 @@
             [self.pageIndexes removeObjectForKey:@(page.hash)];
             
             [page willMoveToParentViewController:nil];
+            [page beginAppearanceTransition:NO animated:NO];
             [page.view removeFromSuperview];
+            [page endAppearanceTransition];
             [page removeFromParentViewController];
         }
     }
