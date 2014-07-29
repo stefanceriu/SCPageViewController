@@ -80,7 +80,6 @@
 {
     [self updateBoundsUsingDefaultContraints];
     [self tilePages];
-    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 #pragma mark - Public Methods
@@ -104,7 +103,6 @@
         
         [self updateBoundsUsingDefaultContraints];
         [self tilePages];
-        [self updateFramesAndTriggerAppearanceCallbacks];
         
     } completion:^(BOOL finished) {
         [self unblockContentOffset];
@@ -134,7 +132,6 @@
     
     [self updateBoundsUsingDefaultContraints];
     [self tilePages];
-    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (void)reloadPageAtIndex:(NSUInteger)index
@@ -159,7 +156,6 @@
     
     [self updateBoundsUsingDefaultContraints];
     [self tilePages];
-    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
@@ -271,6 +267,8 @@
             [page didMoveToParentViewController:self];
         }
     }
+    
+    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (NSUInteger)calculateCurrentPage
@@ -307,7 +305,7 @@
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index
 {
     BOOL foundPage = NO;
-    for (UIViewController *page in self.loadedControllers) {
+    for (UIViewController *page in self.visibleControllers) {
         
         NSUInteger pageIndex = [self.pageIndexes[@(page.hash)] unsignedIntegerValue];
         if (pageIndex == index) {
@@ -331,7 +329,11 @@
         remainder.origin.y = 0.0f;
     }
     
-    NSArray *sortedPages = [self.loadedControllers sortedArrayUsingComparator:^NSComparisonResult(UIViewController *obj1, UIViewController *obj2) {
+    NSMutableSet *allPages = [NSMutableSet set];
+    [allPages addObjectsFromArray:self.loadedControllers.array];
+    [allPages addObjectsFromArray:self.visibleControllers];
+    
+    NSArray *sortedPages = [allPages.allObjects sortedArrayUsingComparator:^NSComparisonResult(UIViewController *obj1, UIViewController *obj2) {
         NSUInteger firstPageIndex = [self.pageIndexes[@(obj1.hash)] unsignedIntegerValue];
         NSUInteger secondPageIndex = [self.pageIndexes[@(obj2.hash)] unsignedIntegerValue];
         
@@ -618,7 +620,6 @@
     }
     
     [self tilePages];
-    [self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
