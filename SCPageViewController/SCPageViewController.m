@@ -29,6 +29,8 @@
 
 @property (nonatomic, assign) BOOL isContentOffsetBlocked;
 
+@property (nonatomic, assign) BOOL isViewVisible;
+
 @end
 
 @implementation SCPageViewController
@@ -74,6 +76,22 @@
     [self.view addSubview:self.scrollView];
     
     [self reloadData];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.isViewVisible = YES;
+    [self tilePages];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    self.isViewVisible = NO;
+    [self tilePages];
 }
 
 - (void)viewWillLayoutSubviews
@@ -233,11 +251,16 @@
             [removedPages addObject:page];
             [self.pageIndexes removeObjectForKey:@(page.hash)];
             
-            [page willMoveToParentViewController:nil];
-            [page beginAppearanceTransition:NO animated:NO];
-            [page.view removeFromSuperview];
-            [page endAppearanceTransition];
-            [page removeFromParentViewController];
+            if([self.visibleControllers containsObject:page]) {
+                
+                [self.visibleControllers removeObject:page];
+                
+                [page willMoveToParentViewController:nil];
+                [page beginAppearanceTransition:NO animated:NO];
+                [page.view removeFromSuperview];
+                [page endAppearanceTransition];
+                [page removeFromParentViewController];
+            }
         }
     }
     
@@ -353,6 +376,8 @@
         CGRect intersection = CGRectIntersection(remainder, nextFrame);
         // If a view controller's frame does intersect the remainder then it's visible
         BOOL visible = self.layouter.navigationType == SCPageLayouterNavigationTypeVertical ? (CGRectGetHeight(intersection) > 0.0f) : (CGRectGetWidth(intersection) > 0.0f);
+        
+        visible = visible && self.isViewVisible;
         
         if(visible) {
             if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
