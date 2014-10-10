@@ -126,9 +126,7 @@ const static int maximumSteps = 10;
     
     if(duration == 0.0f) {
         
-        [UIView setAnimationsEnabled:NO];
         self.contentOffset = contentOffset;
-        [UIView setAnimationsEnabled:YES];
         
         if(completion) {
             completion();
