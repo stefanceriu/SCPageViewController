@@ -73,6 +73,12 @@
 
 
 /**
+ * The total number of pages the page view controllers holds at any given time
+ */
+@property (nonatomic, readonly) NSUInteger numberOfPages;
+
+
+/**
  * An array of currently loaded view controllers in the page view controller
  */
 @property (nonatomic, readonly) NSArray *loadedViewControllers;
