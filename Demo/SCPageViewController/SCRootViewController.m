@@ -87,7 +87,7 @@
     });
     
     id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(type)] alloc] init];
-    //[pageLayouter setNavigationType:SCPageLayouterNavigationTypeVertical];
+    [pageLayouter setNavigationType:UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? SCPageLayouterNavigationTypeHorizontal :SCPageLayouterNavigationTypeVertical];
     
     [self.pageViewController setLayouter:pageLayouter animated:YES completion:nil];
 }
@@ -97,6 +97,11 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self.pageViewController.layouter setNavigationType:UIInterfaceOrientationIsLandscape(toInterfaceOrientation) ? SCPageLayouterNavigationTypeHorizontal :SCPageLayouterNavigationTypeVertical];
 }
 
 @end

@@ -251,16 +251,13 @@
             [removedPages addObject:page];
             [self.pageIndexes removeObjectForKey:@(page.hash)];
             
-            if([self.visibleControllers containsObject:page]) {
-                
-                [self.visibleControllers removeObject:page];
-                
-                [page willMoveToParentViewController:nil];
-                [page beginAppearanceTransition:NO animated:NO];
-                [page.view removeFromSuperview];
-                [page endAppearanceTransition];
-                [page removeFromParentViewController];
-            }
+            [self.visibleControllers removeObject:page];
+            
+            [page willMoveToParentViewController:nil];
+            [page beginAppearanceTransition:NO animated:NO];
+            [page.view removeFromSuperview];
+            [page endAppearanceTransition];
+            [page removeFromParentViewController];
         }
     }
     
@@ -268,7 +265,7 @@
     
     for (NSUInteger index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
         
-        if (![self isDisplayingPageForIndex:index]) {
+        if (![self isPageLoadedForIndex:index]) {
             UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
             
             if(page == nil) {
@@ -325,10 +322,10 @@
     return self.currentPage;
 }
 
-- (BOOL)isDisplayingPageForIndex:(NSUInteger)index
+- (BOOL)isPageLoadedForIndex:(NSUInteger)index
 {
     BOOL foundPage = NO;
-    for (UIViewController *page in self.visibleControllers) {
+    for (UIViewController *page in self.loadedControllers) {
         
         NSUInteger pageIndex = [self.pageIndexes[@(page.hash)] unsignedIntegerValue];
         if (pageIndex == index) {
@@ -445,7 +442,7 @@
     for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
         
         CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
-        CGRect adjustedFrame = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, 0), self.layouter.interItemSpacing/2, 0);
+        CGRect adjustedFrame = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, -self.layouter.interItemSpacing/2), self.layouter.interItemSpacing/2, self.layouter.interItemSpacing/2);
         
         switch (self.layouter.navigationType) {
             case SCPageLayouterNavigationTypeVertical:
@@ -734,8 +731,10 @@
 
 - (void)unblockContentOffset
 {
+    [self.scrollView setContentOffset:self.scrollView.contentOffset animated:YES];
     [self.scrollView removeObserver:self forKeyPath:@"contentSize"];
     self.isContentOffsetBlocked = NO;
+    
     [self updateBoundsUsingDefaultContraints];
 }
 

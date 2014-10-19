@@ -18,8 +18,8 @@ typedef enum {
 
 @interface SCMainViewController : UIViewController
 
-@property (nonatomic, readonly) UILabel *pageNumberLabel;
-@property (nonatomic, readonly) UILabel *visiblePercentageLabel;
+@property (nonatomic, weak, readonly) UILabel *pageNumberLabel;
+@property (nonatomic, weak, readonly) UILabel *visiblePercentageLabel;
 
 @property (nonatomic, weak) IBOutlet id<SCMainViewControllerDelegate> delegate;
 

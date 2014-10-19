@@ -188,9 +188,7 @@ const static int maximumSteps = 10;
         CGPoint contentOffset = CGPointMake(self.beginContentOffset.x + currentDeltaContentOffset.x,
                                             self.beginContentOffset.y + currentDeltaContentOffset.y);
         
-        [UIView setAnimationsEnabled:NO];
         self.contentOffset = contentOffset;
-        [UIView setAnimationsEnabled:YES];
         
         if (adjustedRatio == 1.0) {
             // inform delegate about end of animation
