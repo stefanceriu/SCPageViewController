@@ -17,4 +17,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.frameworks = 'UIKit', 'QuartzCore', 'CoreGraphics', 'Foundation'
   s.screenshots = ["https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif"]
+
+  s.dependency 'SCScrollView'
+
 end
