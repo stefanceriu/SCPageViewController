@@ -1,0 +1,10 @@
+PODS:
+  - SCScrollView (1.0.0)
+
+DEPENDENCIES:
+  - SCScrollView
+
+SPEC CHECKSUMS:
+  SCScrollView: 96e077d1b9dc14ad0ed810628a7f1e5c28ca5cda
+
+COCOAPODS: 0.34.4

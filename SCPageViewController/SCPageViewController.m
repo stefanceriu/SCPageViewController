@@ -7,14 +7,14 @@
 //
 
 #import "SCPageViewController.h"
-#import "SCPageViewControllerScrollView.h"
+#import "SCScrollView.h"
 #import "SCPageLayouterProtocol.h"
 
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
 @interface SCPageViewController () <UIScrollViewDelegate>
 
-@property (nonatomic, strong) SCPageViewControllerScrollView *scrollView;
+@property (nonatomic, strong) SCScrollView *scrollView;
 
 @property (nonatomic, strong) id<SCPageLayouterProtocol> layouter;
 
@@ -65,7 +65,7 @@
     
     [self.view setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     
-    self.scrollView = [[SCPageViewControllerScrollView alloc] initWithFrame:self.view.bounds];
+    self.scrollView = [[SCScrollView alloc] initWithFrame:self.view.bounds];
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.showsHorizontalScrollIndicator = NO;
@@ -609,7 +609,7 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    return [SCPageViewControllerScrollView instanceMethodSignatureForSelector:aSelector];
+    return [SCScrollView instanceMethodSignatureForSelector:aSelector];
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation

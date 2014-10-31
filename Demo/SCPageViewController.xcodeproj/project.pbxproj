@@ -21,13 +21,14 @@
 		187E41CC18A96A4E003D8C70 /* SCRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 187E41C518A96A4E003D8C70 /* SCRootViewController.m */; };
 		187E41CE18A96D2B003D8C70 /* SCRootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */; };
 		1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */; };
-		1894AA2018AFC5CB009CD0EC /* SCPageViewControllerScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */; };
 		1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */; };
 		1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */; };
 		1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */; };
+		3D95AF8B4F46F9506270EA77 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A091F81FC03FF6D00155A69 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A091F81FC03FF6D00155A69 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		18623FFD18B0063D00FFE998 /* colorful_umbrellas.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = colorful_umbrellas.jpg; sourceTree = "<group>"; };
 		1877A41D18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCFacebookPaperPageLayouter.h; sourceTree = "<group>"; };
 		1877A41E18BA5CDF00F29538 /* SCFacebookPaperPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCFacebookPaperPageLayouter.m; sourceTree = "<group>"; };
@@ -53,8 +54,6 @@
 		187E41CD18A96D2B003D8C70 /* SCRootViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SCRootViewController.xib; sourceTree = "<group>"; };
 		1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewController.h; sourceTree = "<group>"; };
 		1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewController.m; sourceTree = "<group>"; };
-		1894AA1E18AFC5CB009CD0EC /* SCPageViewControllerScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewControllerScrollView.h; sourceTree = "<group>"; };
-		1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewControllerScrollView.m; sourceTree = "<group>"; };
 		1894AA2218AFC9F8009CD0EC /* SCParallaxPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCParallaxPageLayouter.h; sourceTree = "<group>"; };
 		1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCParallaxPageLayouter.m; sourceTree = "<group>"; };
 		1894AA2618AFC9F8009CD0EC /* SCSlidingPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCSlidingPageLayouter.h; sourceTree = "<group>"; };
@@ -62,6 +61,8 @@
 		1894AA2818AFC9F8009CD0EC /* SCPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouter.h; sourceTree = "<group>"; };
 		1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageLayouter.m; sourceTree = "<group>"; };
 		1894AA2A18AFC9F8009CD0EC /* SCPageLayouterProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouterProtocol.h; sourceTree = "<group>"; };
+		324731F95BFFB4EFB19CB5BB /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		5A1DA9FE46E7C119733B3764 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +73,7 @@
 				187E412918A968E0003D8C70 /* CoreGraphics.framework in Frameworks */,
 				187E412B18A968E0003D8C70 /* UIKit.framework in Frameworks */,
 				187E412718A968E0003D8C70 /* Foundation.framework in Frameworks */,
+				3D95AF8B4F46F9506270EA77 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +87,7 @@
 				187E412C18A968E0003D8C70 /* Demo */,
 				187E412518A968E0003D8C70 /* Frameworks */,
 				187E412418A968E0003D8C70 /* Products */,
+				48289E63D81C304E93BF8641 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,6 +106,7 @@
 				187E412818A968E0003D8C70 /* CoreGraphics.framework */,
 				187E412A18A968E0003D8C70 /* UIKit.framework */,
 				187E414518A968E0003D8C70 /* XCTest.framework */,
+				0A091F81FC03FF6D00155A69 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -151,8 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				1894AA2118AFC9F8009CD0EC /* Layouters */,
-				1894AA1E18AFC5CB009CD0EC /* SCPageViewControllerScrollView.h */,
-				1894AA1F18AFC5CB009CD0EC /* SCPageViewControllerScrollView.m */,
 				1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */,
 				1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */,
 			);
@@ -176,6 +178,15 @@
 			path = Layouters;
 			sourceTree = "<group>";
 		};
+		48289E63D81C304E93BF8641 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5A1DA9FE46E7C119733B3764 /* Pods.debug.xcconfig */,
+				324731F95BFFB4EFB19CB5BB /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -183,9 +194,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 187E415518A968E0003D8C70 /* Build configuration list for PBXNativeTarget "SCPageViewController" */;
 			buildPhases = (
+				995C65012DC4A50464EB5EFB /* Check Pods Manifest.lock */,
 				187E411F18A968E0003D8C70 /* Sources */,
 				187E412018A968E0003D8C70 /* Frameworks */,
 				187E412118A968E0003D8C70 /* Resources */,
+				707DA6FBAFEC8AD8A0EAECD6 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -237,6 +250,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		707DA6FBAFEC8AD8A0EAECD6 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		995C65012DC4A50464EB5EFB /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		187E411F18A968E0003D8C70 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -249,7 +295,6 @@
 				1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */,
 				1894AA1D18AFC4E4009CD0EC /* SCPageViewController.m in Sources */,
 				187E413318A968E0003D8C70 /* main.m in Sources */,
-				1894AA2018AFC5CB009CD0EC /* SCPageViewControllerScrollView.m in Sources */,
 				187E41C818A96A4E003D8C70 /* SCMainViewController.m in Sources */,
 				187E41C718A96A4E003D8C70 /* UIView+Shadows.m in Sources */,
 				1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */,
@@ -334,6 +379,7 @@
 		};
 		187E415618A968E0003D8C70 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A1DA9FE46E7C119733B3764 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -348,6 +394,7 @@
 		};
 		187E415718A968E0003D8C70 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 324731F95BFFB4EFB19CB5BB /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
