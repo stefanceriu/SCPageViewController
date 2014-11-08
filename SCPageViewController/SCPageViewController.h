@@ -10,6 +10,8 @@
 @protocol SCPageViewControllerDelegate;
 @protocol SCPageLayouterProtocol;
 
+@protocol SCEasingFunctionProtocol;
+
 @interface SCPageViewController : UIViewController
 
 /**
@@ -155,9 +157,9 @@
 
 /** Timing function used when navigating beteen pages
  *
- * Default value is set to kCAMediaTimingFunctionLinear
+ * Default value is set to SCEasingFunctionTypeSineEaseInOut
  */
-@property (nonatomic, strong) CAMediaTimingFunction *timingFunction;
+@property (nonatomic, strong) id<SCEasingFunctionProtocol> easingFunction;
 
 
 /** Animation duration used when navigating beteen pages

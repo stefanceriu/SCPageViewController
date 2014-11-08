@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'SCPageViewController'
-  s.version  = '1.0.7'
+  s.version  = '1.1.0'
   s.platform = :ios
   s.ios.deployment_target = '5.0'
 
@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
   s.frameworks = 'UIKit', 'QuartzCore', 'CoreGraphics', 'Foundation'
   s.screenshots = ["https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif"]
 
-  s.dependency 'SCScrollView'
+  s.dependency 'SCScrollView', '~> 1.1'
 
 end

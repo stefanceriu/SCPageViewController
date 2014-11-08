@@ -7,7 +7,9 @@
 //
 
 #import "SCPageViewController.h"
+
 #import "SCScrollView.h"
+#import "SCEasingFunction.h"
 #import "SCPageLayouterProtocol.h"
 
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
@@ -52,7 +54,7 @@
         self.visiblePercentages = [NSMutableDictionary dictionary];
         self.pagingEnabled = YES;
         
-        self.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+        self.easingFunction = [SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeSineEaseInOut];
         self.animationDuration = 0.25f;
     }
     
@@ -200,9 +202,9 @@
     CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
     
     if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
+        [self.scrollView setContentOffset:CGPointMake(0, CGRectGetMinY(finalFrame)) easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
     } else {
-        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) withTimingFunction:self.timingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
+        [self.scrollView setContentOffset:CGPointMake(CGRectGetMinX(finalFrame), 0) easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
     }
 }
 

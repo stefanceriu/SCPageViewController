@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
+#import "SCEasingFunction.h"
+
 typedef enum {
     SCPageLayouterTypePlain,
     SCPageLayouterTypeSliding,
@@ -23,11 +25,22 @@ typedef enum {
 
 @property (nonatomic, weak) IBOutlet id<SCMainViewControllerDelegate> delegate;
 
+@property (nonatomic, assign) SCPageLayouterType layouterType;
+@property (nonatomic, assign) SCEasingFunctionType easingFunctionType;
+@property (nonatomic, assign) NSTimeInterval duration;
+
 @end
 
 @protocol SCMainViewControllerDelegate <NSObject>
 
-- (void)mainViewController:(SCMainViewController *)mainViewController
-         didSelectLayouter:(SCPageLayouterType)type;
+- (void)mainViewControllerDidChangeLayouterType:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDidChangeAnimationType:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDidChangeAnimationDuration:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDidRequestNavigationToPreviousPage:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDiDRequestNavigationToNextPage:(SCMainViewController *)mainViewController;
 
 @end
