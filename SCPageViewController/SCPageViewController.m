@@ -135,29 +135,44 @@
 
 - (void)reloadData
 {
-    for(UIViewController *controller in self.loadedControllers) {
-        [controller willMoveToParentViewController:nil];
-        [controller.view removeFromSuperview];
-        [controller removeFromParentViewController];
-    }
-    
-    [self.loadedControllers removeAllObjects];
-    [self.visibleControllers removeAllObjects];
-    [self.visiblePercentages removeAllObjects];
-    [self.pageIndexes removeAllObjects];
-    
-    self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
-    
-    [self.scrollView setContentOffset:CGPointZero];
-    
-    [self updateBoundsUsingDefaultContraints];
-    [self tilePages];
+	for(UIViewController *controller in self.loadedControllers) {
+		
+		if([self.visibleControllers containsObject:controller]) {
+			[controller beginAppearanceTransition:NO animated:NO];
+		}
+		
+		[controller willMoveToParentViewController:nil];
+		[controller.view removeFromSuperview];
+		[controller removeFromParentViewController];
+		
+		if([self.visibleControllers containsObject:controller]) {
+			[controller endAppearanceTransition];
+		}
+	}
+	
+	[self.loadedControllers removeAllObjects];
+	[self.visibleControllers removeAllObjects];
+	[self.visiblePercentages removeAllObjects];
+	[self.pageIndexes removeAllObjects];
+	
+	
+	NSUInteger oldNumberOfPages = self.numberOfPages;
+	
+	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
+	
+	if(oldNumberOfPages >= self.numberOfPages) {
+		NSUInteger index = MAX(0, (int)self.numberOfPages-1);
+		[self navigateToPageAtIndex:index animated:NO completion:nil];
+	} else {
+		[self updateBoundsUsingDefaultContraints];
+		[self tilePages];
+	}
 }
 
 - (void)reloadPageAtIndex:(NSUInteger)index
 {
     UIViewController *controller;
-    
+	
     for (UIViewController *page in self.loadedControllers) {
         if ([self.pageIndexes[@(page.hash)] unsignedIntegerValue] == index) {
             controller = page;
