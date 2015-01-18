@@ -24,6 +24,7 @@
 		1894AA2B18AFC9F8009CD0EC /* SCParallaxPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2318AFC9F8009CD0EC /* SCParallaxPageLayouter.m */; };
 		1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2718AFC9F8009CD0EC /* SCSlidingPageLayouter.m */; };
 		1894AA2E18AFC9F8009CD0EC /* SCPageLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */; };
+		189DB8B01A6BC2500043BE64 /* SCPageViewControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 189DB8AF1A6BC2500043BE64 /* SCPageViewControllerView.m */; };
 		3D95AF8B4F46F9506270EA77 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A091F81FC03FF6D00155A69 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,8 @@
 		1894AA2818AFC9F8009CD0EC /* SCPageLayouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouter.h; sourceTree = "<group>"; };
 		1894AA2918AFC9F8009CD0EC /* SCPageLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageLayouter.m; sourceTree = "<group>"; };
 		1894AA2A18AFC9F8009CD0EC /* SCPageLayouterProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageLayouterProtocol.h; sourceTree = "<group>"; };
+		189DB8AE1A6BC2500043BE64 /* SCPageViewControllerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPageViewControllerView.h; sourceTree = "<group>"; };
+		189DB8AF1A6BC2500043BE64 /* SCPageViewControllerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCPageViewControllerView.m; sourceTree = "<group>"; };
 		324731F95BFFB4EFB19CB5BB /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		5A1DA9FE46E7C119733B3764 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -157,6 +160,8 @@
 				1894AA2118AFC9F8009CD0EC /* Layouters */,
 				1894AA1B18AFC4E4009CD0EC /* SCPageViewController.h */,
 				1894AA1C18AFC4E4009CD0EC /* SCPageViewController.m */,
+				189DB8AE1A6BC2500043BE64 /* SCPageViewControllerView.h */,
+				189DB8AF1A6BC2500043BE64 /* SCPageViewControllerView.m */,
 			);
 			name = SCPageViewController;
 			path = ../SCPageViewController;
@@ -298,6 +303,7 @@
 				187E41C818A96A4E003D8C70 /* SCMainViewController.m in Sources */,
 				187E41C718A96A4E003D8C70 /* UIView+Shadows.m in Sources */,
 				1894AA2D18AFC9F8009CD0EC /* SCSlidingPageLayouter.m in Sources */,
+				189DB8B01A6BC2500043BE64 /* SCPageViewControllerView.m in Sources */,
 				187E41CC18A96A4E003D8C70 /* SCRootViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

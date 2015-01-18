@@ -7,6 +7,7 @@
 //
 
 #import "SCPageViewController.h"
+#import "SCPageViewControllerView.h"
 
 #import "SCScrollView.h"
 #import "SCEasingFunction.h"
@@ -14,7 +15,7 @@
 
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
-@interface SCPageViewController () <UIScrollViewDelegate>
+@interface SCPageViewController () <SCPageViewControllerViewDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) SCScrollView *scrollView;
 
@@ -61,11 +62,18 @@
     return self;
 }
 
+- (void)loadView
+{
+	SCPageViewControllerView *view = [[SCPageViewControllerView alloc] init];
+	[view setDelegate:self];
+	self.view = view;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    [self.view setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [self.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     
     self.scrollView = [[SCScrollView alloc] initWithFrame:self.view.bounds];
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -78,6 +86,15 @@
     [self.view addSubview:self.scrollView];
     
     [self reloadData];
+}
+
+- (void)viewWillLayoutSubviews
+{
+	[self updateBoundsUsingDefaultContraints];
+	
+	[self navigateToPageAtIndex:self.currentPage animated:NO completion:nil];
+	
+	[self tilePages];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -93,12 +110,6 @@
     [super viewDidDisappear:animated];
     
     self.isViewVisible = NO;
-    [self tilePages];
-}
-
-- (void)viewWillLayoutSubviews
-{
-    [self updateBoundsUsingDefaultContraints];
     [self tilePages];
 }
 
@@ -632,6 +643,18 @@
         [NSException raise:@"SCPageViewControllerUnrecognizedSelectorException" format:@"Unrecognized selector %@", NSStringFromSelector(aSelector)];
         return nil;
     }
+}
+
+#pragma mark - SCPageViewControllerViewDelegate
+
+- (void)pageViewControllerViewWillChangeFrame:(SCPageViewControllerView *)pageViewControllerView
+{
+	[self.scrollView setDelegate:nil];
+}
+
+- (void)pageViewControllerViewDidChangeFrame:(SCPageViewControllerView *)pageViewControllerView
+{
+	[self.scrollView setDelegate:self];
 }
 
 #pragma mark - UIScrollViewDelegate
