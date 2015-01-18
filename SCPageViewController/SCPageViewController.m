@@ -91,9 +91,6 @@
 - (void)viewWillLayoutSubviews
 {
 	[self updateBoundsUsingDefaultContraints];
-	
-	[self navigateToPageAtIndex:self.currentPage animated:NO completion:nil];
-	
 	[self tilePages];
 }
 
