@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
   s.frameworks = 'UIKit', 'QuartzCore', 'CoreGraphics', 'Foundation'
   s.screenshots = ["https://dl.dropboxusercontent.com/u/12748201/SCPageViewController/SCPageViewController.gif"]
 
-  s.dependency 'SCScrollView', '~> 1.1'
+  s.dependency 'SCScrollView', '~> 1.1.4'
 
 end
