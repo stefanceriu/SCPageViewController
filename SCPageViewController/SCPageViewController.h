@@ -52,6 +52,13 @@
          completion:(void(^)())completion;
 
 
+/**
+ * @param pageIndex The page index you want to retrieve the view controller for
+ * @return the view controller for the given page index if already loaded, nil otherwise
+ */
+- (UIViewController *)viewControllerForPageAtIndex:(NSUInteger)pageIndex;
+
+
 /** Currently used layouter */
 @property (nonatomic, readonly) id<SCPageLayouterProtocol> layouter;
 
@@ -66,6 +73,14 @@
  * Page view controller's delegate
  */
 @property (nonatomic, weak) id<SCPageViewControllerDelegate> delegate;
+
+
+/**
+ * Tell the pageViewController to layout pages only when the scroll rests
+ * Setting this to true will block the page view controller from using
+ * layouter current pages
+ */
+@property (nonatomic, assign) BOOL shouldLayoutPagesOnRest;
 
 
 /**

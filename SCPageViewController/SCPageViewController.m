@@ -260,6 +260,23 @@
     return [self.visiblePercentages[@([viewController hash])] floatValue];
 }
 
+- (UIViewController *)viewControllerForPageAtIndex:(NSUInteger)pageIndex
+{
+	__block UIViewController *controller;
+	[self.pageIndexes enumerateKeysAndObjectsUsingBlock:^(NSNumber *hash, NSNumber *index, BOOL *stop) {
+		if(index.unsignedIntegerValue == pageIndex) {
+			
+			controller = self.loadedControllers[[self.loadedControllers indexOfObjectPassingTest:^BOOL(UIViewController *obj, NSUInteger idx, BOOL *stop) {
+				return (obj.hash == hash.unsignedIntegerValue);
+			}]];
+			
+			*stop = YES;
+		}
+	}];
+	
+	return controller;
+}
+
 #pragma mark - Page Management
 
 - (void)tilePages
@@ -676,21 +693,18 @@
         [self.delegate pageViewController:self didNavigateToOffset:self.scrollView.contentOffset];
     }
     
-    [self tilePages];
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    [self updateBoundsUsingNavigationContraints];
-    
-    if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
-        [self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
-    }
+	if(!self.shouldLayoutPagesOnRest) {
+		[self tilePages];
+	}
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     if(decelerate == NO) {
+		
+		if(self.shouldLayoutPagesOnRest) {
+			[self tilePages];
+		}
         
         [self updateBoundsUsingNavigationContraints];
         
@@ -700,8 +714,25 @@
     }
 }
 
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+	if(self.shouldLayoutPagesOnRest) {
+		[self tilePages];
+	}
+	
+	[self updateBoundsUsingNavigationContraints];
+	
+	if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+		[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
+	}
+}
+
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
+	if(self.shouldLayoutPagesOnRest) {
+		[self tilePages];
+	}
+	
     [self updateBoundsUsingNavigationContraints];
     
     if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
