@@ -26,26 +26,6 @@ typedef NS_ENUM(NSUInteger, SCPickerViewComponentType)
 
 @implementation SCMainViewController
 
-#pragma mark - View Lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self.view setHidden:YES];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self.view setHidden:NO];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    [self.view setHidden:YES];
-}
-
 - (IBAction)onPreviousButtonTap:(id)sender
 {
     if([self.delegate respondsToSelector:@selector(mainViewControllerDidRequestNavigationToPreviousPage:)]) {
@@ -55,9 +35,23 @@ typedef NS_ENUM(NSUInteger, SCPickerViewComponentType)
 
 - (IBAction)onNextButtonTap:(id)sender
 {
-    if([self.delegate respondsToSelector:@selector(mainViewControllerDiDRequestNavigationToNextPage:)]) {
-        [self.delegate mainViewControllerDiDRequestNavigationToNextPage:self];
+    if([self.delegate respondsToSelector:@selector(mainViewControllerDidRequestNavigationToNextPage:)]) {
+		[self.delegate mainViewControllerDidRequestNavigationToNextPage:self];
     }
+}
+
+- (IBAction)onInsertButtonTap:(id)sender
+{
+	if([self.delegate respondsToSelector:@selector(mainViewControllerDidRequestPageInsertion:)]) {
+		[self.delegate mainViewControllerDidRequestPageInsertion:self];
+	}
+}
+
+- (IBAction)onDeleteButtonTap:(id)sender
+{
+	if([self.delegate respondsToSelector:@selector(mainViewControllerDidRequestPageDeletion:)]) {
+		[self.delegate mainViewControllerDidRequestPageDeletion:self];
+	}
 }
 
 #pragma mark - UIPickerViewDataSource

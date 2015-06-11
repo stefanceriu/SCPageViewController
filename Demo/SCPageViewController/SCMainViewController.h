@@ -41,6 +41,10 @@ typedef enum {
 
 - (void)mainViewControllerDidRequestNavigationToPreviousPage:(SCMainViewController *)mainViewController;
 
-- (void)mainViewControllerDiDRequestNavigationToNextPage:(SCMainViewController *)mainViewController;
+- (void)mainViewControllerDidRequestNavigationToNextPage:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDidRequestPageInsertion:(SCMainViewController *)mainViewController;
+
+- (void)mainViewControllerDidRequestPageDeletion:(SCMainViewController *)mainViewController;
 
 @end

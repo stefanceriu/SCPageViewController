@@ -98,4 +98,80 @@ typedef enum {
 - (void)pageViewController:(SCPageViewController *)pageViewController
        didNavigateToOffset:(CGPoint)offset;
 
+
+/** Called by the pageViewController when it receives a reload page animated
+ * request.
+ * The completion call must be called after finishing customizations so that
+ * the pageViewController can continue the layout
+ *
+ * @param index The index of the page about to be reloaded
+ * @param oldViewController The view controller about to be removed
+ * @param newViewController The view controller that is going to be inserted
+ * @param pageViewController the calling pageViewController
+ * @param completion block that lets the pageViewController know that it can
+ * proceed with the layout
+ *
+ */
+- (void)animatePageReloadAtIndex:(NSUInteger)index
+			   oldViewController:(UIViewController *)oldViewController
+			   newViewController:(UIViewController *)newViewController
+			  pageViewController:(SCPageViewController *)pageViewController
+					  completion:(void(^)())completion;
+
+
+/** Called by the pageViewController when it receives an insert page animated
+ * request.
+ * The completion call must be called after finishing customizations so that
+ * the pageViewController can continue the layout
+ *
+ * @param index The index where a new page will be inserted
+ * @param viewController The view controller that is going to be inserted
+ * @param pageViewController the calling pageViewController
+ * @param completion block that lets the pageViewController know that it can
+ * proceed with the layout
+ *
+ */
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
+					 viewController:(UIViewController *)viewController
+				 pageViewController:(SCPageViewController *)pageViewController
+						 completion:(void(^)())completion;
+
+
+/** Called by the pageViewController when it receives a delete page animated
+ * request.
+ * The completion call must be called after finishing customizations so that
+ * the pageViewController can continue the layout
+ *
+ * @param index The index where a new page will be deleted
+ * @param viewController The view controller that is going to be deleted
+ * @param pageViewController the calling pageViewController
+ * @param completion block that lets the pageViewController know that it can
+ * proceed with the layout
+ *
+ */
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
+					viewController:(UIViewController *)viewController
+				pageViewController:(SCPageViewController *)pageViewController
+						completion:(void(^)())completion;
+
+
+/** Called by the pageViewController when it receives an move page animated
+ * request.
+ * The completion call must be called after finishing customizations so that
+ * the pageViewController can continue the layout
+ *
+ * @param fromIndex The orinal index of the page
+ * @param toIndex The final index of the page after updates
+ * @param viewController The view controller that is going to be moved
+ * @param pageViewController the calling pageViewController
+ * @param completion block that lets the pageViewController know that it can
+ * proceed with the layout
+ *
+ */
+- (void)animatePageMoveFromIndex:(NSUInteger)fromIndex
+						 toIndex:(NSUInteger)toIndex
+				  viewController:(UIViewController *)viewController
+			  pageViewController:(SCPageViewController *)pageViewController
+					  completion:(void(^)())completion;
+
 @end

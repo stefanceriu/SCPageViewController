@@ -109,7 +109,7 @@
     [super viewWillAppear:animated];
     
     self.isViewVisible = YES;
-    [self tilePages];
+	[self tilePages];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -117,7 +117,7 @@
     [super viewDidDisappear:animated];
     
     self.isViewVisible = NO;
-    [self tilePages];
+	[self tilePages];
 }
 
 #pragma mark - Public Methods
@@ -140,8 +140,8 @@
     [UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
         
         [self updateBoundsUsingDefaultContraints];
-        [self tilePages];
-        
+		[self tilePages];
+		
     } completion:^(BOOL finished) {
         [self unblockContentOffset];
         
@@ -187,28 +187,24 @@
 	}
 }
 
-- (void)reloadPageAtIndex:(NSUInteger)index
+- (void)reloadPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
 {
-    UIViewController *controller;
-	
-    for (UIViewController *page in self.loadedControllers) {
-        if ([self.pageIndexes[@(page.hash)] unsignedIntegerValue] == index) {
-            controller = page;
-            break;
-        }
-    }
-    
-    [controller willMoveToParentViewController:nil];
-    [controller.view removeFromSuperview];
-    [controller removeFromParentViewController];
-    
-    [self.loadedControllers removeObject:controller];
-    [self.visibleControllers removeObject:controller];
-    [self.visiblePercentages removeObjectForKey:@([controller hash])];
-    [self.pageIndexes removeObjectForKey:@([controller hash])];
-    
-    [self updateBoundsUsingDefaultContraints];
-    [self tilePages];
+	[self _reloadPageAtIndex:index animated:animated completion:completion];
+}
+
+- (void)insertPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
+{
+	[self _insertPageAtIndex:index animated:animated completion:completion];
+}
+
+- (void)removePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
+{
+	[self _removePageAtIndex:index animated:animated completion:completion];
+}
+
+- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)())completion
+{
+	[self _movePageAtIndex:fromIndex toIndex:toIndex animated:animated completion:completion];
 }
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
@@ -285,7 +281,7 @@
         return;
     }
     
-    self.currentPage = [self calculateCurrentPage];
+    self.currentPage = [self _calculateCurrentPage];
     
     NSInteger firstNeededPageIndex = self.currentPage - [self.layouter numberOfPagesToPreloadBeforeCurrentPage];
     firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
@@ -314,16 +310,15 @@
     }
     
     [self.loadedControllers minusSet:removedPages];
-    
+	
     for (NSUInteger index = firstNeededPageIndex; index <= lastNeededPageIndex; index++) {
-        
-        if (![self isPageLoadedForIndex:index]) {
-            UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
+		
+		UIViewController *page = [self viewControllerForPageAtIndex:index];
+        if (!page) {
+			page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
             
-            if(page == nil) {
-                continue;
-            }
-            
+			NSAssert(page, @"Trying to insert nil view controller");
+			
             [self.loadedControllers addObject:page];
             [self.pageIndexes setObject:@(index) forKey:@(page.hash)];
             
@@ -337,55 +332,10 @@
             
             [self addChildViewController:page];
             [page didMoveToParentViewController:self];
-        }
+		}
     }
-    
-    [self updateFramesAndTriggerAppearanceCallbacks];
-}
-
-- (NSUInteger)calculateCurrentPage
-{
-	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
-        CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
-        
-        CGRect adjustedFrame = CGRectOffset(CGRectInset(frame,-self.layouter.interItemSpacing/2, 0),
-                                            self.layouter.interItemSpacing/2, 0);
-        
-        CGPoint adjustedOffset = CGPointZero;
-        
-        switch (self.layouter.navigationType) {
-            case SCPageLayouterNavigationTypeVertical:
-                adjustedOffset.y = self.scrollView.contentOffset.y + CGRectGetHeight(self.scrollView.bounds)/2;
-                adjustedOffset.x = adjustedFrame.origin.x;
-                break;
-            case SCPageLayouterNavigationTypeHorizontal:
-                adjustedOffset.x = self.scrollView.contentOffset.x + CGRectGetWidth(self.scrollView.bounds)/2;
-                adjustedOffset.y = adjustedFrame.origin.y;
-                break;
-            default:
-                break;
-        }
-        
-        if(CGRectContainsPoint(adjustedFrame, adjustedOffset)) {
-            return pageIndex;
-        }
-    }
-    
-    return self.currentPage;
-}
-
-- (BOOL)isPageLoadedForIndex:(NSUInteger)index
-{
-    BOOL foundPage = NO;
-    for (UIViewController *page in self.loadedControllers) {
-        
-        NSUInteger pageIndex = [self.pageIndexes[@(page.hash)] unsignedIntegerValue];
-        if (pageIndex == index) {
-            foundPage = YES;
-            break;
-        }
-    }
-    return foundPage;
+	
+	[self updateFramesAndTriggerAppearanceCallbacks];
 }
 
 #pragma mark Appearance callbacks and framesetting
@@ -403,7 +353,6 @@
     
     NSMutableSet *allPages = [NSMutableSet set];
     [allPages addObjectsFromArray:self.loadedControllers.array];
-    [allPages addObjectsFromArray:self.visibleControllers];
     
     NSArray *sortedPages = [allPages.allObjects sortedArrayUsingComparator:^NSComparisonResult(UIViewController *obj1, UIViewController *obj2) {
         NSUInteger firstPageIndex = [self.pageIndexes[@(obj1.hash)] unsignedIntegerValue];
@@ -448,7 +397,7 @@
                 break;
         }
         
-        remainder = [self subtractRect:intersection fromRect:remainder withEdge:edge];
+        remainder = [self _subtractRect:intersection fromRect:remainder withEdge:edge];
         
         // Finally, trigger appearance callbacks and new frame
         if(visible && ![self.visibleControllers containsObject:viewController]) {
@@ -804,9 +753,9 @@
     [self updateBoundsUsingDefaultContraints];
 }
 
-#pragma mark - Helpers
+#pragma mark - Private
 
-- (CGRect)subtractRect:(CGRect)r2 fromRect:(CGRect)r1 withEdge:(CGRectEdge)edge
+- (CGRect)_subtractRect:(CGRect)r2 fromRect:(CGRect)r1 withEdge:(CGRectEdge)edge
 {
     CGRect intersection = CGRectIntersection(r1, r2);
     if (CGRectIsNull(intersection)) {
@@ -818,6 +767,281 @@
     CGRect remainder, throwaway;
     CGRectDivide(r1, &throwaway, &remainder, chopAmount, edge);
     return remainder;
+}
+
+- (void)_reloadPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
+{
+	UIViewController *oldViewController = [self viewControllerForPageAtIndex:index];
+	[oldViewController willMoveToParentViewController:nil];
+	if([self.visibleViewControllers containsObject:oldViewController]) {
+		[oldViewController beginAppearanceTransition:NO animated:animated];
+	}
+	
+	UIViewController *newViewController = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
+	
+	NSAssert(newViewController, @"Trying to insert nil view controller");
+	
+	[self.loadedControllers addObject:newViewController];
+	[self.pageIndexes setObject:@(index) forKey:@(newViewController.hash)];
+	
+	[newViewController willMoveToParentViewController:self];
+	
+	if(index > self.currentPage) {
+		[self.scrollView insertSubview:newViewController.view atIndex:0];
+	} else {
+		[self.scrollView addSubview:newViewController.view];
+	}
+	
+	[self addChildViewController:newViewController];
+	[newViewController didMoveToParentViewController:self];
+	
+	if([self.layouter respondsToSelector:@selector(animatePageReloadAtIndex:oldViewController:newViewController:pageViewController:completion:)] && animated) {
+		[self.layouter animatePageReloadAtIndex:index oldViewController:oldViewController newViewController:newViewController pageViewController:self completion:^{
+			
+			[oldViewController.view removeFromSuperview];
+			if([self.visibleViewControllers containsObject:oldViewController]) {
+				[oldViewController endAppearanceTransition];
+			}
+			
+			[oldViewController removeFromParentViewController];
+			
+			[self.loadedControllers removeObject:oldViewController];
+			[self.visibleControllers removeObject:oldViewController];
+			[self.visiblePercentages removeObjectForKey:@([oldViewController hash])];
+			[self.pageIndexes removeObjectForKey:@([oldViewController hash])];
+			
+			[self updateBoundsUsingDefaultContraints];
+			[self tilePages];
+		}];
+	}
+}
+
+- (void)_insertPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
+{
+	NSAssert(index < self.numberOfPages, @"Index out of bounds");
+	
+	NSUInteger oldNumberOfPages = self.numberOfPages;
+	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
+	
+	NSAssert((self.numberOfPages == oldNumberOfPages + 1), @"The number of pages after insertion is equal to the one before");
+	
+	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
+	
+	for(NSInteger i = oldNumberOfPages - 1; i >= (NSInteger)index; i--) {
+		UIViewController *someController = [self viewControllerForPageAtIndex:i];
+		if(someController) {
+			[self.pageIndexes removeObjectForKey:@([someController hash])];
+			[self.pageIndexes setObject:@(i+1) forKey:@([someController hash])];
+			
+			if(![self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)] || !animated) {
+				continue;
+			}
+			
+			dispatch_group_enter(animationsDispatchGroup);
+			[self.layouter animatePageMoveFromIndex:index toIndex:i+1 viewController:someController pageViewController:self completion:^{
+				dispatch_group_leave(animationsDispatchGroup);
+			}];
+		}
+	}
+	
+	UIViewController *viewController = [self.dataSource pageViewController:self viewControllerForPageAtIndex:index];
+	
+	NSAssert(viewController, @"Trying to insert nil view controller");
+	
+	[self.loadedControllers addObject:viewController];
+	[self.pageIndexes setObject:@(index) forKey:@(viewController.hash)];
+	
+	[viewController willMoveToParentViewController:self];
+	
+	if(index > self.currentPage) {
+		[self.scrollView insertSubview:viewController.view atIndex:0];
+	} else {
+		[self.scrollView addSubview:viewController.view];
+	}
+	
+	[self addChildViewController:viewController];
+	[viewController didMoveToParentViewController:self];
+	
+	if([self.layouter respondsToSelector:@selector(animatePageInsertionAtIndex:viewController:pageViewController:completion:)] && animated) {
+		dispatch_group_enter(animationsDispatchGroup);
+		[self.layouter animatePageInsertionAtIndex:index viewController:viewController pageViewController:self completion:^{
+			dispatch_group_leave(animationsDispatchGroup);
+		}];
+	}
+	
+	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
+		[self updateBoundsUsingDefaultContraints];
+		[self tilePages];
+		
+		if(completion) {
+			completion();
+		}
+	});
+}
+
+- (void)_removePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion
+{
+	NSAssert(index < self.numberOfPages, @"Index out of bounds");
+	
+	NSUInteger oldNumberOfPages = self.numberOfPages;
+	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
+	
+	NSAssert((self.numberOfPages == oldNumberOfPages - 1), @"The number of pages after removal is equal to the one before");
+	
+	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
+	
+	UIViewController *viewController = [self viewControllerForPageAtIndex:index];
+	[viewController willMoveToParentViewController:nil];
+	if([self.visibleViewControllers containsObject:viewController]) {
+		[viewController beginAppearanceTransition:NO animated:animated];
+	}
+	
+	if([self.layouter respondsToSelector:@selector(animatePageDeletionAtIndex:viewController:pageViewController:completion:)] &&
+	   [self.visibleViewControllers containsObject:viewController] && animated) {
+		dispatch_group_enter(animationsDispatchGroup);
+		[self.layouter animatePageDeletionAtIndex:index viewController:viewController pageViewController:self completion:^{
+			dispatch_group_leave(animationsDispatchGroup);
+		}];
+	}
+	
+	for(NSUInteger i = index + 1; i < oldNumberOfPages; i++) {
+		UIViewController *someController = [self viewControllerForPageAtIndex:i];
+		if(someController) {
+			[self.pageIndexes removeObjectForKey:@([someController hash])];
+			[self.pageIndexes setObject:@(i-1) forKey:@([someController hash])];
+			
+			if(!animated || ![self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)]) {
+				continue;
+			}
+			
+			dispatch_group_enter(animationsDispatchGroup);
+			[self.layouter animatePageMoveFromIndex:i toIndex:i-1 viewController:someController pageViewController:self completion:^{
+				dispatch_group_leave(animationsDispatchGroup);
+			}];
+		}
+	}
+	
+	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
+		[viewController.view removeFromSuperview];
+		if([self.visibleViewControllers containsObject:viewController]) {
+			[viewController endAppearanceTransition];
+		}
+		
+		[viewController removeFromParentViewController];
+		
+		[self.loadedControllers removeObject:viewController];
+		[self.visibleControllers removeObject:viewController];
+		[self.visiblePercentages removeObjectForKey:@([viewController hash])];
+		[self.pageIndexes removeObjectForKey:@([viewController hash])];
+		
+		[self updateBoundsUsingDefaultContraints];
+		[self tilePages];
+		
+		if(completion) {
+			completion();
+		}
+	});
+}
+
+- (void)_movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)())completion
+{
+	NSAssert(fromIndex < self.numberOfPages, @"Index out of bounds");
+	NSAssert(toIndex < self.numberOfPages, @"Index out of bounds");
+	NSAssert(self.numberOfPages > 1, @"Not enough pages in the page view controller");
+	
+	if(fromIndex == toIndex) {
+		return;
+	}
+	
+	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
+	
+	UIViewController *viewController = [self viewControllerForPageAtIndex:fromIndex];
+	
+	if(fromIndex < toIndex) {
+		for(NSUInteger i = fromIndex + 1; i <= toIndex; i++) {
+			UIViewController *someController = [self viewControllerForPageAtIndex:i];
+			if(someController) {
+				[self.pageIndexes removeObjectForKey:@([someController hash])];
+				[self.pageIndexes setObject:@(i-1) forKey:@([someController hash])];
+				
+				if(![self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)] || !animated) {
+					continue;
+				}
+				
+				dispatch_group_enter(animationsDispatchGroup);
+				[self.layouter animatePageMoveFromIndex:i toIndex:i-1 viewController:someController pageViewController:self completion:^{
+					dispatch_group_leave(animationsDispatchGroup);
+				}];
+			}
+		}
+	} else {
+		for(NSUInteger i = fromIndex - 1; i <= toIndex; i++) {
+			UIViewController *someController = [self viewControllerForPageAtIndex:i];
+			if(someController) {
+				[self.pageIndexes removeObjectForKey:@([someController hash])];
+				[self.pageIndexes setObject:@(i+1) forKey:@([someController hash])];
+				
+				if(![self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)] || !animated) {
+					continue;
+				}
+				
+				dispatch_group_enter(animationsDispatchGroup);
+				[self.layouter animatePageMoveFromIndex:i toIndex:i+1 viewController:someController pageViewController:self completion:^{
+					dispatch_group_leave(animationsDispatchGroup);
+				}];
+			}
+		}
+	}
+	
+	[self.pageIndexes setObject:@(toIndex) forKey:@([viewController hash])];
+	
+	if([self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)] &&
+	   [self.visibleViewControllers containsObject:viewController] && animated) {
+		dispatch_group_enter(animationsDispatchGroup);
+		[self.layouter animatePageMoveFromIndex:fromIndex toIndex:toIndex viewController:viewController pageViewController:self completion:^{
+			dispatch_group_leave(animationsDispatchGroup);
+		}];
+	}
+	
+	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
+		[self updateBoundsUsingDefaultContraints];
+		[self tilePages];
+		
+		if(completion) {
+			completion();
+		}
+	});
+}
+
+- (NSUInteger)_calculateCurrentPage
+{
+	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+		
+		CGRect adjustedFrame = CGRectOffset(CGRectInset(frame,-self.layouter.interItemSpacing/2, 0),
+											self.layouter.interItemSpacing/2, 0);
+		
+		CGPoint adjustedOffset = CGPointZero;
+		
+		switch (self.layouter.navigationType) {
+			case SCPageLayouterNavigationTypeVertical:
+				adjustedOffset.y = self.scrollView.contentOffset.y + CGRectGetHeight(self.scrollView.bounds)/2;
+				adjustedOffset.x = adjustedFrame.origin.x;
+				break;
+			case SCPageLayouterNavigationTypeHorizontal:
+				adjustedOffset.x = self.scrollView.contentOffset.x + CGRectGetWidth(self.scrollView.bounds)/2;
+				adjustedOffset.y = adjustedFrame.origin.y;
+				break;
+			default:
+				break;
+		}
+		
+		if(CGRectContainsPoint(adjustedFrame, adjustedOffset)) {
+			return pageIndex;
+		}
+	}
+	
+	return self.currentPage;
 }
 
 @end

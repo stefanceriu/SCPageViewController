@@ -19,10 +19,29 @@
  */
 - (void)reloadData;
 
+
 /**
  * Reloads and re-layouts the page at the given index
  */
-- (void)reloadPageAtIndex:(NSUInteger)index;
+- (void)reloadPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+
+
+/**
+ * Inserts a new page at the given index
+ */
+- (void)insertPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+
+
+/**
+ * Removes the page at the given index
+ */
+- (void)removePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+
+/**
+ * Moves the page to the given index
+ */
+- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)())completion;
+
 
 /**
  * @param pageIndex The page index to navigate to

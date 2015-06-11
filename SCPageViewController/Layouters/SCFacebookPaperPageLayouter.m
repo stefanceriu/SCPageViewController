@@ -62,5 +62,4 @@ static const CGFloat verticalInset = 256.0f;
     return finalFrame;
 }
 
-
 @end

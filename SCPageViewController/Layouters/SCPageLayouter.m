@@ -53,4 +53,69 @@
     return finalFrame;
 }
 
+- (void)animatePageReloadAtIndex:(NSUInteger)index
+			   oldViewController:(UIViewController *)oldViewController
+			   newViewController:(UIViewController *)newViewController
+			  pageViewController:(SCPageViewController *)pageViewController
+					  completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	
+	[newViewController.view setFrame:finalFrame];
+	[newViewController.view setAlpha:0.0f];
+	[UIView animateWithDuration:0.25f animations:^{
+		[oldViewController.view setAlpha:0.0f];
+		[newViewController.view setAlpha:1.0f];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
+					 viewController:(UIViewController *)viewController
+				 pageViewController:(SCPageViewController *)pageViewController
+						 completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	
+	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+	[viewController.view setAlpha:0.0f];
+	[UIView animateWithDuration:0.25f animations:^{
+		[viewController.view setFrame:finalFrame];
+		[viewController.view setAlpha:1.0f];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
+					viewController:(UIViewController *)viewController
+				pageViewController:(SCPageViewController *)pageViewController
+						completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	
+	[UIView animateWithDuration:0.25f animations:^{
+		[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+		[viewController.view setAlpha:0.0f];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
+- (void)animatePageMoveFromIndex:(NSUInteger)fromIndex
+						 toIndex:(NSUInteger)toIndex
+				  viewController:(UIViewController *)viewController
+			  pageViewController:(SCPageViewController *)pageViewController
+					  completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:toIndex inPageViewController:pageViewController];
+	
+	[UIView animateWithDuration:0.25f animations:^{
+		[viewController.view setFrame:finalFrame];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
 @end

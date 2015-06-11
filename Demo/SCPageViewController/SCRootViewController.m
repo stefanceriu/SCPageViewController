@@ -26,6 +26,8 @@
 @property (nonatomic, assign) SCEasingFunctionType selectedEasingFunctionType;
 @property (nonatomic, strong) NSMutableDictionary *viewControllerCache;
 
+@property (nonatomic, assign) NSUInteger numberOfPages;
+
 @end
 
 @implementation SCRootViewController
@@ -33,6 +35,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	
+	self.numberOfPages = 1;
     
     self.pageViewController = [[SCPageViewController alloc] init];
     [self.pageViewController setDataSource:self];
@@ -44,23 +48,6 @@
     [self addChildViewController:self.pageViewController];
     
     [self.pageViewController setLayouter:[[SCPageLayouter alloc] init] animated:NO completion:nil];
-    
-    //[self.pageViewController setPagingEnabled:NO];
-    
-    //[self.pageViewController setContinuousNavigationEnabled:YES];
-    
-    //[self.pageViewController setDecelerationRate:UIScrollViewDecelerationRateNormal];
-    
-    //[self.pageViewController setBounces:NO];
-    
-    //[self.pageViewController setMinimumNumberOfTouches:2];
-    //[self.pageViewController setMaximumNumberOfTouches:1];
-    
-    //[self.pageViewController setTouchRefusalArea:[UIBezierPath bezierPathWithRect:CGRectInset(self.view.bounds, 50, 50)]];
-    
-    //[self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];
-    //[self.pageViewController setAnimationDuration:1.0f];
-    
     [self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];
 }
 
@@ -68,7 +55,7 @@
 
 - (NSUInteger)numberOfPagesInPageViewController:(SCPageViewController *)pageViewController
 {
-    return 5;
+    return self.numberOfPages;
 }
 
 - (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex
@@ -95,7 +82,7 @@
 
 - (void)pageViewController:(SCPageViewController *)pageViewController didShowViewController:(SCMainViewController *)controller atIndex:(NSUInteger)index
 {
-    [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %ld", (unsigned long)index]];
+    [controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %lu of %lu", (unsigned long)index + 1, (unsigned long)pageViewController.numberOfPages]];
     
     [controller setEasingFunctionType:self.selectedEasingFunctionType];
     [controller setDuration:self.pageViewController.animationDuration];
@@ -151,7 +138,7 @@
     [self.pageViewController setAnimationDuration:mainViewController.duration];
 }
 
-- (void)mainViewControllerDiDRequestNavigationToNextPage:(SCMainViewController *)mainViewController
+- (void)mainViewControllerDidRequestNavigationToNextPage:(SCMainViewController *)mainViewController
 {
     [self.pageViewController navigateToPageAtIndex:MIN(self.pageViewController.numberOfPages, self.pageViewController.currentPage + 1) animated:YES completion:nil];
 }
@@ -159,6 +146,97 @@
 - (void)mainViewControllerDidRequestNavigationToPreviousPage:(SCMainViewController *)mainViewController
 {
     [self.pageViewController navigateToPageAtIndex:MAX(0, self.pageViewController.currentPage - 1) animated:YES completion:nil];
+}
+
+- (void)mainViewControllerDidRequestPageInsertion:(SCMainViewController *)mainViewController
+{
+	__block id key;
+	[self.viewControllerCache.allKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		if([[self.viewControllerCache objectForKey:obj] isEqual:mainViewController]) {
+			key = obj;
+			*stop = YES;
+		}
+	}];
+	
+	[self insertPageAtIndex:[key unsignedIntegerValue]];
+}
+
+- (void)mainViewControllerDidRequestPageDeletion:(SCMainViewController *)mainViewController
+{
+	__block id key;
+	[self.viewControllerCache.allKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		if([[self.viewControllerCache objectForKey:obj] isEqual:mainViewController]) {
+			key = obj;
+			*stop = YES;
+		}
+	}];
+	
+	[self removePageAtIndex:[key unsignedIntegerValue]];
+}
+
+- (void)insertPageAtIndex:(NSUInteger)index
+{
+	for(NSInteger i = self.numberOfPages - 1; i >= (NSInteger)index; i--) {
+		UIViewController *viewController = self.viewControllerCache[@(i)];
+		if(viewController) {
+			[self.viewControllerCache removeObjectForKey:@(i)];
+			[self.viewControllerCache setObject:viewController forKey:@(i+1)];
+		}
+	}
+	
+	self.numberOfPages++;
+	
+	[self.pageViewController insertPageAtIndex:index animated:YES completion:nil] ;
+}
+
+- (void)removePageAtIndex:(NSUInteger)index
+{
+	[self.viewControllerCache removeObjectForKey:@(index)];
+	
+	for(NSUInteger i = index + 1; i < self.numberOfPages; i++) {
+		UIViewController *viewController = self.viewControllerCache[@(i)];
+		if(viewController) {
+			[self.viewControllerCache removeObjectForKey:@(i)];
+			[self.viewControllerCache setObject:viewController forKey:@(i-1)];
+		}
+	}
+	
+	self.numberOfPages--;
+	
+	[self.pageViewController removePageAtIndex:index animated:YES completion:nil];
+}
+
+- (void)movePageFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+{
+	UIViewController *viewController = [self.viewControllerCache objectForKey:@(fromIndex)];
+	[self.viewControllerCache removeObjectForKey:@(fromIndex)];
+	
+	for(NSUInteger i = fromIndex + 1; i <= toIndex; i++) {
+		UIViewController *viewController = self.viewControllerCache[@(i)];
+		if(viewController) {
+			[self.viewControllerCache removeObjectForKey:@(i)];
+			[self.viewControllerCache setObject:viewController forKey:@(i-1)];
+		}
+	}
+	
+	[self.viewControllerCache setObject:viewController forKey:@(toIndex)];
+	
+	[self.pageViewController movePageAtIndex:fromIndex toIndex:toIndex animated:YES completion:nil];
+}
+
+- (void)reloadPageAtIndex:(NSUInteger)index
+{
+	[self.viewControllerCache removeObjectForKey:@(index)];
+	
+	for(NSUInteger i = index + 1; i < self.numberOfPages; i++) {
+		UIViewController *viewController = self.viewControllerCache[@(i)];
+		if(viewController) {
+			[self.viewControllerCache removeObjectForKey:@(i)];
+			[self.viewControllerCache setObject:viewController forKey:@(i-1)];
+		}
+	}
+	
+	[self.pageViewController reloadPageAtIndex:index animated:YES completion:nil];
 }
 
 #pragma mark - Rotation Handling

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
-#import "SCPageLayouterProtocol.h"
+#import "SCPageLayouter.h"
 
-@interface SCFacebookPaperPageLayouter : NSObject <SCPageLayouterProtocol>
+@interface SCFacebookPaperPageLayouter : SCPageLayouter
 
 @end
