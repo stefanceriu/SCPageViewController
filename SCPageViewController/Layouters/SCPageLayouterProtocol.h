@@ -35,19 +35,12 @@ typedef enum {
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
 
 
-/** Defines the direction the pages are layed out */
+/** Defines when the page view controller should enforce page bounds while navigating */
 @property (nonatomic, assign) SCPageLayouterNavigationContraintType navigationConstraintType;
 
 
 /** Defines the spacing between each page */
 @property (nonatomic, assign) CGFloat interItemSpacing;
-
-
-/** Defines the empty space useds before and after pages 
- * Based on the navigationType the pageController only uses a pair (top/bottom,
- * left/right)
- */
-@property (nonatomic, assign) UIEdgeInsets contentInsets;
 
 
 /** The number of pages to preload and add to the page view controller before the current page */
@@ -56,6 +49,13 @@ typedef enum {
 
 /** The number of pages to preload and add to the page view controller after the current page */
 @property (nonatomic, assign) NSUInteger numberOfPagesToPreloadAfterCurrentPage;
+
+
+/** Defines the empty space useds before and after pages
+ * Based on the navigationType the pageController only uses a pair (top/bottom,
+ * left/right)
+ */
+- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Returns the final frame for the given view controller

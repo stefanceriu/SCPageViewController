@@ -35,7 +35,7 @@
 /**
  * Removes the page at the given index
  */
-- (void)removePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+- (void)deletePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
 
 /**
  * Moves the page to the given index

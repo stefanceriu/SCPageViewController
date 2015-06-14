@@ -8,46 +8,51 @@
 
 #import "SCFacebookPaperPageLayouter.h"
 
-static const CGFloat horizontalInset = 192.0f;
-static const CGFloat verticalInset = 256.0f;
-
 @implementation SCFacebookPaperPageLayouter
 @synthesize interItemSpacing;
 @synthesize navigationType;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
-@synthesize contentInsets;
 @synthesize navigationConstraintType;
 
+static CGFloat const kPageSizePercentage = 0.5f;
 
 - (id)init
 {
     if(self = [super init]) {
         self.interItemSpacing = 20.0f;
-        
+		
         self.numberOfPagesToPreloadBeforeCurrentPage = 2;
         self.numberOfPagesToPreloadAfterCurrentPage  = 2;
-        
-        self.contentInsets = UIEdgeInsetsMake(0, 0, 0, 384);
-        
+		
         self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
     }
     
     return self;
 }
 
-- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-              inPageViewController:(SCPageViewController *)pageViewController
+- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
 {
-    CGRect frame = CGRectInset(pageViewController.view.bounds, horizontalInset, verticalInset);
-    frame.origin = CGPointZero;
+	CGRect frame = pageViewController.view.bounds;
+	CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * kPageSizePercentage;
+	CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * kPageSizePercentage;
+	
+	return UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
+}
+
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
+			  inPageViewController:(SCPageViewController *)pageViewController
+{
+	CGRect frame = pageViewController.view.bounds;
+	frame.size.height = frame.size.height * kPageSizePercentage;
+	frame.size.width = frame.size.width * kPageSizePercentage;
     
     if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
         frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
-        frame.origin.x = CGRectGetWidth(pageViewController.view.bounds) - CGRectGetWidth(frame);
+        frame.origin.x = CGRectGetMidX(pageViewController.view.bounds) - CGRectGetMidX(frame);
     } else {
         frame.origin.x = index * (CGRectGetWidth(frame) + self.interItemSpacing);
-        frame.origin.y = CGRectGetHeight(pageViewController.view.bounds) - CGRectGetHeight(frame);
+        frame.origin.y = CGRectGetMidY(pageViewController.view.bounds) - CGRectGetMidY(frame);
     }
     
     return frame;

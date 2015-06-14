@@ -36,7 +36,7 @@
 {
     [super viewDidLoad];
 	
-	self.numberOfPages = 1;
+	self.numberOfPages = 10;
     
     self.pageViewController = [[SCPageViewController alloc] init];
     [self.pageViewController setDataSource:self];
@@ -49,6 +49,9 @@
     
     [self.pageViewController setLayouter:[[SCPageLayouter alloc] init] animated:NO completion:nil];
     [self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];
+	
+	[self.pageViewController setPagingEnabled:YES];
+	[self.pageViewController setContinuousNavigationEnabled:YES];
 }
 
 #pragma mark - SCPageViewControllerDataSource
@@ -159,6 +162,9 @@
 	}];
 	
 	[self insertPageAtIndex:[key unsignedIntegerValue]];
+	
+//	[self movePageFromIndex:self.numberOfPages - 1 toIndex:0];
+//	[self movePageFromIndex:0 toIndex:self.numberOfPages - 1];
 }
 
 - (void)mainViewControllerDidRequestPageDeletion:(SCMainViewController *)mainViewController
@@ -171,7 +177,10 @@
 		}
 	}];
 	
-	[self removePageAtIndex:[key unsignedIntegerValue]];
+	[self deletePageAtIndex:[key unsignedIntegerValue] + 1];
+	
+//	[self movePageFromIndex:self.numberOfPages - 1 toIndex:0];
+//	[self movePageFromIndex:0 toIndex:self.numberOfPages - 1];
 }
 
 - (void)insertPageAtIndex:(NSUInteger)index
@@ -186,10 +195,10 @@
 	
 	self.numberOfPages++;
 	
-	[self.pageViewController insertPageAtIndex:index animated:YES completion:nil] ;
+	[self.pageViewController insertPageAtIndex:index animated:YES completion:nil];
 }
 
-- (void)removePageAtIndex:(NSUInteger)index
+- (void)deletePageAtIndex:(NSUInteger)index
 {
 	[self.viewControllerCache removeObjectForKey:@(index)];
 	
@@ -203,7 +212,7 @@
 	
 	self.numberOfPages--;
 	
-	[self.pageViewController removePageAtIndex:index animated:YES completion:nil];
+	[self.pageViewController deletePageAtIndex:index animated:YES completion:nil];
 }
 
 - (void)movePageFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -211,15 +220,27 @@
 	UIViewController *viewController = [self.viewControllerCache objectForKey:@(fromIndex)];
 	[self.viewControllerCache removeObjectForKey:@(fromIndex)];
 	
-	for(NSUInteger i = fromIndex + 1; i <= toIndex; i++) {
-		UIViewController *viewController = self.viewControllerCache[@(i)];
-		if(viewController) {
-			[self.viewControllerCache removeObjectForKey:@(i)];
-			[self.viewControllerCache setObject:viewController forKey:@(i-1)];
+	if(fromIndex < toIndex) {
+		for(NSUInteger pageIndex = fromIndex + 1; pageIndex <= toIndex; pageIndex++) {
+			UIViewController *viewController = self.viewControllerCache[@(pageIndex)];
+			if(viewController) {
+				[self.viewControllerCache removeObjectForKey:@(pageIndex)];
+				[self.viewControllerCache setObject:viewController forKey:@(pageIndex-1)];
+			}
+		}
+	} else {
+		for(NSInteger pageIndex = (NSInteger)(fromIndex - 1); pageIndex >= (NSInteger)toIndex; pageIndex--) {
+			UIViewController *viewController = self.viewControllerCache[@(pageIndex)];
+			if(viewController) {
+				[self.viewControllerCache removeObjectForKey:@(pageIndex)];
+				[self.viewControllerCache setObject:viewController forKey:@(pageIndex+1)];
+			}
 		}
 	}
 	
-	[self.viewControllerCache setObject:viewController forKey:@(toIndex)];
+	if(viewController) {
+		[self.viewControllerCache setObject:viewController forKey:@(toIndex)];
+	}
 	
 	[self.pageViewController movePageAtIndex:fromIndex toIndex:toIndex animated:YES completion:nil];
 }

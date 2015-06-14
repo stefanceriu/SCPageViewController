@@ -13,7 +13,6 @@
 @synthesize interItemSpacing;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
-@synthesize contentInsets;
 @synthesize navigationConstraintType;
 
 - (id)init
@@ -28,6 +27,11 @@
     }
     
     return self;
+}
+
+- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
+{
+	return UIEdgeInsetsZero;
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
