@@ -9,11 +9,11 @@
 #import "SCEasingFunction.h"
 
 typedef enum {
-    SCPageLayouterTypePlain,
-    SCPageLayouterTypeSliding,
-    SCPageLayouterTypeParallax,
-    SCPageLayouterTypeFacebookPaper,
-    SCPageLayouterTypeCount
+	SCPageLayouterTypePlain,
+	SCPageLayouterTypeSliding,
+	SCPageLayouterTypeParallax,
+	SCPageLayouterTypeCards,
+	SCPageLayouterTypeCount
 } SCPageLayouterType;
 
 @protocol SCMainViewControllerDelegate;

@@ -48,8 +48,8 @@
  * @param animated Whether the transition will be animated
  */
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
-                     animated:(BOOL)animated
-                   completion:(void(^)())completion;
+					 animated:(BOOL)animated
+				   completion:(void(^)())completion;
 
 
 /**
@@ -67,8 +67,8 @@
 
 /** Pass the layouter the pageController should use for the pages */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layoyter
-           animated:(BOOL)animated
-         completion:(void(^)())completion;
+		   animated:(BOOL)animated
+		 completion:(void(^)())completion;
 
 
 /**
@@ -251,8 +251,8 @@
  *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-     didShowViewController:(UIViewController *)controller
-                   atIndex:(NSUInteger)index;
+	 didShowViewController:(UIViewController *)controller
+				   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when a view controller is hidden
@@ -265,8 +265,8 @@
  *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-     didHideViewController:(UIViewController *)controller
-                   atIndex:(NSUInteger)index;
+	 didHideViewController:(UIViewController *)controller
+				   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when its scrollView scrolls
@@ -275,7 +275,7 @@
  *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-       didNavigateToOffset:(CGPoint)offset;
+	   didNavigateToOffset:(CGPoint)offset;
 
 
 /** Delegate method that the pageController calls when its scrollView rests

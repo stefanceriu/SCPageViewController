@@ -15,17 +15,17 @@
  */
 
 typedef enum {
-    SCPageLayouterNavigationTypeHorizontal,
-    SCPageLayouterNavigationTypeVertical,
+	SCPageLayouterNavigationTypeHorizontal,
+	SCPageLayouterNavigationTypeVertical,
 } SCPageLayouterNavigationType;
 
 /** Navigation contraint types that can be used used when continuous
  * navigation is disabled
  */
 typedef enum {
-    SCPageLayouterNavigationContraintTypeNone = 0,
-    SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
-    SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
+	SCPageLayouterNavigationContraintTypeNone = 0,
+	SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
+	SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
 } SCPageLayouterNavigationContraintType;
 
 
@@ -67,7 +67,7 @@ typedef enum {
  *
  */
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-              inPageViewController:(SCPageViewController *)pageViewController;
+			  inPageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Returns the intermediate frame for the given view controller and current
@@ -82,10 +82,10 @@ typedef enum {
  *
  */
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
-                              withIndex:(NSUInteger)index
-                          contentOffset:(CGPoint)contentOffset
-                             finalFrame:(CGRect)finalFrame
-                   inPageViewController:(SCPageViewController *)pageViewController;
+							  withIndex:(NSUInteger)index
+						  contentOffset:(CGPoint)contentOffset
+							 finalFrame:(CGRect)finalFrame
+				   inPageViewController:(SCPageViewController *)pageViewController;
 
 
 @optional
@@ -96,7 +96,7 @@ typedef enum {
  *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-       didNavigateToOffset:(CGPoint)offset;
+	   didNavigateToOffset:(CGPoint)offset;
 
 
 /** Called by the pageViewController when it receives a reload page animated

@@ -17,16 +17,16 @@
 
 - (id)init
 {
-    if(self = [super init]) {
-        self.interItemSpacing = 50.0f;
-        
-        self.numberOfPagesToPreloadBeforeCurrentPage = 1;
-        self.numberOfPagesToPreloadAfterCurrentPage  = 1;
-        
-        self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
-    }
-    
-    return self;
+	if(self = [super init]) {
+		self.interItemSpacing = 50.0f;
+		
+		self.numberOfPagesToPreloadBeforeCurrentPage = 1;
+		self.numberOfPagesToPreloadAfterCurrentPage  = 1;
+		
+		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
+	}
+	
+	return self;
 }
 
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
@@ -35,26 +35,26 @@
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-              inPageViewController:(SCPageViewController *)pageViewController
+			  inPageViewController:(SCPageViewController *)pageViewController
 {
-    CGRect frame = pageViewController.view.bounds;
-    
-    if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
-        frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
-    } else {
-        frame.origin.x = index * (CGRectGetWidth(frame) + self.interItemSpacing);
-    }
-    
-    return frame;
+	CGRect frame = pageViewController.view.bounds;
+	
+	if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
+		frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
+	} else {
+		frame.origin.x = index * (CGRectGetWidth(frame) + self.interItemSpacing);
+	}
+	
+	return frame;
 }
 
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
-                              withIndex:(NSUInteger)index
-                          contentOffset:(CGPoint)contentOffset
-                             finalFrame:(CGRect)finalFrame
-                   inPageViewController:(SCPageViewController *)pageViewController;
+							  withIndex:(NSUInteger)index
+						  contentOffset:(CGPoint)contentOffset
+							 finalFrame:(CGRect)finalFrame
+				   inPageViewController:(SCPageViewController *)pageViewController;
 {
-    return finalFrame;
+	return finalFrame;
 }
 
 - (void)animatePageReloadAtIndex:(NSUInteger)index

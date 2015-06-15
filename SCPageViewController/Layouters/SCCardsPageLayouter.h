@@ -1,5 +1,5 @@
 //
-//  SCFacebookPaperPageLayouter.h
+//  SCCardsPageLayouter.h
 //  SCPageViewController
 //
 //  Created by Stefan Ceriu on 23/02/2014.
@@ -8,6 +8,8 @@
 
 #import "SCPageLayouter.h"
 
-@interface SCFacebookPaperPageLayouter : SCPageLayouter
+@interface SCCardsPageLayouter : SCPageLayouter
+
+@property (nonatomic, assign) CGSize pageSize;
 
 @end
