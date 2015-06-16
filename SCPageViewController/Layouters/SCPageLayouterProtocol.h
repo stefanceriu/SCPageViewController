@@ -90,6 +90,30 @@ typedef enum {
 
 @optional
 
+- (NSUInteger)zPositionForViewController:(UIViewController *)viewController
+							   withIndex:(NSUInteger)index
+						   numberOfPages:(NSUInteger)numberOfPages
+					inPageViewController:(SCPageViewController *)pageViewController;
+
+
+/** Returns the view controller sublayer transformation that should be used
+ * for the current offset
+ *
+ * @param viewController The view controller for which to calculate the frame
+ * @param index The index of the view controller in the Stack's children array
+ * @param position The position in the stack
+ * @param stackViewController The calling StackViewController
+ *
+ * @return The sublayer transformation to be applied
+ *
+ */
+- (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
+										  withIndex:(NSUInteger)index
+									  contentOffset:(CGPoint)contentOffset
+										 finalFrame:(CGRect)finalFrame
+							   inPageViewController:(SCPageViewController *)pageViewController;
+
+
 /** Method that the pageController calls when its scrollView scrolls
  * @param pageViewController The calling PageViewController
  * @param offset The current offset in the PageViewController's scrollView

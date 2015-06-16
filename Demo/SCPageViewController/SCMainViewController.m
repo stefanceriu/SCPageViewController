@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, SCPickerViewComponentType) {
 
 @interface SCMainViewController () <UIPickerViewDataSource, UIPickerViewDelegate>
 
+@property (nonatomic, weak) IBOutlet UIView *contentView;
+
 @property (nonatomic, weak) IBOutlet UILabel *pageNumberLabel;
 @property (nonatomic, weak) IBOutlet UILabel *visiblePercentageLabel;
 
@@ -85,7 +87,8 @@ typedef NS_ENUM(NSUInteger, SCPickerViewComponentType) {
 				typeToString = (@{@(SCPageLayouterTypePlain)    : @"Plain",
 								  @(SCPageLayouterTypeSliding)  : @"Sliding",
 								  @(SCPageLayouterTypeParallax) : @"Parallax",
-								  @(SCPageLayouterTypeCards)    : @"Cards"});
+								  @(SCPageLayouterTypeCards)    : @"Cards",
+								  @(SCPageLayouterTypeSafari)   : @"Safari"});
 			});
 			
 			return [[NSAttributedString alloc] initWithString:typeToString[@(row)]

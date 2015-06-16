@@ -173,30 +173,9 @@
 
 - (void)reloadData
 {
-	for(SCPageViewControllerPageDetails *details in self.pages) {
-		
-		if([details isEqual:[NSNull null]]) {
-			continue;
-		}
-		
-		UIViewController *viewController = details.viewController;
-		
-		if(viewController == nil) {
-			continue;
-		}
-		
-		if([self.visibleControllers containsObject:viewController]) {
-			[viewController beginAppearanceTransition:NO animated:NO];
-		}
-		
-		[viewController willMoveToParentViewController:nil];
-		[viewController.view removeFromSuperview];
-		[viewController removeFromParentViewController];
-		
-		if([self.visibleControllers containsObject:viewController]) {
-			[viewController endAppearanceTransition];
-		}
-	}
+	[self.pages enumerateObjectsUsingBlock:^(id obj, NSUInteger pageIndex, BOOL *stop) {
+		[self _removePageAtIndex:pageIndex];
+	}];
 	
 	NSUInteger oldNumberOfPages = self.numberOfPages;
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
@@ -342,18 +321,9 @@
 			return;
 		}
 		
-		UIViewController *page = pageDetails.viewController;
-		
 		if (pageIndex < firstNeededPageIndex || pageIndex > lastNeededPageIndex) {
 			[removedIndexes addObject:@(pageIndex)];
-			
-			[self.visibleControllers removeObject:page];
-			
-			[page willMoveToParentViewController:nil];
-			[page beginAppearanceTransition:NO animated:NO];
-			[page.view removeFromSuperview];
-			[page endAppearanceTransition];
-			[page removeFromParentViewController];
+			[self _removePageAtIndex:pageIndex];
 		}
 	}];
 	
@@ -365,27 +335,7 @@
 		
 		UIViewController *page = [self viewControllerForPageAtIndex:pageIndex];
 		if (!page) {
-			page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:pageIndex];
-			
-			NSAssert(page, @"Trying to insert nil view controller");
-			
-			SCPageViewControllerPageDetails *details = [[SCPageViewControllerPageDetails alloc] init];
-			[details setViewController:page];
-			
-			[self.pages replaceObjectAtIndex:pageIndex withObject:details];
-			
-			[page willMoveToParentViewController:self];
-			
-			if(pageIndex > self.currentPage) {
-				[self.scrollView insertSubview:page.view atIndex:0];
-			} else {
-				[self.scrollView addSubview:page.view];
-			}
-			
-			[self addChildViewController:page];
-			[page didMoveToParentViewController:self];
-			
-			[page.view setFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]];
+			[self _createAndInsertNewPageAtIndex:pageIndex];
 		}
 	}
 	
@@ -474,6 +424,17 @@
 			
 		} else {
 			[viewController.view setFrame:nextFrame];
+		}
+		
+		if([self.layouter respondsToSelector:@selector(sublayerTransformForViewController:withIndex:contentOffset:finalFrame:inPageViewController:)]) {
+			CATransform3D transform = [self.layouter sublayerTransformForViewController:viewController
+																			  withIndex:pageIndex
+																		  contentOffset:self.scrollView.contentOffset
+																			 finalFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]
+																   inPageViewController:self];
+			[viewController.view.layer setSublayerTransform:transform];
+		} else {
+			[viewController.view.layer setSublayerTransform:CATransform3DIdentity];
 		}
 	}];
 }
@@ -876,6 +837,79 @@
 	return self.currentPage;
 }
 
+- (UIViewController *)_createAndInsertNewPageAtIndex:(NSUInteger)pageIndex
+{
+	SCPageViewControllerPageDetails *pageDetails = [self.pages objectAtIndex:pageIndex];
+	if(![pageDetails isEqual:[NSNull null]] && pageDetails.viewController) {
+		return pageDetails.viewController;
+	}
+	
+	UIViewController *page = [self.dataSource pageViewController:self viewControllerForPageAtIndex:pageIndex];
+	
+	NSAssert(page, @"Trying to insert nil view controller");
+	
+	SCPageViewControllerPageDetails *details = [[SCPageViewControllerPageDetails alloc] init];
+	[details setViewController:page];
+	
+	[self.pages replaceObjectAtIndex:pageIndex withObject:details];
+	
+	NSUInteger zPosition = pageIndex;
+	if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:numberOfPages:inPageViewController:)]) {
+		zPosition = [self.layouter zPositionForViewController:page
+													withIndex:pageIndex
+												numberOfPages:self.numberOfPages
+										 inPageViewController:self];
+	}
+	
+	NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
+	
+	NSLog(@"Inserting at page at index %d at position %d", pageIndex, zPosition);
+	
+	if(zPosition == 0) {
+		[self.scrollView insertSubview:page.view atIndex:0];
+	} else if(zPosition == self.numberOfPages - 1) {
+		[self.scrollView addSubview:page.view];
+	} else if([[self.pages objectAtIndex:pageIndex - 1] isEqual:[NSNull null]]) {
+		[self.scrollView addSubview:page.view];
+	} else if([[self.pages objectAtIndex:pageIndex + 1] isEqual:[NSNull null]]) {
+		[self.scrollView insertSubview:page.view atIndex:0];
+	} else {
+		[self.scrollView insertSubview:page.view atIndex:zPosition];
+	}
+	
+	[self addChildViewController:page];
+	[page didMoveToParentViewController:self];
+	
+	[page.view setFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]];
+	
+	return page;
+}
+
+- (void)_removePageAtIndex:(NSUInteger)pageIndex
+{
+	SCPageViewControllerPageDetails *pageDetails = [self.pages objectAtIndex:pageIndex];
+	if([pageDetails isEqual:[NSNull null]]) {
+		return;
+	}
+	
+	UIViewController *viewController = pageDetails.viewController;
+	if(!viewController) {
+		return;
+	}
+	
+	if([self.visibleControllers containsObject:viewController]) {
+		[viewController beginAppearanceTransition:NO animated:NO];
+	}
+	
+	[viewController willMoveToParentViewController:nil];
+	[viewController.view removeFromSuperview];
+	[viewController removeFromParentViewController];
+	
+	if([self.visibleControllers containsObject:viewController]) {
+		[viewController endAppearanceTransition];
+	}
+}
+
 - (void)_reloadPageAtIndex:(NSUInteger)pageIndex animated:(BOOL)animated completion:(void(^)())completion
 {
 	UIViewController *oldViewController = [self viewControllerForPageAtIndex:pageIndex];
@@ -884,26 +918,7 @@
 		[oldViewController beginAppearanceTransition:NO animated:animated];
 	}
 	
-	UIViewController *newViewController = [self.dataSource pageViewController:self viewControllerForPageAtIndex:pageIndex];
-	
-	NSAssert(newViewController, @"Trying to insert nil view controller");
-	
-	SCPageViewControllerPageDetails *details = [[SCPageViewControllerPageDetails alloc] init];
-	[details setViewController:newViewController];
-	
-	[self.pages replaceObjectAtIndex:pageIndex withObject:details];
-	
-	[newViewController willMoveToParentViewController:self];
-	
-	if(pageIndex > self.currentPage) {
-		[self.scrollView insertSubview:newViewController.view atIndex:0];
-	} else {
-		[self.scrollView addSubview:newViewController.view];
-	}
-	
-	
-	[self addChildViewController:newViewController];
-	[newViewController didMoveToParentViewController:self];
+	UIViewController *newViewController = [self _createAndInsertNewPageAtIndex:pageIndex];
 	
 	if([self.layouter respondsToSelector:@selector(animatePageReloadAtIndex:oldViewController:newViewController:pageViewController:completion:)] && animated) {
 		[self.layouter animatePageReloadAtIndex:pageIndex oldViewController:oldViewController newViewController:newViewController pageViewController:self completion:^{
@@ -979,23 +994,7 @@
 	}
 	
 	// Insert the new page
-	UIViewController *viewController = [self.dataSource pageViewController:self viewControllerForPageAtIndex:insertionIndex];
-	NSAssert(viewController, @"Trying to insert nil view controller");
-	
-	SCPageViewControllerPageDetails *details = [[SCPageViewControllerPageDetails alloc] init];
-	[details setViewController:viewController];
-	[self.pages replaceObjectAtIndex:insertionIndex withObject:details];
-	
-	[viewController willMoveToParentViewController:self];
-	
-	if(insertionIndex > self.currentPage) {
-		[self.scrollView insertSubview:viewController.view atIndex:0];
-	} else {
-		[self.scrollView addSubview:viewController.view];
-	}
-	
-	[self addChildViewController:viewController];
-	[viewController didMoveToParentViewController:self];
+	UIViewController *viewController = [self _createAndInsertNewPageAtIndex:insertionIndex];
 	
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageInsertionAtIndex:viewController:pageViewController:completion:)]) {
 		dispatch_group_enter(animationsDispatchGroup);
@@ -1177,26 +1176,7 @@
 	
 	if(!viewController) {
 		// Force load the missing page
-		viewController = [self.dataSource pageViewController:self viewControllerForPageAtIndex:toIndex];
-		
-		NSAssert(viewController, @"Trying to insert nil view controller");
-		
-		SCPageViewControllerPageDetails *details = [[SCPageViewControllerPageDetails alloc] init];
-		[details setViewController:viewController];
-		[self.pages replaceObjectAtIndex:toIndex withObject:details];
-		
-		[viewController willMoveToParentViewController:self];
-		
-		if(toIndex > self.currentPage) {
-			[self.scrollView insertSubview:viewController.view atIndex:0];
-		} else {
-			[self.scrollView addSubview:viewController.view];
-		}
-		
-		[viewController.view setFrame:[self.layouter finalFrameForPageAtIndex:fromIndex inPageViewController:self]];
-		
-		[self addChildViewController:viewController];
-		[viewController didMoveToParentViewController:self];
+		viewController = [self _createAndInsertNewPageAtIndex:toIndex];
 	}
 	
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)]) {

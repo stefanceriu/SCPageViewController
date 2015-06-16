@@ -40,4 +40,16 @@
 	return finalFrame;
 }
 
+- (NSUInteger)zPositionForViewController:(UIViewController *)viewController
+							   withIndex:(NSUInteger)index
+						   numberOfPages:(NSUInteger)numberOfPages
+					inPageViewController:(SCPageViewController *)pageViewController
+{
+	if(numberOfPages == 0) {
+		return 0;
+	}
+	
+	return numberOfPages - index - 1;
+}
+
 @end

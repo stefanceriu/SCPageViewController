@@ -13,12 +13,15 @@ typedef enum {
 	SCPageLayouterTypeSliding,
 	SCPageLayouterTypeParallax,
 	SCPageLayouterTypeCards,
+	SCPageLayouterTypeSafari,
 	SCPageLayouterTypeCount
 } SCPageLayouterType;
 
 @protocol SCMainViewControllerDelegate;
 
 @interface SCMainViewController : UIViewController
+
+@property (nonatomic, weak, readonly) UIView *contentView;
 
 @property (nonatomic, weak, readonly) UILabel *pageNumberLabel;
 @property (nonatomic, weak, readonly) UILabel *visiblePercentageLabel;

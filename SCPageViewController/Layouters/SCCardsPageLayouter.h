@@ -10,6 +10,6 @@
 
 @interface SCCardsPageLayouter : SCPageLayouter
 
-@property (nonatomic, assign) CGSize pageSize;
+@property (nonatomic, assign) CGFloat pagePercentage;
 
 @end

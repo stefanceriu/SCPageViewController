@@ -8,6 +8,8 @@
 
 #import "SCCardsPageLayouter.h"
 
+
+
 @implementation SCCardsPageLayouter
 @synthesize interItemSpacing;
 @synthesize navigationType;
@@ -15,17 +17,17 @@
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize navigationConstraintType;
 
-static CGFloat const kPageSizePercentage = 0.5f;
-
 - (id)init
 {
 	if(self = [super init]) {
 		self.interItemSpacing = 20.0f;
 		
-		self.numberOfPagesToPreloadBeforeCurrentPage = 2;
-		self.numberOfPagesToPreloadAfterCurrentPage  = 2;
+		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
+		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
 		
 		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
+		
+		self.pagePercentage = 0.5f;
 	}
 	
 	return self;
@@ -34,8 +36,8 @@ static CGFloat const kPageSizePercentage = 0.5f;
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
-	CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * kPageSizePercentage;
-	CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * kPageSizePercentage;
+	CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage;
+	CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage;
 	
 	return UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
 }
@@ -44,12 +46,8 @@ static CGFloat const kPageSizePercentage = 0.5f;
 			  inPageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
-	if(CGSizeEqualToSize(CGSizeZero, self.pageSize)) {
-		frame.size.height = frame.size.height * kPageSizePercentage;
-		frame.size.width = frame.size.width * kPageSizePercentage;
-	} else {
-		frame.size = self.pageSize;
-	}
+	frame.size.height = frame.size.height * self.pagePercentage;
+	frame.size.width = frame.size.width * self.pagePercentage;
 	
 	if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
 		frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
