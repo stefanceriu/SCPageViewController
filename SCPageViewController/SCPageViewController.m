@@ -16,7 +16,10 @@
 @interface SCPageViewControllerPageDetails : NSObject
 
 @property (nonatomic, strong) UIViewController *viewController;
+
 @property (nonatomic, assign) CGFloat visiblePercentage;
+
+@property (nonatomic, assign) NSUInteger zPosition;
 
 @end
 
@@ -148,23 +151,13 @@
 		return; // Will attempt tiling on viewDidLoad
 	}
 	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
-	
-	CGPoint offset;
-	if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
-		offset = [self nextStepOffsetForFrame:frame velocity:CGPointMake(-1.0f, 0.0f)];
-		[self adjustTargetContentOffset:&offset withVelocity:CGPointMake(-1.0f, 0.0f)];
-	} else {
-		offset = [self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, -1.0f)];
-		[self adjustTargetContentOffset:&offset withVelocity:CGPointMake(-.0f, -1.0f)];
-	}
-	
 	[UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
 		[self blockContentOffset];
 		[self updateBoundsUsingDefaultContraints];
 		[self unblockContentOffset];
-		[self.scrollView setContentOffset:offset];
+		[self _sortPagesByZPosition];
 	} completion:^(BOOL finished) {
+		[self tilePages];
 		if(completion) {
 			completion();
 		}
@@ -346,8 +339,21 @@
 
 - (void)updateFramesAndTriggerAppearanceCallbacks
 {
-	__block CGRect remainder = self.scrollView.bounds;
+	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
 	
+	if(filteredPages.count == 0) {
+		return;
+	}
+	
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"viewController.view" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+		return [@([self.scrollView.subviews indexOfObject:obj1]) compare:@([self.scrollView.subviews indexOfObject:obj2])];
+	}];
+	
+	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
+	
+	BOOL isReversed = (![filteredPages isEqual:sortedPages]);
+	
+	__block CGRect remainder = self.scrollView.bounds;
 	if(remainder.origin.x < 0.0f || remainder.origin.y < 0.0f) {
 		remainder.size.width += remainder.origin.x;
 		remainder.size.height += remainder.origin.y;
@@ -355,17 +361,50 @@
 		remainder.origin.y = 0.0f;
 	}
 	
-	[self.pages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *details, NSUInteger pageIndex, BOOL *stop) {
-		
-		if([details isEqual:[NSNull null]]) {
-			return;
+	CGRectEdge edge = -1;
+	SCPageViewControllerPageDetails *firstPage = [sortedPages firstObject];
+	switch (self.layouter.navigationType) {
+		case SCPageLayouterNavigationTypeVertical: {
+			if(isReversed) {
+				edge = CGRectMaxYEdge;
+				
+				CGFloat remainderDelta = CGRectGetMaxY(remainder) - CGRectGetMaxY(firstPage.viewController.view.frame);
+				if(remainderDelta > 0) {
+					remainder.size.height -= remainderDelta;
+				}
+				
+			} else {
+				edge = CGRectMinYEdge;
+			}
+			
+			break;
 		}
+		case SCPageLayouterNavigationTypeHorizontal: {
+			if(isReversed) {
+				edge = CGRectMaxXEdge;
+				
+				CGFloat remainderDelta = CGRectGetMaxX(remainder) - CGRectGetMaxX(firstPage.viewController.view.frame);
+				if(remainderDelta > 0) {
+					remainder.size.height -= remainderDelta;
+				}
+				
+			} else {
+				edge = CGRectMinXEdge;
+			}
+			
+			break;
+		}
+	}
+	
+	[sortedPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *details, NSUInteger idx, BOOL *stop) {
 		
 		UIViewController *viewController = details.viewController;
 		
 		if(!viewController) {
 			return;
 		}
+		
+		NSUInteger pageIndex = [self.pages indexOfObject:details];
 		
 		CGRect nextFrame =  [self.layouter currentFrameForViewController:viewController
 															   withIndex:pageIndex
@@ -376,7 +415,6 @@
 		CGRect intersection = CGRectIntersection(remainder, nextFrame);
 		// If a view controller's frame does intersect the remainder then it's visible
 		BOOL visible = self.layouter.navigationType == SCPageLayouterNavigationTypeVertical ? (CGRectGetHeight(intersection) > 0.0f) : (CGRectGetWidth(intersection) > 0.0f);
-		
 		visible = visible && self.isViewVisible;
 		
 		if(visible) {
@@ -385,18 +423,6 @@
 			} else {
 				[details setVisiblePercentage:roundf((CGRectGetWidth(intersection) * 1000) / CGRectGetWidth(nextFrame)) / 1000.0f];
 			}
-		}
-		
-		CGRectEdge edge = -1;
-		switch (self.layouter.navigationType) {
-			case SCPageLayouterNavigationTypeVertical:
-				edge = CGRectMinYEdge;
-				break;
-			case SCPageLayouterNavigationTypeHorizontal:
-				edge = CGRectMinXEdge;
-				break;
-			default:
-				break;
 		}
 		
 		remainder = [self _subtractRect:intersection fromRect:remainder withEdge:edge];
@@ -837,6 +863,31 @@
 	return self.currentPage;
 }
 
+- (void)_sortPagesByZPosition
+{
+	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
+	
+	[filteredPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger pageIndex, BOOL *stop) {
+		NSUInteger zPosition = self.numberOfPages - [self.pages indexOfObject:pageDetails] - 1;
+		if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:numberOfPages:inPageViewController:)]) {
+			zPosition = [self.layouter zPositionForViewController:pageDetails.viewController
+														withIndex:[self.pages indexOfObject:pageDetails]
+													numberOfPages:self.numberOfPages
+											 inPageViewController:self];
+		}
+		
+		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
+		[pageDetails setZPosition:zPosition];
+	}];
+	
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"zPosition" ascending:NO];
+	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
+	
+	[sortedPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger idx, BOOL *stop) {
+		[self.scrollView sendSubviewToBack:pageDetails.viewController.view];
+	}];
+}
+
 - (UIViewController *)_createAndInsertNewPageAtIndex:(NSUInteger)pageIndex
 {
 	SCPageViewControllerPageDetails *pageDetails = [self.pages objectAtIndex:pageIndex];
@@ -852,30 +903,9 @@
 	[details setViewController:page];
 	
 	[self.pages replaceObjectAtIndex:pageIndex withObject:details];
+	[self.scrollView addSubview:page.view];
 	
-	NSUInteger zPosition = pageIndex;
-	if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:numberOfPages:inPageViewController:)]) {
-		zPosition = [self.layouter zPositionForViewController:page
-													withIndex:pageIndex
-												numberOfPages:self.numberOfPages
-										 inPageViewController:self];
-	}
-	
-	NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
-	
-	NSLog(@"Inserting at page at index %d at position %d", pageIndex, zPosition);
-	
-	if(zPosition == 0) {
-		[self.scrollView insertSubview:page.view atIndex:0];
-	} else if(zPosition == self.numberOfPages - 1) {
-		[self.scrollView addSubview:page.view];
-	} else if([[self.pages objectAtIndex:pageIndex - 1] isEqual:[NSNull null]]) {
-		[self.scrollView addSubview:page.view];
-	} else if([[self.pages objectAtIndex:pageIndex + 1] isEqual:[NSNull null]]) {
-		[self.scrollView insertSubview:page.view atIndex:0];
-	} else {
-		[self.scrollView insertSubview:page.view atIndex:zPosition];
-	}
+	[self _sortPagesByZPosition];
 	
 	[self addChildViewController:page];
 	[page didMoveToParentViewController:self];

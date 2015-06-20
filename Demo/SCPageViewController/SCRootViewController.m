@@ -20,7 +20,7 @@
 
 #import "UIColor+RandomColors.h"
 
-static const NSUInteger kDefaultNumberOfPages = 1;
+static const NSUInteger kDefaultNumberOfPages = 4;
 
 @interface SCRootViewController () <SCPageViewControllerDataSource, SCPageViewControllerDelegate, SCMainViewControllerDelegate>
 

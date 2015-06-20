@@ -18,10 +18,10 @@
 - (id)init
 {
 	if(self = [super init]) {
-		self.interItemSpacing = - 300.0f;
+		self.interItemSpacing = -300.0f;
 		
-		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
-		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
+		self.numberOfPagesToPreloadBeforeCurrentPage = 5;
+		self.numberOfPagesToPreloadAfterCurrentPage  = 5;
 		
 		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
 		
@@ -40,7 +40,7 @@
 		CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage;
 		CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage;
 		
-		return UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
+		self.contentInset = UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
 	}
 	
 	return self.contentInset;
@@ -77,6 +77,11 @@
 	return finalFrame;
 }
 
+- (NSUInteger)zPositionForViewController:(UIViewController *)viewController withIndex:(NSUInteger)index numberOfPages:(NSUInteger)numberOfPages inPageViewController:(SCPageViewController *)pageViewController
+{
+	return index;
+}
+
 - (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
 										  withIndex:(NSUInteger)index
 									  contentOffset:(CGPoint)contentOffset
@@ -84,11 +89,14 @@
 							   inPageViewController:(SCPageViewController *)pageViewController
 {
 	CATransform3D transform = CATransform3DIdentity;
-	transform.m34 = 0.00035f;
+	transform.m34 = 1.0 / 990;
 	
-	CGFloat visiblePercentage = [pageViewController visiblePercentageForViewController:viewController];
-	CGFloat angle = (30.0f - visiblePercentage * 30.0f) * M_PI / 60.0f;
-	transform = CATransform3DRotate(transform, angle, 1.0f, 0.0f, 0.0f);
+	CGFloat angle = 30.0f;
+	if(contentOffset.y < -self.contentInset.top) {
+		angle += (ABS(contentOffset.y) - self.contentInset.top) / 10.0f;
+	}
+	
+	transform = CATransform3DRotate(transform, (angle * M_PI / 180.0f), 1.0f, 0.0f, 0.0f);
 	
 	return transform;
 }
