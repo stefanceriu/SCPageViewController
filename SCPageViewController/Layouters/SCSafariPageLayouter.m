@@ -15,7 +15,7 @@
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize navigationConstraintType;
 
-- (id)init
+- (instancetype)init
 {
 	if(self = [super init]) {
 		self.interItemSpacing = -300.0f;
@@ -77,7 +77,9 @@
 	return finalFrame;
 }
 
-- (NSUInteger)zPositionForViewController:(UIViewController *)viewController withIndex:(NSUInteger)index numberOfPages:(NSUInteger)numberOfPages inPageViewController:(SCPageViewController *)pageViewController
+- (NSUInteger)zPositionForViewController:(UIViewController *)viewController
+							   withIndex:(NSUInteger)index
+					inPageViewController:(SCPageViewController *)pageViewController
 {
 	return index;
 }
@@ -88,10 +90,51 @@
 										 finalFrame:(CGRect)finalFrame
 							   inPageViewController:(SCPageViewController *)pageViewController
 {
-	CATransform3D transform = CATransform3DIdentity;
-	transform.m34 = 1.0 / 990;
+	return [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:contentOffset];
+}
+
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
+					 viewController:(UIViewController *)viewController
+				 pageViewController:(SCPageViewController *)pageViewController
+						 completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CATransform3D sublayerTransform = [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:CGPointZero];
 	
-	CGFloat angle = 30.0f;
+	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+	[viewController.view setAlpha:0.0f];
+	
+	[UIView animateWithDuration:0.25f animations:^{
+		[viewController.view setFrame:finalFrame];
+		[viewController.view setAlpha:1.0f];
+		[(CALayer *)viewController.view.layer.sublayers.firstObject setTransform:sublayerTransform];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
+					viewController:(UIViewController *)viewController
+				pageViewController:(SCPageViewController *)pageViewController
+						completion:(void (^)())completion
+{
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	[UIView animateWithDuration:0.25f animations:^{
+		[viewController.view setFrame:CGRectOffset(finalFrame, -CGRectGetMaxX(finalFrame), 0.0f)];
+		[viewController.view setAlpha:0.0f];
+	} completion:^(BOOL finished) {
+		completion();
+	}];
+}
+
+#pragma mark - Private
+
+- (CATransform3D)_sublayerTransformWithNumberOfPages:(NSUInteger)numberOfPages andContentOffset:(CGPoint)contentOffset
+{
+	CATransform3D transform = CATransform3DIdentity;
+	transform.m34 = 1.0 / 995;
+	
+	CGFloat angle = MIN(numberOfPages * 10.0f, 60.0f);
 	if(contentOffset.y < -self.contentInset.top) {
 		angle += (ABS(contentOffset.y) - self.contentInset.top) / 10.0f;
 	}

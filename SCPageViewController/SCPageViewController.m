@@ -13,6 +13,7 @@
 #import "SCEasingFunction.h"
 #import "SCPageLayouterProtocol.h"
 
+
 @interface SCPageViewControllerPageDetails : NSObject
 
 @property (nonatomic, strong) UIViewController *viewController;
@@ -25,12 +26,8 @@
 
 @implementation SCPageViewControllerPageDetails
 
-- (NSString *)description
-{
-	return [NSString stringWithFormat:@"%@ %d %@ %f", NSStringFromClass([self class]), [self hash], self.viewController, self.visiblePercentage];
-}
-
 @end
+
 
 @interface SCPageViewController () <SCPageViewControllerViewDelegate, UIScrollViewDelegate>
 
@@ -51,6 +48,8 @@
 
 @property (nonatomic, assign) BOOL isRotating;
 
+@property (nonatomic, assign) UIEdgeInsets layouterContentInset;
+
 @end
 
 @implementation SCPageViewController
@@ -62,10 +61,10 @@
 @dynamic scrollEnabled;
 @dynamic decelerationRate;
 
-- (id)init
+- (instancetype)init
 {
 	if(self = [super init]) {
-		[self commonInit];
+		[self _commonSetup];
 	}
 	
 	return self;
@@ -74,10 +73,10 @@
 - (void)awakeFromNib
 {
 	[super awakeFromNib];
-	[self commonInit];
+	[self _commonSetup];
 }
 
-- (void)commonInit
+- (void)_commonSetup
 {
 	self.pages = [NSMutableArray array];
 	self.visibleControllers = [NSMutableArray array];
@@ -85,6 +84,8 @@
 	
 	self.easingFunction = [SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeSineEaseInOut];
 	self.animationDuration = 0.25f;
+	
+	self.layouterContentInset = UIEdgeInsetsZero;
 }
 
 - (void)loadView
@@ -115,8 +116,8 @@
 
 - (void)viewWillLayoutSubviews
 {
-	[self updateBoundsUsingDefaultContraints];
-	[self tilePages];
+	[self _updateBoundsAndConstraints];
+	[self _tilePagesAnimated:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -124,7 +125,7 @@
 	[super viewWillAppear:animated];
 	
 	self.isViewVisible = YES;
-	[self tilePages];
+	[self _tilePagesAnimated:NO];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -132,7 +133,7 @@
 	[super viewDidDisappear:animated];
 	
 	self.isViewVisible = NO;
-	[self tilePages];
+	[self _tilePagesAnimated:NO];
 }
 
 #pragma mark - Public Methods
@@ -151,17 +152,29 @@
 		return; // Will attempt tiling on viewDidLoad
 	}
 	
-	[UIView animateWithDuration:(animated ? self.animationDuration : 0.0f) animations:^{
-		[self blockContentOffset];
-		[self updateBoundsUsingDefaultContraints];
-		[self unblockContentOffset];
+	void(^updateLayout)() = ^{
+		[self _blockContentOffset];
+		[self _updateBoundsAndConstraints];
+		[self _unblockContentOffset];
+		
 		[self _sortPagesByZPosition];
-	} completion:^(BOOL finished) {
-		[self tilePages];
+		[self _tilePagesAnimated:animated];
+	};
+	
+	if(animated) {
+		[UIView animateWithDuration:self.animationDuration delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+			updateLayout();
+		} completion:^(BOOL finished) {
+			if(completion) {
+				completion();
+			}
+		}];
+	} else {
+		updateLayout();
 		if(completion) {
 			completion();
 		}
-	}];
+	}
 }
 
 - (void)reloadData
@@ -183,8 +196,8 @@
 		NSUInteger index = MAX(0, (int)self.numberOfPages-1);
 		[self navigateToPageAtIndex:index animated:NO completion:nil];
 	} else {
-		[self updateBoundsUsingDefaultContraints];
-		[self tilePages];
+		[self _updateBoundsAndConstraints];
+		[self _tilePagesAnimated:NO];
 	}
 }
 
@@ -218,7 +231,7 @@
 	
 	void(^animationFinishedBlock)() = ^{
 		
-		[self updateBoundsUsingNavigationContraints];
+		[self _updateNavigationContraints];
 		
 		if(!animated && [self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 			[self.delegate pageViewController:self didNavigateToPageAtIndex:pageIndex];
@@ -289,9 +302,96 @@
 	return pageDetails.viewController;
 }
 
+#pragma mark - Navigational Constraints
+
+- (void)_updateBoundsAndConstraints
+{
+	if([self.layouter respondsToSelector:@selector(contentInsetForPageViewController:)]) {
+		self.layouterContentInset = [self.layouter contentInsetForPageViewController:self];
+	} else {
+		self.layouterContentInset = UIEdgeInsetsZero;
+	}
+	
+	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
+	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
+		[self.scrollView setContentInset:UIEdgeInsetsMake(self.layouterContentInset.top, 0.0f, self.layouterContentInset.bottom, 0.0f)];
+		[self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame))];
+	} else {
+		[self.scrollView setContentInset:UIEdgeInsetsMake(0.0f, self.layouterContentInset.left, 0.0f, self.layouterContentInset.right)];
+		[self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame), CGRectGetHeight(self.view.bounds))];
+	}
+	
+	[self _updateNavigationContraints];
+}
+
+- (void)_updateNavigationContraints
+{
+	if(self.continuousNavigationEnabled) {
+		return;
+	}
+	
+	UIEdgeInsets insets = UIEdgeInsetsZero;
+	
+	CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage == 0 ? 0 : self.currentPage - 1)  inPageViewController:self];
+	switch (self.layouter.navigationType) {
+		case SCPageLayouterNavigationTypeVertical:
+			frame.origin.x = 0.0f;
+			frame.origin.y -= self.layouterContentInset.top;
+			break;
+		case SCPageLayouterNavigationTypeHorizontal:
+			frame.origin.y = 0.0f;
+			frame.origin.x -= self.layouterContentInset.left;
+			break;
+		default:
+			break;
+	}
+	
+	if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeReverse) {
+		switch (self.layouter.navigationType) {
+			case SCPageLayouterNavigationTypeVertical: {
+				insets.top = -[self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(0.0f, -1.0f)].y;
+				break;
+			}
+			case SCPageLayouterNavigationTypeHorizontal: {
+				insets.left = -[self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(-1.0f, 0.0f)].x;
+				break;
+			}
+		}
+	}
+	
+	frame = [self.layouter finalFrameForPageAtIndex:MIN(self.currentPage + 1, self.numberOfPages - 1) inPageViewController:self];
+	switch (self.layouter.navigationType) {
+		case SCPageLayouterNavigationTypeVertical:
+			frame.origin.x = 0.0f;
+			frame.origin.y += self.layouterContentInset.top;
+			break;
+		case SCPageLayouterNavigationTypeHorizontal:
+			frame.origin.y = 0.0f;
+			frame.origin.x += self.layouterContentInset.left;
+			break;
+		default:
+			break;
+	}
+	
+	if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeForward) {
+		switch (self.layouter.navigationType) {
+			case SCPageLayouterNavigationTypeVertical: {
+				insets.bottom = -(self.scrollView.contentSize.height - ABS([self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(0.0f, 1.0f)].y));
+				break;
+			}
+			case SCPageLayouterNavigationTypeHorizontal: {
+				insets.right = -(self.scrollView.contentSize.width - ABS([self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(1.0f, 0.0f)].x));
+				break;
+			}
+		}
+	}
+	
+	[self.scrollView setContentInset:insets];
+}
+
 #pragma mark - Page Management
 
-- (void)tilePages
+- (void)_tilePagesAnimated:(BOOL)animated
 {
 	if(self.numberOfPages == 0) {
 		return;
@@ -332,12 +432,12 @@
 		}
 	}
 	
-	[self updateFramesAndTriggerAppearanceCallbacks];
+	[self _updateFramesAndTriggerAppearanceCallbacksAnimated:animated];
 }
 
 #pragma mark Appearance callbacks and framesetting
 
-- (void)updateFramesAndTriggerAppearanceCallbacks
+- (void)_updateFramesAndTriggerAppearanceCallbacksAnimated:(BOOL)animated
 {
 	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
 	
@@ -427,40 +527,53 @@
 		
 		remainder = [self _subtractRect:intersection fromRect:remainder withEdge:edge];
 		
-		// Finally, trigger appearance callbacks and new frame
-		if(visible && ![self.visibleControllers containsObject:viewController]) {
-			[self.visibleControllers addObject:viewController];
-			[viewController beginAppearanceTransition:YES animated:NO];
-			[viewController.view setFrame:nextFrame];
-			[viewController endAppearanceTransition];
+		void (^updateFrames)() = ^{
 			
-			if([self.delegate respondsToSelector:@selector(pageViewController:didShowViewController:atIndex:)]) {
-				[self.delegate pageViewController:self didShowViewController:viewController atIndex:pageIndex];
+			[self _setAnimatableSublayerTransform:CATransform3DIdentity forViewController:viewController];
+			
+			// Finally, trigger appearance callbacks and new frame
+			if(visible && ![self.visibleControllers containsObject:viewController]) {
+				[self.visibleControllers addObject:viewController];
+				[viewController beginAppearanceTransition:YES animated:NO];
+				[viewController.view setFrame:nextFrame];
+				[viewController endAppearanceTransition];
+				
+				if([self.delegate respondsToSelector:@selector(pageViewController:didShowViewController:atIndex:)]) {
+					[self.delegate pageViewController:self didShowViewController:viewController atIndex:pageIndex];
+				}
+				
+			} else if(!visible && [self.visibleControllers containsObject:viewController]) {
+				[self.visibleControllers removeObject:viewController];
+				[viewController beginAppearanceTransition:NO animated:NO];
+				[viewController.view setFrame:nextFrame];
+				[viewController endAppearanceTransition];
+				
+				if([self.delegate respondsToSelector:@selector(pageViewController:didHideViewController:atIndex:)]) {
+					[self.delegate pageViewController:self didHideViewController:viewController atIndex:pageIndex];
+				}
+				
+			} else {
+				[viewController.view setFrame:nextFrame];
 			}
 			
-		} else if(!visible && [self.visibleControllers containsObject:viewController]) {
-			[self.visibleControllers removeObject:viewController];
-			[viewController beginAppearanceTransition:NO animated:NO];
-			[viewController.view setFrame:nextFrame];
-			[viewController endAppearanceTransition];
-			
-			if([self.delegate respondsToSelector:@selector(pageViewController:didHideViewController:atIndex:)]) {
-				[self.delegate pageViewController:self didHideViewController:viewController atIndex:pageIndex];
+			CATransform3D transform = CATransform3DIdentity;
+			if([self.layouter respondsToSelector:@selector(sublayerTransformForViewController:withIndex:contentOffset:finalFrame:inPageViewController:)]) {
+				transform = [self.layouter sublayerTransformForViewController:viewController
+																	withIndex:pageIndex
+																contentOffset:self.scrollView.contentOffset
+																   finalFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]
+														 inPageViewController:self];
 			}
 			
-		} else {
-			[viewController.view setFrame:nextFrame];
-		}
+			[self _setAnimatableSublayerTransform:transform forViewController:viewController];
+		};
 		
-		if([self.layouter respondsToSelector:@selector(sublayerTransformForViewController:withIndex:contentOffset:finalFrame:inPageViewController:)]) {
-			CATransform3D transform = [self.layouter sublayerTransformForViewController:viewController
-																			  withIndex:pageIndex
-																		  contentOffset:self.scrollView.contentOffset
-																			 finalFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]
-																   inPageViewController:self];
-			[viewController.view.layer setSublayerTransform:transform];
+		if(animated) {
+			[UIView animateWithDuration:self.animationDuration delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+				updateFrames();
+			} completion:nil];
 		} else {
-			[viewController.view.layer setSublayerTransform:CATransform3DIdentity];
+			updateFrames();
 		}
 	}];
 }
@@ -468,179 +581,6 @@
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods
 {
 	return NO;
-}
-
-#pragma mark Pagination
-
-- (void)adjustTargetContentOffset:(inout CGPoint *)targetContentOffset withVelocity:(CGPoint)velocity
-{
-	if(!self.pagingEnabled && self.continuousNavigationEnabled) {
-		return;
-	}
-	
-	UIEdgeInsets layouterInsets = [self.layouter contentInsetForPageViewController:self];
-	
-	// Enumerate through all the pages and figure out which one contains the targeted offset
-	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
-		
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
-		CGRect adjustedFrame = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, -self.layouter.interItemSpacing/2), self.layouter.interItemSpacing/2, self.layouter.interItemSpacing/2);
-		
-		switch (self.layouter.navigationType) {
-			case SCPageLayouterNavigationTypeVertical:
-				adjustedFrame.origin.x = 0.0f;
-				adjustedFrame.origin.y -= layouterInsets.top;
-				break;
-			case SCPageLayouterNavigationTypeHorizontal:
-				adjustedFrame.origin.y = 0.0f;
-				adjustedFrame.origin.x -= layouterInsets.left;
-				break;
-			default:
-				break;
-		}
-		
-		if(CGRectContainsPoint(adjustedFrame, *targetContentOffset)) {
-			
-			// If the velocity is zero then jump to the closest navigation step
-			if(CGPointEqualToPoint(CGPointZero, velocity)) {
-				
-				switch (self.layouter.navigationType) {
-					case SCPageLayouterNavigationTypeVertical:
-					{
-						CGPoint previousStepOffset = [self nextStepOffsetForFrame:adjustedFrame velocity:CGPointMake(0.0f, -1.0f)];
-						CGPoint nextStepOffset = [self nextStepOffsetForFrame:adjustedFrame velocity:CGPointMake(0.0f, 1.0f)];
-						
-						*targetContentOffset = ABS(targetContentOffset->y - previousStepOffset.y) > ABS(targetContentOffset->y - nextStepOffset.y) ? nextStepOffset : previousStepOffset;
-						break;
-					}
-					case SCPageLayouterNavigationTypeHorizontal:
-					{
-						CGPoint previousStepOffset = [self nextStepOffsetForFrame:adjustedFrame velocity:CGPointMake(-1.0f, 0.0f)];
-						CGPoint nextStepOffset = [self nextStepOffsetForFrame:adjustedFrame velocity:CGPointMake(1.0f, 0.0f)];
-						
-						*targetContentOffset = ABS(targetContentOffset->x - previousStepOffset.x) > ABS(targetContentOffset->x - nextStepOffset.x) ? nextStepOffset : previousStepOffset;
-						break;
-					}
-				}
-				
-			} else {
-				// Calculate the next step of the pagination (either a navigationStep or a controller edge)
-				*targetContentOffset = [self nextStepOffsetForFrame:adjustedFrame velocity:velocity];
-			}
-						
-			break;
-		}
-	}
-}
-
-#pragma mark - Navigational Constraints
-
-- (void)updateBoundsUsingDefaultContraints
-{
-	if(self.isContentOffsetBlocked) {
-		[UIView animateWithDuration:self.animationDuration animations:^{
-			[self.scrollView setContentSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-		}];
-		return;
-	}
-	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
-	UIEdgeInsets insets = [self.layouter contentInsetForPageViewController:self];
-	
-	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-		[self.scrollView setContentInset:UIEdgeInsetsMake(insets.top, 0.0f, insets.bottom, 0.0f)];
-		[self.scrollView setContentSize:CGSizeMake(0, CGRectGetMaxY(frame))];
-	} else {
-		[self.scrollView setContentInset:UIEdgeInsetsMake(0.0f, insets.left, 0.0f, insets.right)];
-		[self.scrollView setContentSize:CGSizeMake(CGRectGetMaxX(frame), CGRectGetHeight(self.view.bounds))];
-	}
-	
-	[self updateBoundsUsingNavigationContraints];
-}
-
-- (void)updateBoundsUsingNavigationContraints
-{
-	if(self.continuousNavigationEnabled || self.isContentOffsetBlocked) {
-		return;
-	}
-	
-	UIEdgeInsets insets = UIEdgeInsetsZero;
-	UIEdgeInsets layouterInsets = [self.layouter contentInsetForPageViewController:self];
-	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage == 0 ? 0 : self.currentPage - 1)  inPageViewController:self];
-	switch (self.layouter.navigationType) {
-		case SCPageLayouterNavigationTypeVertical:
-			frame.origin.x = 0.0f;
-			frame.origin.y -= layouterInsets.top;
-			break;
-		case SCPageLayouterNavigationTypeHorizontal:
-			frame.origin.y = 0.0f;
-			frame.origin.x -= layouterInsets.left;
-			break;
-		default:
-			break;
-	}
-	
-	if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeReverse) {
-		switch (self.layouter.navigationType) {
-			case SCPageLayouterNavigationTypeVertical: {
-				insets.top = -[self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, -1.0f)].y;
-				break;
-			}
-			case SCPageLayouterNavigationTypeHorizontal: {
-				insets.left = -[self nextStepOffsetForFrame:frame velocity:CGPointMake(-1.0f, 0.0f)].x;
-				break;
-			}
-		}
-	}
-	
-	frame = [self.layouter finalFrameForPageAtIndex:MIN(self.currentPage + 1, self.numberOfPages - 1) inPageViewController:self];
-	switch (self.layouter.navigationType) {
-		case SCPageLayouterNavigationTypeVertical:
-			frame.origin.x = 0.0f;
-			frame.origin.y += layouterInsets.top;
-			break;
-		case SCPageLayouterNavigationTypeHorizontal:
-			frame.origin.y = 0.0f;
-			frame.origin.x += layouterInsets.left;
-			break;
-		default:
-			break;
-	}
-	
-	if(self.layouter.navigationConstraintType & SCPageLayouterNavigationContraintTypeForward) {
-		switch (self.layouter.navigationType) {
-			case SCPageLayouterNavigationTypeVertical: {
-				insets.bottom = -(self.scrollView.contentSize.height - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, 1.0f)].y));
-				break;
-			}
-			case SCPageLayouterNavigationTypeHorizontal: {
-				insets.right = -(self.scrollView.contentSize.width - ABS([self nextStepOffsetForFrame:frame velocity:CGPointMake(1.0f, 0.0f)].x));
-				break;
-			}
-		}
-	}
-	
-	[self.scrollView setContentInset:insets];
-}
-
-#pragma mark - Step calculations
-
-- (CGPoint)nextStepOffsetForFrame:(CGRect)finalFrame
-						 velocity:(CGPoint)velocity
-{
-	CGPoint nextStepOffset = CGPointZero;
-	if(velocity.y > 0.0f) {
-		nextStepOffset.y = CGRectGetMaxY(finalFrame);
-	} else if(velocity.x > 0.0f) {
-		nextStepOffset.x = CGRectGetMaxX(finalFrame);
-	} else if(velocity.y < 0.0f) {
-		nextStepOffset.y = CGRectGetMinY(finalFrame);
-	} else if(velocity.x < 0.0f) {
-		nextStepOffset.x = CGRectGetMinX(finalFrame);
-	}
-	
-	return nextStepOffset;
 }
 
 #pragma mark - Properties and forwarding
@@ -668,18 +608,6 @@
 	}
 }
 
-#pragma mark - SCPageViewControllerViewDelegate
-
-- (void)pageViewControllerViewWillChangeFrame:(SCPageViewControllerView *)pageViewControllerView
-{
-	[self.scrollView setDelegate:nil];
-}
-
-- (void)pageViewControllerViewDidChangeFrame:(SCPageViewControllerView *)pageViewControllerView
-{
-	[self.scrollView setDelegate:self];
-}
-
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -693,7 +621,7 @@
 	}
 	
 	if(!self.shouldLayoutPagesOnRest) {
-		[self tilePages];
+		[self _tilePagesAnimated:NO];
 	}
 }
 
@@ -702,10 +630,10 @@
 	if(decelerate == NO) {
 		
 		if(self.shouldLayoutPagesOnRest) {
-			[self tilePages];
+			[self _tilePagesAnimated:NO];
 		}
 		
-		[self updateBoundsUsingNavigationContraints];
+		[self _updateNavigationContraints];
 		
 		if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 			[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
@@ -716,10 +644,10 @@
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
 	if(self.shouldLayoutPagesOnRest) {
-		[self tilePages];
+		[self _tilePagesAnimated:NO];
 	}
 	
-	[self updateBoundsUsingNavigationContraints];
+	[self _updateNavigationContraints];
 	
 	if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 		[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
@@ -729,10 +657,10 @@
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
 	if(self.shouldLayoutPagesOnRest) {
-		[self tilePages];
+		[self _tilePagesAnimated:NO];
 	}
 	
-	[self updateBoundsUsingNavigationContraints];
+	[self _updateNavigationContraints];
 	
 	if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 		[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
@@ -744,20 +672,31 @@
 	// Bouncing target content offset when fix.
 	// When trying to adjust content offset while bouncing the velocity drops down to almost nothing.
 	// Seems to be an internal UIScrollView issue
-	UIEdgeInsets insets = [self.layouter contentInsetForPageViewController:self];
-	if(self.scrollView.contentOffset.y < -insets.top) {
-		targetContentOffset->y = -insets.top;
-	} else if(self.scrollView.contentOffset.x < -insets.left) {
-		targetContentOffset->x = -insets.left;
-	} else if(self.scrollView.contentOffset.y > ABS((self.scrollView.contentSize.height + insets.bottom) - CGRectGetHeight(self.scrollView.bounds))) {
-		targetContentOffset->y = (self.scrollView.contentSize.height + insets.bottom) - CGRectGetHeight(self.scrollView.bounds);
-	} else if(self.scrollView.contentOffset.x > ABS((self.scrollView.contentSize.width + insets.right) - CGRectGetWidth(self.scrollView.bounds))) {
-		targetContentOffset->x = (self.scrollView.contentSize.width + insets.right) - CGRectGetWidth(self.scrollView.bounds);
+	if(self.scrollView.contentOffset.y < -self.layouterContentInset.top) {
+		targetContentOffset->y = -self.layouterContentInset.top;
+	} else if(self.scrollView.contentOffset.x < -self.layouterContentInset.left) {
+		targetContentOffset->x = -self.layouterContentInset.left;
+	} else if(self.scrollView.contentOffset.y > ABS((self.scrollView.contentSize.height + self.layouterContentInset.bottom) - CGRectGetHeight(self.scrollView.bounds))) {
+		targetContentOffset->y = (self.scrollView.contentSize.height + self.layouterContentInset.bottom) - CGRectGetHeight(self.scrollView.bounds);
+	} else if(self.scrollView.contentOffset.x > ABS((self.scrollView.contentSize.width + self.layouterContentInset.right) - CGRectGetWidth(self.scrollView.bounds))) {
+		targetContentOffset->x = (self.scrollView.contentSize.width + self.layouterContentInset.right) - CGRectGetWidth(self.scrollView.bounds);
 	}
 	// Normal pagination
 	else {
-		[self adjustTargetContentOffset:targetContentOffset withVelocity:velocity];
+		[self _adjustTargetContentOffset:targetContentOffset withVelocity:velocity];
 	}
+}
+
+#pragma mark - SCPageViewControllerViewDelegate
+
+- (void)pageViewControllerViewWillChangeFrame:(SCPageViewControllerView *)pageViewControllerView
+{
+	[self.scrollView setDelegate:nil];
+}
+
+- (void)pageViewControllerViewDidChangeFrame:(SCPageViewControllerView *)pageViewControllerView
+{
+	[self.scrollView setDelegate:self];
 }
 
 #pragma mark - Rotation
@@ -765,23 +704,26 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	self.isRotating = YES;
-	[self blockContentOffset];
+	[self _blockContentOffset];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
 	self.isRotating = NO;
-	[self unblockContentOffset];
-	[self updateBoundsUsingDefaultContraints];
+	[self _unblockContentOffset];
+	[self _updateBoundsAndConstraints];
 }
 
-#pragma mark - Content Offset Blocking
+#pragma mark - Private - Content Offset Blocking
 
-- (void)blockContentOffset
+static NSUInteger oldCurrentPage;
+- (void)_blockContentOffset
 {
 	if(!self.isContentOffsetBlocked) {
 		self.isContentOffsetBlocked = YES;
-		[self.scrollView addObserver:self forKeyPath:@"contentSize" options:0 context:nil];
+		[self.scrollView setDelegate:nil];
+		oldCurrentPage = self.currentPage;
+		[self.scrollView addObserver:self forKeyPath:@"contentOffset" options:0 context:nil];
 	}
 }
 
@@ -789,15 +731,15 @@
 {
 	if(self.isContentOffsetBlocked) {
 		
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:oldCurrentPage inPageViewController:self];
 		
 		CGPoint offset;
 		if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
-			offset = [self nextStepOffsetForFrame:frame velocity:CGPointMake(-1.0f, 0.0f)];
-			[self adjustTargetContentOffset:&offset withVelocity:CGPointMake(-1.0f, 0.0f)];
+			offset = [self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(-1.0f, 0.0f)];
+			offset.y -= self.layouterContentInset.left;
 		} else {
-			offset = [self nextStepOffsetForFrame:frame velocity:CGPointMake(0.0f, -1.0f)];
-			[self adjustTargetContentOffset:&offset withVelocity:CGPointMake(-.0f, -1.0f)];
+			offset = [self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(0.0f, -1.0f)];
+			offset.y -= self.layouterContentInset.top;
 		}
 		
 		if(!CGPointEqualToPoint(offset, self.scrollView.contentOffset)) {
@@ -806,56 +748,34 @@
 	}
 }
 
-- (void)unblockContentOffset
+- (void)_unblockContentOffset
 {
 	if(self.isContentOffsetBlocked) {
-		[self.scrollView setContentOffset:self.scrollView.contentOffset animated:YES];
-		[self.scrollView removeObserver:self forKeyPath:@"contentSize"];
+		[self.scrollView removeObserver:self forKeyPath:@"contentOffset"];
 		self.isContentOffsetBlocked = NO;
-		[self updateBoundsUsingDefaultContraints];
+		[self.scrollView setDelegate:self];
 	}
 }
 
-#pragma mark - Private
-
-- (CGRect)_subtractRect:(CGRect)r2 fromRect:(CGRect)r1 withEdge:(CGRectEdge)edge
-{
-	CGRect intersection = CGRectIntersection(r1, r2);
-	if (CGRectIsNull(intersection)) {
-		return r1;
-	}
-	
-	float chopAmount = (edge == CGRectMinXEdge || edge == CGRectMaxXEdge) ? CGRectGetWidth(intersection) : CGRectGetHeight(intersection);
-	
-	CGRect remainder, throwaway;
-	CGRectDivide(r1, &throwaway, &remainder, chopAmount, edge);
-	return remainder;
-}
+#pragma mark Private - Pagination
 
 - (NSUInteger)_calculateCurrentPage
 {
 	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+		
 		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
 		
-		CGRect adjustedFrame = CGRectOffset(CGRectInset(frame,-self.layouter.interItemSpacing/2, 0),
-											self.layouter.interItemSpacing/2, 0);
-		
-		CGPoint adjustedOffset = CGPointZero;
-		
+		CGPoint adjustedOffset = [self.view convertPoint:self.view.center toView:self.scrollView];;
 		switch (self.layouter.navigationType) {
 			case SCPageLayouterNavigationTypeVertical:
-				adjustedOffset.y = self.scrollView.contentOffset.y + CGRectGetHeight(self.scrollView.bounds)/2;
-				adjustedOffset.x = adjustedFrame.origin.x;
+				adjustedOffset.y += self.layouterContentInset.top / 2.0f;
 				break;
 			case SCPageLayouterNavigationTypeHorizontal:
-				adjustedOffset.x = self.scrollView.contentOffset.x + CGRectGetWidth(self.scrollView.bounds)/2;
-				adjustedOffset.y = adjustedFrame.origin.y;
-				break;
-			default:
+				adjustedOffset.y += self.layouterContentInset.left / 2.0f;
 				break;
 		}
 		
-		if(CGRectContainsPoint(adjustedFrame, adjustedOffset)) {
+		if(CGRectContainsPoint(frame, adjustedOffset)) {
 			return pageIndex;
 		}
 	}
@@ -863,30 +783,82 @@
 	return self.currentPage;
 }
 
-- (void)_sortPagesByZPosition
+- (CGPoint)_nextStepOffsetForFrame:(CGRect)finalFrame withVelocity:(CGPoint)velocity
 {
-	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
+	CGPoint nextStepOffset = CGPointZero;
+	if(velocity.y > 0.0f) {
+		nextStepOffset.y = CGRectGetMaxY(finalFrame);
+	} else if(velocity.x > 0.0f) {
+		nextStepOffset.x = CGRectGetMaxX(finalFrame);
+	} else if(velocity.y < 0.0f) {
+		nextStepOffset.y = CGRectGetMinY(finalFrame);
+	} else if(velocity.x < 0.0f) {
+		nextStepOffset.x = CGRectGetMinX(finalFrame);
+	}
 	
-	[filteredPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger pageIndex, BOOL *stop) {
-		NSUInteger zPosition = self.numberOfPages - [self.pages indexOfObject:pageDetails] - 1;
-		if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:numberOfPages:inPageViewController:)]) {
-			zPosition = [self.layouter zPositionForViewController:pageDetails.viewController
-														withIndex:[self.pages indexOfObject:pageDetails]
-													numberOfPages:self.numberOfPages
-											 inPageViewController:self];
+	return nextStepOffset;
+}
+
+- (void)_adjustTargetContentOffset:(inout CGPoint *)targetContentOffset withVelocity:(CGPoint)velocity
+{
+	if(!self.pagingEnabled && self.continuousNavigationEnabled) {
+		return;
+	}
+	
+	// Enumerate through all the pages and figure out which one contains the targeted offset
+	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+		
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+		CGRect adjustedFrame = CGRectOffset(CGRectInset(frame, -self.layouter.interItemSpacing/2, -self.layouter.interItemSpacing/2), self.layouter.interItemSpacing/2, self.layouter.interItemSpacing/2);
+		
+		switch (self.layouter.navigationType) {
+			case SCPageLayouterNavigationTypeVertical:
+				adjustedFrame.origin.x = 0.0f;
+				adjustedFrame.origin.y -= self.layouterContentInset.top;
+				break;
+			case SCPageLayouterNavigationTypeHorizontal:
+				adjustedFrame.origin.y = 0.0f;
+				adjustedFrame.origin.x -= self.layouterContentInset.left;
+				break;
+			default:
+				break;
 		}
 		
-		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
-		[pageDetails setZPosition:zPosition];
-	}];
-	
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"zPosition" ascending:NO];
-	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
-	
-	[sortedPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger idx, BOOL *stop) {
-		[self.scrollView sendSubviewToBack:pageDetails.viewController.view];
-	}];
+		if(CGRectContainsPoint(adjustedFrame, *targetContentOffset)) {
+			
+			// If the velocity is zero then jump to the closest navigation step
+			if(CGPointEqualToPoint(CGPointZero, velocity)) {
+				
+				switch (self.layouter.navigationType) {
+					case SCPageLayouterNavigationTypeVertical:
+					{
+						CGPoint previousStepOffset = [self _nextStepOffsetForFrame:adjustedFrame withVelocity:CGPointMake(0.0f, -1.0f)];
+						CGPoint nextStepOffset = [self _nextStepOffsetForFrame:adjustedFrame withVelocity:CGPointMake(0.0f, 1.0f)];
+						
+						*targetContentOffset = ABS(targetContentOffset->y - previousStepOffset.y) > ABS(targetContentOffset->y - nextStepOffset.y) ? nextStepOffset : previousStepOffset;
+						break;
+					}
+					case SCPageLayouterNavigationTypeHorizontal:
+					{
+						CGPoint previousStepOffset = [self _nextStepOffsetForFrame:adjustedFrame withVelocity:CGPointMake(-1.0f, 0.0f)];
+						CGPoint nextStepOffset = [self _nextStepOffsetForFrame:adjustedFrame withVelocity:CGPointMake(1.0f, 0.0f)];
+						
+						*targetContentOffset = ABS(targetContentOffset->x - previousStepOffset.x) > ABS(targetContentOffset->x - nextStepOffset.x) ? nextStepOffset : previousStepOffset;
+						break;
+					}
+				}
+				
+			} else {
+				// Calculate the next step of the pagination (either a navigationStep or a controller edge)
+				*targetContentOffset = [self _nextStepOffsetForFrame:adjustedFrame withVelocity:velocity];
+			}
+			
+			break;
+		}
+	}
 }
+
+#pragma mark - Private
 
 - (UIViewController *)_createAndInsertNewPageAtIndex:(NSUInteger)pageIndex
 {
@@ -940,6 +912,53 @@
 	}
 }
 
+- (void)_sortPagesByZPosition
+{
+	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
+	
+	[filteredPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger pageIndex, BOOL *stop) {
+		NSUInteger zPosition = self.numberOfPages - [self.pages indexOfObject:pageDetails] - 1;
+		if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:inPageViewController:)]) {
+			zPosition = [self.layouter zPositionForViewController:pageDetails.viewController
+														withIndex:[self.pages indexOfObject:pageDetails]
+											 inPageViewController:self];
+		}
+		
+		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
+		[pageDetails setZPosition:zPosition];
+	}];
+	
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"zPosition" ascending:NO];
+	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
+	
+	[sortedPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger idx, BOOL *stop) {
+		[self.scrollView sendSubviewToBack:pageDetails.viewController.view];
+	}];
+}
+
+- (CGRect)_subtractRect:(CGRect)r2 fromRect:(CGRect)r1 withEdge:(CGRectEdge)edge
+{
+	CGRect intersection = CGRectIntersection(r1, r2);
+	if (CGRectIsNull(intersection)) {
+		return r1;
+	}
+	
+	float chopAmount = (edge == CGRectMinXEdge || edge == CGRectMaxXEdge) ? CGRectGetWidth(intersection) : CGRectGetHeight(intersection);
+	
+	CGRect remainder, throwaway;
+	CGRectDivide(r1, &throwaway, &remainder, chopAmount, edge);
+	return remainder;
+}
+
+- (void)_setAnimatableSublayerTransform:(CATransform3D)transform forViewController:(UIViewController *)viewController
+{
+	for(CALayer *layer in viewController.view.layer.sublayers) {
+		[layer setTransform:transform];
+	}
+}
+
+#pragma mark - Private - Incremental Updates
+
 - (void)_reloadPageAtIndex:(NSUInteger)pageIndex animated:(BOOL)animated completion:(void(^)())completion
 {
 	UIViewController *oldViewController = [self viewControllerForPageAtIndex:pageIndex];
@@ -963,17 +982,17 @@
 			[self.pages removeObjectAtIndex:pageIndex];
 			[self.visibleControllers removeObject:oldViewController];
 			
-			[self updateBoundsUsingDefaultContraints];
-			[self tilePages];
+			[self _updateBoundsAndConstraints];
+			[self _tilePagesAnimated:NO];
 		}];
 	}
 }
 
-- (void)_insertPageAtIndex:(NSUInteger)insertionIndex animated:(BOOL)animated completion:(void(^)())completion
+- (void)_insertPageAtIndex:(NSInteger)insertionIndex animated:(BOOL)animated completion:(void(^)())completion
 {
 	NSAssert(insertionIndex < self.numberOfPages, @"Index out of bounds");
 	
-	NSUInteger oldNumberOfPages = self.numberOfPages;
+	NSInteger oldNumberOfPages = self.numberOfPages;
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
 	
 	NSAssert((self.numberOfPages == oldNumberOfPages + 1), @"The number of pages after insertion is equal to the one before");
@@ -983,10 +1002,10 @@
 	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
 	
 	// Animate page movements
-	BOOL shouldAdjustOffset = (insertionIndex <= self.currentPage);
+	BOOL shouldAdjustOffset = (insertionIndex < self.currentPage);
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)]) {
 		if(shouldAdjustOffset) {
-			for(NSInteger pageIndex = (NSInteger)(insertionIndex - 1); pageIndex >= 0; pageIndex--) {
+			for(NSInteger pageIndex = (insertionIndex - 1); pageIndex >= 0; pageIndex--) {
 				UIViewController *someController = [self viewControllerForPageAtIndex:pageIndex];
 				
 				CGRect frameForAnimation = [self.layouter finalFrameForPageAtIndex:(pageIndex + 1) inPageViewController:self];
@@ -1008,21 +1027,6 @@
 		}
 	}
 	
-	// Update the scrollView's offset
-	if(shouldAdjustOffset) {
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage + 1) inPageViewController:self];
-		
-		if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-			CGPoint offset = self.scrollView.contentOffset;
-			offset.y += CGRectGetHeight(frame) + self.layouter.interItemSpacing;
-			[self.scrollView setContentOffset:offset];
-		} else {
-			CGPoint offset = self.scrollView.contentOffset;
-			offset.x += CGRectGetWidth(frame) + self.layouter.interItemSpacing;
-			[self.scrollView setContentOffset:offset];
-		}
-	}
-	
 	// Insert the new page
 	UIViewController *viewController = [self _createAndInsertNewPageAtIndex:insertionIndex];
 	
@@ -1033,23 +1037,55 @@
 		}];
 	}
 	
+	// Update the content offset and pages layout
+	void (^updateLayout)() = ^{
+		
+		self.scrollView.delegate = nil;
+		
+		if(shouldAdjustOffset) {
+			CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage + 1) inPageViewController:self];
+			
+			if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
+				CGPoint offset = self.scrollView.contentOffset;
+				offset.y += CGRectGetHeight(frame) + self.layouter.interItemSpacing;
+				[self.scrollView setContentOffset:offset];
+			} else {
+				CGPoint offset = self.scrollView.contentOffset;
+				offset.x += CGRectGetWidth(frame) + self.layouter.interItemSpacing;
+				[self.scrollView setContentOffset:offset];
+			}
+		}
+		
+		[self _updateBoundsAndConstraints];
+		[self _tilePagesAnimated:animated];
+		
+		self.scrollView.delegate = self;
+	};
+	
+	if(animated) {
+		dispatch_group_enter(animationsDispatchGroup);
+		[UIView animateWithDuration:0.25f delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+			updateLayout();
+		} completion:^(BOOL finished) {
+			dispatch_group_leave(animationsDispatchGroup);
+		}];
+	} else {
+		updateLayout();
+	}
+	
 	// Clean up everything and notify of completion
 	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
-		
-		[self updateBoundsUsingDefaultContraints];
-		[self tilePages];
-		
 		if(completion) {
 			completion();
 		}
 	});
 }
 
-- (void)_deletePageAtIndex:(NSUInteger)deletionIndex animated:(BOOL)animated completion:(void(^)())completion
+- (void)_deletePageAtIndex:(NSInteger)deletionIndex animated:(BOOL)animated completion:(void(^)())completion
 {
 	NSAssert(deletionIndex < self.numberOfPages, @"Index out of bounds");
 	
-	NSUInteger oldNumberOfPages = self.numberOfPages;
+	NSInteger oldNumberOfPages = self.numberOfPages;
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
 	
 	NSAssert((self.numberOfPages == oldNumberOfPages - 1), @"The number of pages after removal is equal to the one before");
@@ -1065,17 +1101,16 @@
 	// Animate the deletion
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageDeletionAtIndex:viewController:pageViewController:completion:)]) {
 		dispatch_group_enter(animationsDispatchGroup);
-		
 		[self.layouter animatePageDeletionAtIndex:deletionIndex viewController:viewController pageViewController:self completion:^{
 			dispatch_group_leave(animationsDispatchGroup);
 		}];
 	}
 	
 	// Animate page movements
-	BOOL shouldAdjustOffset = (deletionIndex <= self.currentPage);
+	BOOL shouldAdjustOffset = (deletionIndex < self.currentPage);
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageMoveFromIndex:toIndex:viewController:pageViewController:completion:)]) {
 		if(shouldAdjustOffset) {
-			for(NSInteger pageIndex = (NSInteger)(deletionIndex - 1); (NSInteger)pageIndex >= 0; pageIndex--) {
+			for(NSInteger pageIndex = (deletionIndex - 1); pageIndex >= 0; pageIndex--) {
 				
 				UIViewController *someController = [self viewControllerForPageAtIndex:pageIndex];
 				
@@ -1100,11 +1135,15 @@
 	
 	// Update page indexes
 	[self.pages removeObjectAtIndex:deletionIndex];
+	[self.visibleControllers removeObject:viewController];
 	
-	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
+	// Update the content offset and pages layout
+	void (^updateLayout)() = ^{
 		
-		// Update the scrollView's offset
+		self.scrollView.delegate = nil;
+		
 		if(shouldAdjustOffset) {
+			
 			CGRect frame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
 			
 			if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
@@ -1118,15 +1157,32 @@
 			}
 		}
 		
+		[self _updateBoundsAndConstraints];
+		[self _tilePagesAnimated:animated];
+		
+		self.scrollView.delegate = self;
+	};
+	
+	if(animated) {
+		dispatch_group_enter(animationsDispatchGroup);
+		[UIView animateWithDuration:0.25f delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+			updateLayout();
+		} completion:^(BOOL finished) {
+			dispatch_group_leave(animationsDispatchGroup);
+		}];
+	} else {
+		updateLayout();
+	}
+	
+	// Cleanup and notify of completion
+	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
+		
 		[viewController.view removeFromSuperview];
 		if([self.visibleViewControllers containsObject:viewController]) {
 			[viewController endAppearanceTransition];
 		}
 		
 		[viewController removeFromParentViewController];
-		
-		[self updateBoundsUsingDefaultContraints];
-		[self tilePages];
 		
 		if(completion) {
 			completion();
@@ -1217,8 +1273,8 @@
 	}
 	
 	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
-		[self updateBoundsUsingDefaultContraints];
-		[self tilePages];
+		[self _updateBoundsAndConstraints];
+		[self _tilePagesAnimated:NO];
 		
 		if(completion) {
 			completion();

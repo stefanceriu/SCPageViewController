@@ -23,15 +23,11 @@
 		self.numberOfPagesToPreloadBeforeCurrentPage = 1;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 1;
 		
+		self.navigationType = SCPageLayouterNavigationTypeVertical;
 		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
 	}
 	
 	return self;
-}
-
-- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
-{
-	return UIEdgeInsetsZero;
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index

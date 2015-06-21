@@ -83,31 +83,9 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 
 #pragma mark - SCPageViewControllerDelegate
 
-- (void)pageViewController:(SCPageViewController *)pageViewController didShowViewController:(SCMainViewController *)controller atIndex:(NSUInteger)index
-{
-	[controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %lu of %lu", (unsigned long)index + 1, (unsigned long)pageViewController.numberOfPages]];
-	
-	[controller setEasingFunctionType:self.selectedEasingFunctionType];
-	[controller setDuration:self.pageViewController.animationDuration];
-	
-	static NSDictionary *layouterToType;
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		layouterToType = (@{NSStringFromClass([SCPageLayouter class])         : @(SCPageLayouterTypePlain),
-							NSStringFromClass([SCSlidingPageLayouter class])  : @(SCPageLayouterTypeSliding),
-							NSStringFromClass([SCParallaxPageLayouter class]) : @(SCPageLayouterTypeParallax),
-							NSStringFromClass([SCCardsPageLayouter class])    : @(SCPageLayouterTypeCards),
-							NSStringFromClass([SCSafariPageLayouter class])   : @(SCPageLayouterTypeSafari)});
-	});
-	
-	[controller setLayouterType:(SCPageLayouterType)[layouterToType[NSStringFromClass([self.pageViewController.layouter class])] unsignedIntegerValue]];
-}
-
 - (void)pageViewController:(SCPageViewController *)pageViewController didNavigateToOffset:(CGPoint)offset
 {
-	for(SCMainViewController *menuViewController in pageViewController.visibleViewControllers) {
-		[menuViewController.visiblePercentageLabel setText:[NSString stringWithFormat:@"%.2f%%", [pageViewController visiblePercentageForViewController:menuViewController]]];
-	}
+	[self _updateViewControllerDetails];
 }
 
 #pragma mark - SCMainViewControllerDelegate
@@ -126,12 +104,16 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 	
 	id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(mainViewController.layouterType)] alloc] init];
 	[self.pageViewController setLayouter:pageLayouter animated:YES completion:nil];
+	
+	[self _updateViewControllerDetails];
 }
 
 - (void)mainViewControllerDidChangeAnimationType:(SCMainViewController *)mainViewController
 {
 	[self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:mainViewController.easingFunctionType]];
 	self.selectedEasingFunctionType = mainViewController.easingFunctionType;
+	
+	[self _updateViewControllerDetails];
 }
 
 - (void)mainViewControllerDidChangeAnimationDuration:(SCMainViewController *)mainViewController
@@ -151,33 +133,33 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 
 - (void)mainViewControllerDidRequestPageInsertion:(SCMainViewController *)mainViewController
 {
-	[self insertPageAtIndex:[self.viewControllers indexOfObject:mainViewController]];
+	[self _insertPageAtIndex:[self.viewControllers indexOfObject:mainViewController]];
 	
-	//	[self movePageFromIndex:self.numberOfPages - 1 toIndex:0];
-	//	[self movePageFromIndex:0 toIndex:self.numberOfPages - 1];
+	[self _updateViewControllerDetails];
 }
 
 - (void)mainViewControllerDidRequestPageDeletion:(SCMainViewController *)mainViewController
 {
-	[self deletePageAtIndex:[self.viewControllers indexOfObject:mainViewController] + 1];
+	[self _deletePageAtIndex:[self.viewControllers indexOfObject:mainViewController]];
 	
-	//	[self movePageFromIndex:self.numberOfPages - 1 toIndex:0];
-	//	[self movePageFromIndex:0 toIndex:self.numberOfPages - 1];
+	[self _updateViewControllerDetails];
 }
 
-- (void)insertPageAtIndex:(NSUInteger)index
+#pragma mark - Private
+
+- (void)_insertPageAtIndex:(NSUInteger)index
 {
 	[self.viewControllers insertObject:[NSNull null] atIndex:index];
 	[self.pageViewController insertPageAtIndex:index animated:YES completion:nil];
 }
 
-- (void)deletePageAtIndex:(NSUInteger)index
+- (void)_deletePageAtIndex:(NSUInteger)index
 {
 	[self.viewControllers removeObjectAtIndex:index];
 	[self.pageViewController deletePageAtIndex:index animated:YES completion:nil];
 }
 
-- (void)movePageFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)_movePageFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
 	UIViewController *viewController = [self.viewControllers objectAtIndex:fromIndex];
 	[self.viewControllers removeObjectAtIndex:fromIndex];
@@ -186,17 +168,35 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 	[self.pageViewController movePageAtIndex:fromIndex toIndex:toIndex animated:YES completion:nil];
 }
 
-- (void)reloadPageAtIndex:(NSUInteger)index
+- (void)_reloadPageAtIndex:(NSUInteger)index
 {
 	[self.viewControllers replaceObjectAtIndex:index withObject:[NSNull null]];
 	[self.pageViewController reloadPageAtIndex:index animated:YES completion:nil];
 }
 
-#pragma mark - Rotation Handling
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+- (void)_updateViewControllerDetails
 {
-	return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
+	[self.viewControllers enumerateObjectsUsingBlock:^(SCMainViewController *controller, NSUInteger index, BOOL *stop) {
+		
+		[controller.visiblePercentageLabel setText:[NSString stringWithFormat:@"%.2f%%", [self.pageViewController visiblePercentageForViewController:controller]]];
+		
+		[controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %lu of %lu", (unsigned long)index, (unsigned long)self.pageViewController.numberOfPages]];
+		
+		[controller setEasingFunctionType:self.selectedEasingFunctionType];
+		[controller setDuration:self.pageViewController.animationDuration];
+		
+		static NSDictionary *layouterToType;
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			layouterToType = (@{NSStringFromClass([SCPageLayouter class])         : @(SCPageLayouterTypePlain),
+								NSStringFromClass([SCSlidingPageLayouter class])  : @(SCPageLayouterTypeSliding),
+								NSStringFromClass([SCParallaxPageLayouter class]) : @(SCPageLayouterTypeParallax),
+								NSStringFromClass([SCCardsPageLayouter class])    : @(SCPageLayouterTypeCards),
+								NSStringFromClass([SCSafariPageLayouter class])   : @(SCPageLayouterTypeSafari)});
+		});
+		
+		[controller setLayouterType:(SCPageLayouterType)[layouterToType[NSStringFromClass([self.pageViewController.layouter class])] unsignedIntegerValue]];
+	}];
 }
 
 @end

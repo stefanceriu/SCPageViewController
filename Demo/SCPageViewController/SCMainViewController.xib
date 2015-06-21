@@ -19,42 +19,21 @@
             <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" id="G5E-G0-ono" userLabel="Content View">
+                <view clipsSubviews="YES" contentMode="scaleToFill" id="G5E-G0-ono" userLabel="Content View">
                     <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <subviews>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="50%" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" id="Kco-cs-Z9q" userLabel="Visible percentage label">
-                            <rect key="frame" x="568" y="20" width="180" height="47"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" id="in5-kv-W97" userLabel="Page Number Label">
+                            <rect key="frame" x="8" y="207" width="752" height="47"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="24"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                             <color key="shadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             <size key="shadowOffset" width="0.0" height="1"/>
                         </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" id="in5-kv-W97" userLabel="Page Number Label">
-                            <rect key="frame" x="20" y="20" width="339" height="47"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="24"/>
-                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <nil key="highlightedColor"/>
-                            <color key="shadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            <size key="shadowOffset" width="0.0" height="1"/>
-                        </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="X2I-WC-Dth">
-                            <rect key="frame" x="259" y="820" width="100" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
-                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="12"/>
-                            <state key="normal" title="Insert Page">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="onInsertButtonTap:" destination="-1" eventType="touchUpInside" id="4ZP-2D-4EB"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="A5j-rQ-cHS">
-                            <rect key="frame" x="568" y="924" width="200" height="100"/>
+                            <rect key="frame" x="668" y="944" width="100" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="18"/>
@@ -67,7 +46,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="0gH-7a-Qwm">
-                            <rect key="frame" x="0.0" y="924" width="200" height="100"/>
+                            <rect key="frame" x="0.0" y="944" width="100" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="18"/>
@@ -79,18 +58,6 @@
                                 <action selector="onPreviousButtonTap:" destination="-1" eventType="touchUpInside" id="YOW-Uv-1hO"/>
                             </connections>
                         </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="zUc-Ji-ZD9">
-                            <rect key="frame" x="409" y="820" width="100" height="30"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
-                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="12"/>
-                            <state key="normal" title="Delete Page">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="onDeleteButtonTap:" destination="-1" eventType="touchUpInside" id="t2H-Ge-ink"/>
-                            </connections>
-                        </button>
                         <pickerView contentMode="scaleToFill" id="kMv-Wb-rnL">
                             <rect key="frame" x="0.0" y="404" width="768" height="216"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
@@ -100,6 +67,39 @@
                                 <outlet property="delegate" destination="-1" id="eRD-bc-4dS"/>
                             </connections>
                         </pickerView>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="rXB-2w-3Gl">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="80"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="12"/>
+                            <state key="normal" title="Delete Page">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="onDeleteButtonTap:" destination="-1" eventType="touchUpInside" id="tnY-7T-WNh"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="gJF-ab-b7I">
+                            <rect key="frame" x="668" y="0.0" width="100" height="80"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="12"/>
+                            <state key="normal" title="Insert Page">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="onInsertButtonTap:" destination="-1" eventType="touchUpInside" id="V0g-ct-Qkq"/>
+                            </connections>
+                        </button>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" id="Kco-cs-Z9q" userLabel="Visible percentage label">
+                            <rect key="frame" x="8" y="770" width="752" height="47"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="24"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                            <color key="shadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <size key="shadowOffset" width="0.0" height="1"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </view>

@@ -10,7 +10,7 @@
 
 @implementation SCParallaxPageLayouter
 
-- (id)init
+- (instancetype)init
 {
 	if(self = [super init]) {
 		self.interItemSpacing = 0.0f;

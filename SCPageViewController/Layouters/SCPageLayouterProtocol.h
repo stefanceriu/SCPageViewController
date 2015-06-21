@@ -51,13 +51,6 @@ typedef enum {
 @property (nonatomic, assign) NSUInteger numberOfPagesToPreloadAfterCurrentPage;
 
 
-/** Defines the empty space useds before and after pages
- * Based on the navigationType the pageController only uses a pair (top/bottom,
- * left/right)
- */
-- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
-
-
 /** Returns the final frame for the given view controller
  *
  * @param index The index of the view controller in the PageViewController's children array
@@ -90,9 +83,29 @@ typedef enum {
 
 @optional
 
+
+/** Defines the empty space useds before and after pages
+ * Based on the navigationType the pageController only uses a pair (top/bottom,
+ * left/right)
+ *
+ * @param pageViewController the calling page view controller
+ * 
+ * @return the insets to be used
+ */
+- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
+
+
+/** Defines the z position which should be used when laying out the given view controller
+ * Defaults to the inverse of the page order
+ *
+ * @param viewController the view controller to return the position for
+ * @param index the page index for the given view controller
+ * @param pageViewController the calling page view controller
+ *
+ * @return the index the view controller we be places at in the view hierarchy
+ */
 - (NSUInteger)zPositionForViewController:(UIViewController *)viewController
 							   withIndex:(NSUInteger)index
-						   numberOfPages:(NSUInteger)numberOfPages
 					inPageViewController:(SCPageViewController *)pageViewController;
 
 

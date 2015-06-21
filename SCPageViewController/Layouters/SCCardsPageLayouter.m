@@ -17,7 +17,7 @@
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize navigationConstraintType;
 
-- (id)init
+- (instancetype)init
 {
 	if(self = [super init]) {
 		self.interItemSpacing = 20.0f;
