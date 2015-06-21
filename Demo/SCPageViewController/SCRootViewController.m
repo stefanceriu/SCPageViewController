@@ -178,6 +178,10 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 {
 	[self.viewControllers enumerateObjectsUsingBlock:^(SCMainViewController *controller, NSUInteger index, BOOL *stop) {
 		
+		if([controller isEqual:[NSNull null]]) {
+			return;
+		}
+		
 		[controller.visiblePercentageLabel setText:[NSString stringWithFormat:@"%.2f%%", [self.pageViewController visiblePercentageForViewController:controller]]];
 		
 		[controller.pageNumberLabel setText:[NSString stringWithFormat:@"Page %lu of %lu", (unsigned long)index, (unsigned long)self.pageViewController.numberOfPages]];
