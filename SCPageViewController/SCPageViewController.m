@@ -924,7 +924,7 @@ static NSUInteger oldCurrentPage;
 											 inPageViewController:self];
 		}
 		
-		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %d", pageIndex);
+		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %lu", pageIndex);
 		[pageDetails setZPosition:zPosition];
 	}];
 	

@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Stefan Ceriu. All rights reserved.
 //
 
+@import UIKit;
+
 @protocol SCPageViewControllerViewDelegate;
 
 @interface SCPageViewControllerView : UIView

@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
+@import UIKit;
+
 typedef enum {
     SCShadowEdgeNone   = 0,
     SCShadowEdgeTop    = 1 << 0,
