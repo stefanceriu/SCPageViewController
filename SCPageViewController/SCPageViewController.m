@@ -772,7 +772,14 @@ static NSUInteger oldCurrentPage;
 
 - (NSUInteger)_calculateCurrentPage
 {
-	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
+	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
+	
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"zPosition" ascending:NO];
+	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
+	
+	for(NSUInteger i = 0; i < sortedPages.count; i++) {
+		
+		NSUInteger pageIndex = [self.pages indexOfObject:sortedPages[i]];
 		
 		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
 		CGPoint centerOffset = [self.view convertPoint:self.view.center toView:self.scrollView];
