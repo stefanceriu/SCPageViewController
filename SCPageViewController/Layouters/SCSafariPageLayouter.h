@@ -8,11 +8,10 @@
 
 #import "SCPageLayouter.h"
 
+/**
+ * A SCPageLayouter subclass zooms and tilts the pages
+ * similar to the Safari tab switcher on iPhones
+ */
 @interface SCSafariPageLayouter : SCPageLayouter
-
-@property (nonatomic, assign) CGSize pageSize;
-@property (nonatomic, assign) UIEdgeInsets contentInset;
-
-@property (nonatomic, assign) CGFloat pagePercentage;
 
 @end

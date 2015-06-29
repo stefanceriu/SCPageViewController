@@ -8,6 +8,10 @@
 
 #import "SCPageLayouter.h"
 
+/**
+ * A SCPageLayouter subclass that adds a sliding effect
+ * when navigating between pages
+ */
 @interface SCSlidingPageLayouter : SCPageLayouter
 
 @end

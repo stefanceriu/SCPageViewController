@@ -8,10 +8,7 @@
 
 #import "SCCardsPageLayouter.h"
 
-
-
 @implementation SCCardsPageLayouter
-@synthesize interItemSpacing;
 @synthesize navigationType;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
@@ -20,7 +17,6 @@
 - (instancetype)init
 {
 	if(self = [super init]) {
-		self.interItemSpacing = 20.0f;
 		
 		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
@@ -42,6 +38,20 @@
 	return UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
 }
 
+- (CGFloat)interItemSpacingForPageViewController:(SCPageViewController *)pageViewController
+{
+	switch (self.navigationType) {
+		case SCPageLayouterNavigationTypeHorizontal: {
+			self.interItemSpacing = CGRectGetWidth(pageViewController.view.bounds)/100.0f;
+		}
+		case SCPageLayouterNavigationTypeVertical: {
+			self.interItemSpacing = CGRectGetHeight(pageViewController.view.bounds)/100.0f;
+		}
+	}
+	
+	return self.interItemSpacing;
+}
+
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 			  inPageViewController:(SCPageViewController *)pageViewController
 {
@@ -58,15 +68,6 @@
 	}
 	
 	return frame;
-}
-
-- (CGRect)currentFrameForViewController:(UIViewController *)viewController
-							  withIndex:(NSUInteger)index
-						  contentOffset:(CGPoint)contentOffset
-							 finalFrame:(CGRect)finalFrame
-				   inPageViewController:(SCPageViewController *)pageViewController;
-{
-	return finalFrame;
 }
 
 @end

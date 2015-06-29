@@ -8,6 +8,11 @@
 
 #import "SCPageLayouter.h"
 
+/**
+ * A SCPageLayouter subclass that shrinks the page sizes
+ * to a percentage of the page view controller bounds and
+ * centers them on screen
+ */
 @interface SCCardsPageLayouter : SCPageLayouter
 
 @property (nonatomic, assign) CGFloat pagePercentage;

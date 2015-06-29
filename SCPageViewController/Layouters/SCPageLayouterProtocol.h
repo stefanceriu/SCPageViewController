@@ -14,21 +14,26 @@
  * effects at each point of the transition.
  */
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, SCPageLayouterNavigationType) {
 	SCPageLayouterNavigationTypeHorizontal,
 	SCPageLayouterNavigationTypeVertical,
-} SCPageLayouterNavigationType;
+};
 
 /** Navigation contraint types that can be used used when continuous
  * navigation is disabled
  */
-typedef enum {
+typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 	SCPageLayouterNavigationContraintTypeNone = 0,
 	SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
 	SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
-} SCPageLayouterNavigationContraintType;
+};
 
 
+/**
+ * The page layouter protocol specifies the required and optional methods that define
+ * how pages are layed out on screen and how they are animated while performing
+ * incremental updates
+ */
 @protocol SCPageLayouterProtocol <NSObject>
 
 /** Defines the direction the pages are layed out */
@@ -37,10 +42,6 @@ typedef enum {
 
 /** Defines when the page view controller should enforce page bounds while navigating */
 @property (nonatomic, assign) SCPageLayouterNavigationContraintType navigationConstraintType;
-
-
-/** Defines the spacing between each page */
-@property (nonatomic, assign) CGFloat interItemSpacing;
 
 
 /** The number of pages to preload and add to the page view controller before the current page */
@@ -63,6 +64,28 @@ typedef enum {
 			  inPageViewController:(SCPageViewController *)pageViewController;
 
 
+@optional
+
+/** The amount of space in between each page
+ *
+ * @param pageViewController the calling page view controller
+ *
+ * @return the spacing to be used
+ */
+- (CGFloat)interItemSpacingForPageViewController:(SCPageViewController *)pageViewController;
+
+
+/** Defines the empty space useds before and after pages
+ * Based on the navigationType the pageController only uses a pair (top/bottom,
+ * left/right)
+ *
+ * @param pageViewController the calling page view controller
+ *
+ * @return the insets to be used
+ */
+- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
+
+
 /** Returns the intermediate frame for the given view controller and current
  * offset
  *
@@ -79,20 +102,6 @@ typedef enum {
 						  contentOffset:(CGPoint)contentOffset
 							 finalFrame:(CGRect)finalFrame
 				   inPageViewController:(SCPageViewController *)pageViewController;
-
-
-@optional
-
-
-/** Defines the empty space useds before and after pages
- * Based on the navigationType the pageController only uses a pair (top/bottom,
- * left/right)
- *
- * @param pageViewController the calling page view controller
- * 
- * @return the insets to be used
- */
-- (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Defines the z position which should be used when laying out the given view controller
@@ -123,7 +132,6 @@ typedef enum {
 - (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
 										  withIndex:(NSUInteger)index
 									  contentOffset:(CGPoint)contentOffset
-										 finalFrame:(CGRect)finalFrame
 							   inPageViewController:(SCPageViewController *)pageViewController;
 
 

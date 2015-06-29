@@ -10,15 +10,6 @@
 
 @implementation SCParallaxPageLayouter
 
-- (instancetype)init
-{
-	if(self = [super init]) {
-		self.interItemSpacing = 0.0f;
-	}
-	
-	return self;
-}
-
 - (CGRect)currentFrameForViewController:(UIViewController *)viewController
 							  withIndex:(NSUInteger)index
 						  contentOffset:(CGPoint)contentOffset

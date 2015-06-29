@@ -14,6 +14,10 @@
 
 @protocol SCEasingFunctionProtocol;
 
+/** SCPageViewController is a container view controller which allows 
+ * you to paginate other view controllers and build custom transitions
+ * between them while providing correct physics and appearance calls.
+ */
 @interface SCPageViewController : UIViewController
 
 /**
@@ -68,7 +72,14 @@
 
 
 /** Pass the layouter the pageController should use for the pages */
-- (void)setLayouter:(id<SCPageLayouterProtocol>)layoyter
+- (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
+		   animated:(BOOL)animated
+		 completion:(void(^)())completion;
+
+
+/** Pass the layouter the pageController should use for the pages */
+- (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
+	andFocusOnIndex:(NSUInteger)pageIndex
 		   animated:(BOOL)animated
 		 completion:(void(^)())completion;
 
@@ -215,7 +226,9 @@
 @end
 
 
-
+/**
+ * The page view controller's dataSource protocol
+ */
 @protocol SCPageViewControllerDataSource <NSObject>
 
 /**
@@ -237,7 +250,9 @@
 @end
 
 
-
+/**
+ * The page view controller's delegate protocol
+ */
 @protocol SCPageViewControllerDelegate <NSObject>
 
 @optional

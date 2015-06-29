@@ -10,6 +10,9 @@
 
 @protocol SCPageViewControllerViewDelegate;
 
+/** A custom view used inside the page view controller
+ * which notifies it about impending frame changes
+ */
 @interface SCPageViewControllerView : UIView
 
 @property (nonatomic, weak) id<SCPageViewControllerViewDelegate> delegate;

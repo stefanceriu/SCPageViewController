@@ -8,8 +8,15 @@
 
 #import "SCSafariPageLayouter.h"
 
+@interface SCSafariPageLayouter ()
+
+@property (nonatomic, assign) CGFloat pagePercentage;
+
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+
+@end
+
 @implementation SCSafariPageLayouter
-@synthesize interItemSpacing;
 @synthesize navigationType;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
@@ -18,16 +25,14 @@
 - (instancetype)init
 {
 	if(self = [super init]) {
-		self.interItemSpacing = -300.0f;
+
+		self.navigationType = SCPageLayouterNavigationTypeVertical;
+		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeNone;
 		
 		self.numberOfPagesToPreloadBeforeCurrentPage = 5;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 5;
 		
-		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
-		
 		self.pagePercentage = 0.5f;
-		
-		self.navigationType = SCPageLayouterNavigationTypeVertical;
 	}
 	
 	return self;
@@ -35,27 +40,35 @@
 
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
 {
-	if(UIEdgeInsetsEqualToEdgeInsets(UIEdgeInsetsZero, self.contentInset)) {
-		CGRect frame = pageViewController.view.bounds;
-		CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage;
-		CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage;
-		
-		self.contentInset = UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
-	}
+	CGRect frame = pageViewController.view.bounds;
+	CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage;
+	CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage;
+	
+	self.contentInset = UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
 	
 	return self.contentInset;
+}
+
+- (CGFloat)interItemSpacingForPageViewController:(SCPageViewController *)pageViewController
+{
+	switch (self.navigationType) {
+		case SCPageLayouterNavigationTypeHorizontal: {
+			self.interItemSpacing = -CGRectGetWidth(pageViewController.view.bounds)/3.0f;
+		}
+		case SCPageLayouterNavigationTypeVertical: {
+			self.interItemSpacing = -CGRectGetHeight(pageViewController.view.bounds)/3.0f;
+		}
+	}
+	
+	return self.interItemSpacing;
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 			  inPageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
-	if(CGSizeEqualToSize(CGSizeZero, self.pageSize)) {
-		frame.size.height = frame.size.height * self.pagePercentage;
-		frame.size.width = frame.size.width * self.pagePercentage;
-	} else {
-		frame.size = self.pageSize;
-	}
+	frame.size.height = frame.size.height * self.pagePercentage;
+	frame.size.width = frame.size.width * self.pagePercentage;
 	
 	if(self.navigationType == SCPageLayouterNavigationTypeVertical) {
 		frame.origin.y = index * (CGRectGetHeight(frame) + self.interItemSpacing);
@@ -68,15 +81,6 @@
 	return frame;
 }
 
-- (CGRect)currentFrameForViewController:(UIViewController *)viewController
-							  withIndex:(NSUInteger)index
-						  contentOffset:(CGPoint)contentOffset
-							 finalFrame:(CGRect)finalFrame
-				   inPageViewController:(SCPageViewController *)pageViewController;
-{
-	return finalFrame;
-}
-
 - (NSUInteger)zPositionForViewController:(UIViewController *)viewController
 							   withIndex:(NSUInteger)index
 					inPageViewController:(SCPageViewController *)pageViewController
@@ -87,7 +91,6 @@
 - (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
 										  withIndex:(NSUInteger)index
 									  contentOffset:(CGPoint)contentOffset
-										 finalFrame:(CGRect)finalFrame
 							   inPageViewController:(SCPageViewController *)pageViewController
 {
 	return [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:contentOffset];

@@ -8,9 +8,12 @@
 
 #import "SCPageLayouter.h"
 
+@interface SCPageLayouter ()
+
+@end
+
 @implementation SCPageLayouter
 @synthesize navigationType;
-@synthesize interItemSpacing;
 @synthesize numberOfPagesToPreloadBeforeCurrentPage;
 @synthesize numberOfPagesToPreloadAfterCurrentPage;
 @synthesize navigationConstraintType;
@@ -18,16 +21,20 @@
 - (id)init
 {
 	if(self = [super init]) {
-		self.interItemSpacing = 50.0f;
+		
+		self.navigationType = SCPageLayouterNavigationTypeHorizontal;
+		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
 		
 		self.numberOfPagesToPreloadBeforeCurrentPage = 1;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 1;
-		
-		self.navigationType = SCPageLayouterNavigationTypeVertical;
-		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
 	}
 	
 	return self;
+}
+
+- (CGFloat)interItemSpacingForPageViewController:(SCPageViewController *)pageViewController
+{
+	return self.interItemSpacing;
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
@@ -42,15 +49,6 @@
 	}
 	
 	return frame;
-}
-
-- (CGRect)currentFrameForViewController:(UIViewController *)viewController
-							  withIndex:(NSUInteger)index
-						  contentOffset:(CGPoint)contentOffset
-							 finalFrame:(CGRect)finalFrame
-				   inPageViewController:(SCPageViewController *)pageViewController;
-{
-	return finalFrame;
 }
 
 - (void)animatePageReloadAtIndex:(NSUInteger)index

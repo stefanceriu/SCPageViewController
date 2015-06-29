@@ -46,16 +46,13 @@ static const NSUInteger kDefaultNumberOfPages = 4;
 	[self.pageViewController setDataSource:self];
 	[self.pageViewController setDelegate:self];
 	
-	[self.pageViewController willMoveToParentViewController:self];
-	[self.pageViewController.view setFrame:self.view.bounds];
-	[self.view addSubview:self.pageViewController.view];
-	[self addChildViewController:self.pageViewController];
-	
 	[self.pageViewController setLayouter:[[SCPageLayouter alloc] init] animated:NO completion:nil];
 	[self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];
 	
-	[self.pageViewController setPagingEnabled:YES];
-	[self.pageViewController setContinuousNavigationEnabled:YES];
+	[self addChildViewController:self.pageViewController];
+	[self.pageViewController.view setFrame:self.view.bounds];
+	[self.view addSubview:self.pageViewController.view];
+	[self.pageViewController didMoveToParentViewController:self];
 }
 
 #pragma mark - SCPageViewControllerDataSource
