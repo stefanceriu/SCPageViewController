@@ -327,6 +327,23 @@
 	return pageDetails.viewController;
 }
 
+- (NSUInteger)pageIndexForViewController:(UIViewController *)viewController
+{
+	NSUInteger pageIndex = NSNotFound;
+	
+	for(SCPageViewControllerPageDetails *details in self.pages) {
+		if([details isEqual:[NSNull null]]) {
+			continue;
+		}
+		
+		if([details.viewController isEqual:viewController]) {
+			return [self.pages indexOfObject:details];
+		}
+	}
+	
+	return pageIndex;
+}
+
 #pragma mark - Navigational Constraints
 
 - (void)_updateBoundsAndConstraints

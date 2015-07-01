@@ -91,6 +91,13 @@
 - (UIViewController *)viewControllerForPageAtIndex:(NSUInteger)pageIndex;
 
 
+/**
+ * @param viewController The viewController for which to retrieve the page index
+ * @return The page index for the given view controller or NSNotFound
+ */
+- (NSUInteger)pageIndexForViewController:(UIViewController *)viewController;
+
+
 /** Currently used layouter */
 @property (nonatomic, readonly) id<SCPageLayouterProtocol> layouter;
 
