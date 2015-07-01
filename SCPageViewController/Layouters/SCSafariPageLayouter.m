@@ -64,7 +64,7 @@
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-			  inPageViewController:(SCPageViewController *)pageViewController
+				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
 	frame.size.height = frame.size.height * self.pagePercentage;
@@ -81,17 +81,15 @@
 	return frame;
 }
 
-- (NSUInteger)zPositionForViewController:(UIViewController *)viewController
-							   withIndex:(NSUInteger)index
-					inPageViewController:(SCPageViewController *)pageViewController
+- (NSUInteger)zPositionForPageAtIndex:(NSUInteger)index
+				   pageViewController:(SCPageViewController *)pageViewController
 {
 	return index;
 }
 
-- (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
-										  withIndex:(NSUInteger)index
-									  contentOffset:(CGPoint)contentOffset
-							   inPageViewController:(SCPageViewController *)pageViewController
+- (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
+								   contentOffset:(CGPoint)contentOffset
+							  pageViewController:(SCPageViewController *)pageViewController
 {
 	return [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:contentOffset];
 }
@@ -101,7 +99,7 @@
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
 	CATransform3D sublayerTransform = [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:CGPointZero];
 	
 	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
@@ -121,7 +119,7 @@
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
 	[UIView animateWithDuration:0.25f animations:^{
 		[viewController.view setFrame:CGRectOffset(finalFrame, -CGRectGetMaxX(finalFrame), 0.0f)];
 		[viewController.view setAlpha:0.0f];

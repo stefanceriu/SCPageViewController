@@ -38,7 +38,7 @@
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-			  inPageViewController:(SCPageViewController *)pageViewController
+				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
 	
@@ -57,7 +57,7 @@
 			  pageViewController:(SCPageViewController *)pageViewController
 					  completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
 	
 	[newViewController.view setFrame:finalFrame];
 	[newViewController.view setAlpha:0.0f];
@@ -74,7 +74,7 @@
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
 	
 	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
 	[viewController.view setAlpha:0.0f];
@@ -91,7 +91,7 @@
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
 	
 	[UIView animateWithDuration:0.25f animations:^{
 		[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
@@ -107,7 +107,7 @@
 			  pageViewController:(SCPageViewController *)pageViewController
 					  completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:toIndex inPageViewController:pageViewController];
+	CGRect finalFrame = [self finalFrameForPageAtIndex:toIndex pageViewController:pageViewController];
 	
 	[UIView animateWithDuration:0.25f animations:^{
 		[viewController.view setFrame:finalFrame];

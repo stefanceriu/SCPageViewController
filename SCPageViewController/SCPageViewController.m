@@ -152,7 +152,11 @@
 		   animated:(BOOL)animated
 		 completion:(void(^)())completion
 {
-	[self setLayouter:layouter animated:animated completion:completion];
+	[self setLayouter:layouter animated:animated completion:^{
+		if(completion) {
+			completion();
+		}
+	}];
 	
 	if(animated) {
 		[UIView animateWithDuration:self.animationDuration delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
@@ -267,7 +271,7 @@
 		}
 	};
 	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+	CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
 	
 	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 		CGFloat delta = (CGRectGetHeight(self.view.bounds) - CGRectGetHeight(frame)) / 2.0f;
@@ -360,7 +364,7 @@
 		self.layouterInterItemSpacing = 0.0f;
 	}
 	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 inPageViewController:self];
+	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 pageViewController:self];
 	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 		[self.scrollView setContentInset:UIEdgeInsetsMake(self.layouterContentInset.top, 0.0f, self.layouterContentInset.bottom, 0.0f)];
 		[self.scrollView setContentSize:CGSizeMake(0, roundf(CGRectGetMaxY(frame)))];
@@ -380,7 +384,7 @@
 	
 	UIEdgeInsets insets = UIEdgeInsetsZero;
 	
-	CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage == 0 ? 0 : self.currentPage - 1)  inPageViewController:self];
+	CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage == 0 ? 0 : self.currentPage - 1)  pageViewController:self];
 	switch (self.layouter.navigationType) {
 		case SCPageLayouterNavigationTypeVertical:
 			frame.origin.x = 0.0f;
@@ -407,7 +411,7 @@
 		}
 	}
 	
-	frame = [self.layouter finalFrameForPageAtIndex:MIN(self.currentPage + 1, self.numberOfPages - 1) inPageViewController:self];
+	frame = [self.layouter finalFrameForPageAtIndex:MIN(self.currentPage + 1, self.numberOfPages - 1) pageViewController:self];
 	switch (self.layouter.navigationType) {
 		case SCPageLayouterNavigationTypeVertical:
 			frame.origin.x = 0.0f;
@@ -556,14 +560,13 @@
 		
 		NSUInteger pageIndex = [self.pages indexOfObject:details];
 		
-		CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+		CGRect finalFrame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
 		CGRect nextFrame = finalFrame;
-		if([self.layouter respondsToSelector:@selector(currentFrameForViewController:withIndex:contentOffset:finalFrame:inPageViewController:)]) {
-			nextFrame = [self.layouter currentFrameForViewController:viewController
-														   withIndex:pageIndex
-													   contentOffset:self.scrollView.contentOffset
-														  finalFrame:finalFrame
-												inPageViewController:self];
+		if([self.layouter respondsToSelector:@selector(currentFrameForPageAtIndex:contentOffset:finalFrame:pageViewController:)]) {
+			nextFrame = [self.layouter currentFrameForPageAtIndex:pageIndex
+													contentOffset:self.scrollView.contentOffset
+													   finalFrame:finalFrame
+											   pageViewController:self];
 		}
 		
 		CGRect intersection = CGRectIntersection(remainder, nextFrame);
@@ -609,11 +612,10 @@
 		}
 		
 		CATransform3D transform = CATransform3DIdentity;
-		if([self.layouter respondsToSelector:@selector(sublayerTransformForViewController:withIndex:contentOffset:inPageViewController:)]) {
-			transform = [self.layouter sublayerTransformForViewController:viewController
-																withIndex:pageIndex
-															contentOffset:self.scrollView.contentOffset
-													 inPageViewController:self];
+		if([self.layouter respondsToSelector:@selector(sublayerTransformForPageAtIndex:contentOffset:pageViewController:)]) {
+			transform = [self.layouter sublayerTransformForPageAtIndex:pageIndex
+														 contentOffset:self.scrollView.contentOffset
+													pageViewController:self];
 		}
 		
 		[self _setAnimatableSublayerTransform:transform forViewController:viewController];
@@ -758,7 +760,7 @@ static NSUInteger oldCurrentPage;
 {
 	if(self.isContentOffsetBlocked) {
 		
-		CGRect frame = CGRectIntegral([self.layouter finalFrameForPageAtIndex:oldCurrentPage inPageViewController:self]);
+		CGRect frame = CGRectIntegral([self.layouter finalFrameForPageAtIndex:oldCurrentPage pageViewController:self]);
 		
 		CGPoint offset;
 		if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
@@ -789,16 +791,32 @@ static NSUInteger oldCurrentPage;
 
 - (NSUInteger)_calculateCurrentPage
 {
-	NSArray *filteredPages = [self.pages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [NSNull null]]];
+	NSMutableArray *pages = [self.pages mutableCopy];
+	
+	for(NSUInteger i = 0; i < pages.count; i++) {
+		SCPageViewControllerPageDetails *details = pages[i];
+		
+		if([details isEqual:[NSNull null]]) {
+			SCPageViewControllerPageDetails *newDetails = [[SCPageViewControllerPageDetails alloc] init];
+			NSUInteger zPosition = pages.count - i - 1;
+			if([self.layouter respondsToSelector:@selector(zPositionForPageAtIndex:pageViewController:)]) {
+				zPosition = [self.layouter zPositionForPageAtIndex:i
+												pageViewController:self];
+			}
+			
+			[newDetails setZPosition:zPosition];
+			[pages replaceObjectAtIndex:i withObject:newDetails];
+		}
+	}
 	
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"zPosition" ascending:NO];
-	NSArray *sortedPages = [filteredPages sortedArrayUsingDescriptors:@[sortDescriptor]];
+	NSArray *sortedPages = [pages sortedArrayUsingDescriptors:@[sortDescriptor]];
 	
 	for(NSUInteger i = 0; i < sortedPages.count; i++) {
 		
-		NSUInteger pageIndex = [self.pages indexOfObject:sortedPages[i]];
+		NSUInteger pageIndex = [pages indexOfObject:sortedPages[i]];
 		
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
 		CGPoint centerOffset = [self.view convertPoint:self.view.center toView:self.scrollView];
 		
 		if(CGRectContainsPoint(frame, centerOffset)) {
@@ -834,7 +852,7 @@ static NSUInteger oldCurrentPage;
 	// Enumerate through all the pages and figure out which one contains the targeted offset
 	for(NSUInteger pageIndex = 0; pageIndex < self.numberOfPages; pageIndex ++) {
 		
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
 		
 		switch (self.layouter.navigationType) {
 			case SCPageLayouterNavigationTypeVertical:
@@ -912,10 +930,9 @@ static NSUInteger oldCurrentPage;
 	
 	[filteredPages enumerateObjectsUsingBlock:^(SCPageViewControllerPageDetails *pageDetails, NSUInteger pageIndex, BOOL *stop) {
 		NSUInteger zPosition = self.numberOfPages - [self.pages indexOfObject:pageDetails] - 1;
-		if([self.layouter respondsToSelector:@selector(zPositionForViewController:withIndex:inPageViewController:)]) {
-			zPosition = [self.layouter zPositionForViewController:pageDetails.viewController
-														withIndex:[self.pages indexOfObject:pageDetails]
-											 inPageViewController:self];
+		if([self.layouter respondsToSelector:@selector(zPositionForPageAtIndex:pageViewController:)]) {
+			zPosition = [self.layouter zPositionForPageAtIndex:[self.pages indexOfObject:pageDetails]
+											pageViewController:self];
 		}
 		
 		NSAssert(zPosition < (NSInteger)self.numberOfPages, @"Invalid zPosition for page at index %lu", (unsigned long)pageIndex);
@@ -966,9 +983,9 @@ static NSUInteger oldCurrentPage;
 	
 	[page.view setAutoresizingMask:UIViewAutoresizingNone];
 	if(self.isAnimatingLayouterChange) {
-		[page.view setFrame:[self.previousLayouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]];
+		[page.view setFrame:[self.previousLayouter finalFrameForPageAtIndex:pageIndex pageViewController:self]];
 	} else {
-		[page.view setFrame:[self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self]];
+		[page.view setFrame:[self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self]];
 	}
 	[self.scrollView addSubview:page.view];
 	
@@ -1058,7 +1075,7 @@ static NSUInteger oldCurrentPage;
 			for(NSInteger pageIndex = (insertionIndex - 1); pageIndex >= 0; pageIndex--) {
 				UIViewController *someController = [self viewControllerForPageAtIndex:pageIndex];
 				
-				CGRect frameForAnimation = [self.layouter finalFrameForPageAtIndex:(pageIndex + 1) inPageViewController:self];
+				CGRect frameForAnimation = [self.layouter finalFrameForPageAtIndex:(pageIndex + 1) pageViewController:self];
 				[someController.view setFrame:frameForAnimation];
 				
 				dispatch_group_enter(animationsDispatchGroup);
@@ -1093,7 +1110,7 @@ static NSUInteger oldCurrentPage;
 		self.scrollView.delegate = nil;
 		
 		if(shouldAdjustOffset) {
-			CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage + 1) inPageViewController:self];
+			CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage + 1) pageViewController:self];
 			
 			if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 				CGPoint offset = self.scrollView.contentOffset;
@@ -1164,7 +1181,7 @@ static NSUInteger oldCurrentPage;
 				
 				UIViewController *someController = [self viewControllerForPageAtIndex:pageIndex];
 				
-				CGRect frameForAnimation = [self.layouter finalFrameForPageAtIndex:pageIndex inPageViewController:self];
+				CGRect frameForAnimation = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
 				[someController.view setFrame:frameForAnimation];
 				
 				dispatch_group_enter(animationsDispatchGroup);
@@ -1193,7 +1210,7 @@ static NSUInteger oldCurrentPage;
 		
 		if(shouldAdjustOffset) {
 			
-			CGRect frame = [self.layouter finalFrameForPageAtIndex:self.currentPage inPageViewController:self];
+			CGRect frame = [self.layouter finalFrameForPageAtIndex:self.currentPage pageViewController:self];
 			
 			if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 				CGPoint offset = self.scrollView.contentOffset;
@@ -1297,7 +1314,7 @@ static NSUInteger oldCurrentPage;
 	
 	// Update the scrollView's offset
 	if(shouldAdjustOffset) {
-		CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage) inPageViewController:self];
+		CGRect frame = [self.layouter finalFrameForPageAtIndex:(self.currentPage) pageViewController:self];
 		
 		if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 			CGPoint offset = self.scrollView.contentOffset;

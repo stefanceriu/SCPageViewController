@@ -61,7 +61,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  *
  */
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-			  inPageViewController:(SCPageViewController *)pageViewController;
+				pageViewController:(SCPageViewController *)pageViewController;
 
 
 @optional
@@ -97,11 +97,10 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The frame for the viewController's view
  *
  */
-- (CGRect)currentFrameForViewController:(UIViewController *)viewController
-							  withIndex:(NSUInteger)index
-						  contentOffset:(CGPoint)contentOffset
-							 finalFrame:(CGRect)finalFrame
-				   inPageViewController:(SCPageViewController *)pageViewController;
+- (CGRect)currentFrameForPageAtIndex:(NSUInteger)index
+					   contentOffset:(CGPoint)contentOffset
+						  finalFrame:(CGRect)finalFrame
+				  pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Defines the z position which should be used when laying out the given view controller
@@ -113,9 +112,8 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  *
  * @return the index the view controller we be places at in the view hierarchy
  */
-- (NSUInteger)zPositionForViewController:(UIViewController *)viewController
-							   withIndex:(NSUInteger)index
-					inPageViewController:(SCPageViewController *)pageViewController;
+- (NSUInteger)zPositionForPageAtIndex:(NSUInteger)index
+				   pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Returns the view controller sublayer transformation that should be used
@@ -129,10 +127,9 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The sublayer transformation to be applied
  *
  */
-- (CATransform3D)sublayerTransformForViewController:(UIViewController *)viewController
-										  withIndex:(NSUInteger)index
-									  contentOffset:(CGPoint)contentOffset
-							   inPageViewController:(SCPageViewController *)pageViewController;
+- (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
+								   contentOffset:(CGPoint)contentOffset
+							  pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Method that the pageController calls when its scrollView scrolls

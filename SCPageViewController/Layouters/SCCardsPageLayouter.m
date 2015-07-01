@@ -53,7 +53,7 @@
 }
 
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-			  inPageViewController:(SCPageViewController *)pageViewController
+				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
 	frame.size.height = frame.size.height * self.pagePercentage;
