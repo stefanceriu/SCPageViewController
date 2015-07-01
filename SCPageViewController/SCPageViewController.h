@@ -129,6 +129,12 @@
 
 
 /**
+ * The current content offset in the page view controller's scroll view
+ */
+@property (nonatomic, readonly) CGPoint contentOffset;
+
+
+/**
  * The total number of pages the page view controllers holds at any given time
  */
 @property (nonatomic, readonly) NSUInteger numberOfPages;

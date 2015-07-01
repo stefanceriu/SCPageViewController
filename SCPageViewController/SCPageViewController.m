@@ -56,6 +56,7 @@
 @end
 
 @implementation SCPageViewController
+@dynamic contentOffset;
 @dynamic bounces;
 @dynamic touchRefusalArea;
 @dynamic showsScrollIndicators;
