@@ -68,6 +68,7 @@
 - (void)dealloc
 {
 	[self _unblockContentOffset];
+	[self.scrollView setDelegate:nil];
 }
 
 - (instancetype)init
