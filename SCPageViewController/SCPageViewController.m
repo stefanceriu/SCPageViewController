@@ -67,7 +67,10 @@
 
 - (void)dealloc
 {
-	[self _unblockContentOffset];
+	if(self.isContentOffsetBlocked) {
+		[self.scrollView removeObserver:self forKeyPath:@"contentOffset"];
+	}
+	
 	[self.scrollView setDelegate:nil];
 }
 
