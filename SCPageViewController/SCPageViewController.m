@@ -776,8 +776,10 @@ static NSUInteger oldCurrentPage;
 			offset.y -= self.layouterContentInset.top;
 		}
 		
-		if((NSInteger)floor(offset.x) != (NSInteger)floor(self.scrollView.contentOffset.x) ||
-		   (NSInteger)floor(offset.y) != (NSInteger)floor(self.scrollView.contentOffset.y)) {
+		offset = CGPointMake((NSInteger)floorf(offset.x), (NSInteger)floorf(offset.y));
+		
+		if(offset.x != (NSInteger)floor(self.scrollView.contentOffset.x) ||
+		   offset.y != (NSInteger)floor(self.scrollView.contentOffset.y)) {
 			[self.scrollView setContentOffset:offset];
 		}
 	}
@@ -840,9 +842,11 @@ static NSUInteger oldCurrentPage;
 	} else if(velocity.x > 0.0f) {
 		nextStepOffset.x = (NSInteger)CGRectGetMaxX(finalFrame);
 	} else if(velocity.y < 0.0f) {
-		nextStepOffset.y = (NSInteger)CGRectGetMinY(finalFrame);
+		CGFloat maxOffset = self.scrollView.contentSize.height - CGRectGetHeight(self.scrollView.bounds) + self.layouterContentInset.top + self.layouterContentInset.bottom;
+		nextStepOffset.y = MIN(maxOffset, (NSInteger)CGRectGetMinY(finalFrame));
 	} else if(velocity.x < 0.0f) {
-		nextStepOffset.x = (NSInteger)CGRectGetMinX(finalFrame);
+		CGFloat maxOffset = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) + self.layouterContentInset.left + self.layouterContentInset.right;
+		nextStepOffset.x = MIN(maxOffset, (NSInteger)CGRectGetMinX(finalFrame));
 	}
 	
 	return nextStepOffset;
