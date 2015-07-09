@@ -489,7 +489,6 @@
 	}
 	
 	for (NSUInteger pageIndex = firstNeededPageIndex; pageIndex <= lastNeededPageIndex; pageIndex++) {
-		
 		UIViewController *page = [self viewControllerForPageAtIndex:pageIndex];
 		if (!page) {
 			[self _createAndInsertNewPageAtIndex:pageIndex];
@@ -1087,20 +1086,23 @@
 	
 	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
 	
+	BOOL shouldAdjustOffset = (insertionIndex <= self.currentPage);
+	
 	// Insert the new page
 	[self.pages insertObject:[NSNull null] atIndex:insertionIndex];
 	UIViewController *viewController = [self _createAndInsertNewPageAtIndex:insertionIndex];
 	
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageInsertionAtIndex:viewController:pageViewController:completion:)]) {
 		dispatch_group_enter(animationsDispatchGroup);
-		[self.layouter animatePageInsertionAtIndex:insertionIndex viewController:viewController pageViewController:self completion:^{
+		
+		NSInteger animationIndex = (shouldAdjustOffset ? insertionIndex - 1 : insertionIndex);
+		[self.layouter animatePageInsertionAtIndex:animationIndex viewController:viewController pageViewController:self completion:^{
 			dispatch_group_leave(animationsDispatchGroup);
 		}];
 	}
 	
 	// Update the content offset and pages layout
 	void (^updateLayout)() = ^{
-		BOOL shouldAdjustOffset = (insertionIndex <= self.currentPage);
 		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage + 1)];
 		}
@@ -1121,7 +1123,6 @@
 		updateLayout();
 	}
 	
-	
 	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
 		if(completion) {
 			completion();
@@ -1140,6 +1141,8 @@
 	
 	dispatch_group_t animationsDispatchGroup = dispatch_group_create();
 	
+	BOOL shouldAdjustOffset = (deletionIndex < self.currentPage);
+	
 	UIViewController *viewController = [self viewControllerForPageAtIndex:deletionIndex];
 	[viewController willMoveToParentViewController:nil];
 	if([self.visibleViewControllers containsObject:viewController]) {
@@ -1149,7 +1152,9 @@
 	// Animate the deletion
 	if(animated && [self.layouter respondsToSelector:@selector(animatePageDeletionAtIndex:viewController:pageViewController:completion:)]) {
 		dispatch_group_enter(animationsDispatchGroup);
-		[self.layouter animatePageDeletionAtIndex:deletionIndex viewController:viewController pageViewController:self completion:^{
+		
+		NSInteger animationIndex = (shouldAdjustOffset ? deletionIndex - 1 : deletionIndex);
+		[self.layouter animatePageDeletionAtIndex:animationIndex viewController:viewController pageViewController:self completion:^{
 			dispatch_group_leave(animationsDispatchGroup);
 		}];
 	}
@@ -1159,7 +1164,6 @@
 	
 	// Update the content offset and pages layout
 	void (^updateLayout)() = ^{
-		BOOL shouldAdjustOffset = (deletionIndex < self.currentPage);
 		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage - 1)];
 		}

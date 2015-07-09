@@ -37,7 +37,7 @@
 	return self.interItemSpacing;
 }
 
-- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
+- (CGRect)finalFrameForPageAtIndex:(NSInteger)index
 				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
@@ -69,7 +69,7 @@
 	}];
 }
 
-- (void)animatePageInsertionAtIndex:(NSUInteger)index
+- (void)animatePageInsertionAtIndex:(NSInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void (^)())completion
@@ -86,7 +86,7 @@
 	}];
 }
 
-- (void)animatePageDeletionAtIndex:(NSUInteger)index
+- (void)animatePageDeletionAtIndex:(NSInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void (^)())completion
