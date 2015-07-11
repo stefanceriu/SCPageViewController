@@ -10,7 +10,7 @@
 
 @implementation SCSlidingPageLayouter
 
-- (CGRect)currentFrameForPageAtIndex:(NSInteger)index
+- (CGRect)currentFrameForPageAtIndex:(NSUInteger)index
 					   contentOffset:(CGPoint)contentOffset
 						  finalFrame:(CGRect)finalFrame
 				  pageViewController:(SCPageViewController *)pageViewController

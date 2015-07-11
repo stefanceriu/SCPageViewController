@@ -29,19 +29,19 @@
 /**
  * Reloads and re-layouts the page at the given index
  */
-- (void)reloadPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+- (void)reloadPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
 
 
 /**
  * Inserts a new page at the given index
  */
-- (void)insertPageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+- (void)insertPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
 
 
 /**
  * Removes the page at the given index
  */
-- (void)deletePageAtIndex:(NSUInteger)index animated:(BOOL)animated completion:(void(^)())completion;
+- (void)deletePagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
 
 /**
  * Moves the page to the given index

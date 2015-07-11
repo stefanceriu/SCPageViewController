@@ -21,7 +21,7 @@
 		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
 		
-		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
+		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeNone;
 		
 		self.pagePercentage = 0.5f;
 	}
@@ -32,8 +32,8 @@
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
-	CGFloat verticalInset = CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage;
-	CGFloat horizontalInset = CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage;
+	CGFloat verticalInset = floorf(CGRectGetHeight(frame) - CGRectGetHeight(frame) * self.pagePercentage);
+	CGFloat horizontalInset = floorf(CGRectGetWidth(frame) - CGRectGetWidth(frame) * self.pagePercentage);
 	
 	return UIEdgeInsetsMake(verticalInset/2.0f, horizontalInset/2.0f, verticalInset/2.0f, horizontalInset/2.0f);
 }
@@ -42,10 +42,10 @@
 {
 	switch (self.navigationType) {
 		case SCPageLayouterNavigationTypeHorizontal: {
-			self.interItemSpacing = CGRectGetWidth(pageViewController.view.bounds)/100.0f;
+			self.interItemSpacing = floorf(CGRectGetWidth(pageViewController.view.bounds)/100.0f);
 		}
 		case SCPageLayouterNavigationTypeVertical: {
-			self.interItemSpacing = CGRectGetHeight(pageViewController.view.bounds)/100.0f;
+			self.interItemSpacing = floorf(CGRectGetHeight(pageViewController.view.bounds)/100.0f);
 		}
 	}
 	

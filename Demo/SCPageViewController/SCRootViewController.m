@@ -130,30 +130,43 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 
 - (void)mainViewControllerDidRequestPageInsertion:(SCMainViewController *)mainViewController
 {
-	[self _insertPageAtIndex:[self.viewControllers indexOfObject:mainViewController]];
-	
+	[self _insertPagesAtIndexes:[NSIndexSet indexSetWithIndex:[self.viewControllers indexOfObject:mainViewController]]];
 	[self _updateViewControllerDetails];
 }
 
 - (void)mainViewControllerDidRequestPageDeletion:(SCMainViewController *)mainViewController
 {
-	[self _deletePageAtIndex:[self.viewControllers indexOfObject:mainViewController]];
-	
+	[self _deletePagesAtIndexes:[NSIndexSet indexSetWithIndex:[self.viewControllers indexOfObject:mainViewController]]];
 	[self _updateViewControllerDetails];
 }
 
 #pragma mark - Private
 
-- (void)_insertPageAtIndex:(NSUInteger)index
+- (void)_reloadPagesAtIndexes:(NSIndexSet *)indexes
 {
-	[self.viewControllers insertObject:[NSNull null] atIndex:index];
-	[self.pageViewController insertPageAtIndex:index animated:YES completion:nil];
+	[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[self.viewControllers replaceObjectAtIndex:idx withObject:[NSNull null]];
+	}];
+	
+	[self.pageViewController reloadPagesAtIndexes:indexes animated:YES completion:nil];
 }
 
-- (void)_deletePageAtIndex:(NSUInteger)index
+- (void)_insertPagesAtIndexes:(NSIndexSet *)indexes
 {
-	[self.viewControllers removeObjectAtIndex:index];
-	[self.pageViewController deletePageAtIndex:index animated:YES completion:nil];
+	[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+		[self.viewControllers insertObject:[NSNull null] atIndex:idx];
+	}];
+	
+	[self.pageViewController insertPagesAtIndexes:indexes animated:YES completion:nil];
+}
+
+- (void)_deletePagesAtIndexes:(NSIndexSet *)indexes
+{
+	[indexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
+		[self.viewControllers removeObjectAtIndex:idx];
+	}];
+	
+	[self.pageViewController deletePagesAtIndexes:indexes animated:YES completion:nil];
 }
 
 - (void)_movePageFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
@@ -163,12 +176,6 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 	[self.viewControllers insertObject:viewController atIndex:toIndex];
 	
 	[self.pageViewController movePageAtIndex:fromIndex toIndex:toIndex animated:YES completion:nil];
-}
-
-- (void)_reloadPageAtIndex:(NSUInteger)index
-{
-	[self.viewControllers replaceObjectAtIndex:index withObject:[NSNull null]];
-	[self.pageViewController reloadPageAtIndex:index animated:YES completion:nil];
 }
 
 - (void)_updateViewControllerDetails

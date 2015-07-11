@@ -63,7 +63,7 @@
 	return self.interItemSpacing;
 }
 
-- (CGRect)finalFrameForPageAtIndex:(NSInteger)index
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
@@ -87,26 +87,26 @@
 	return index;
 }
 
-- (CATransform3D)sublayerTransformForPageAtIndex:(NSInteger)index
+- (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
 								   contentOffset:(CGPoint)contentOffset
 							  pageViewController:(SCPageViewController *)pageViewController
 {
 	return [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:contentOffset];
 }
 
-- (void)animatePageInsertionAtIndex:(NSInteger)index
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
+	CGRect frame = viewController.view.frame;
 	CATransform3D sublayerTransform = [self _sublayerTransformWithNumberOfPages:pageViewController.numberOfPages andContentOffset:CGPointZero];
 	
-	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+	[viewController.view setFrame:CGRectOffset(frame, 0.0f, CGRectGetHeight(frame))];
 	[viewController.view setAlpha:0.0f];
 	
-	[UIView animateWithDuration:0.25f animations:^{
-		[viewController.view setFrame:finalFrame];
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
+		[viewController.view setFrame:frame];
 		[viewController.view setAlpha:1.0f];
 		[(CALayer *)viewController.view.layer.sublayers.firstObject setTransform:sublayerTransform];
 	} completion:^(BOOL finished) {
@@ -114,14 +114,13 @@
 	}];
 }
 
-- (void)animatePageDeletionAtIndex:(NSInteger)index
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
-	[UIView animateWithDuration:0.25f animations:^{
-		[viewController.view setFrame:CGRectOffset(finalFrame, -CGRectGetMaxX(finalFrame), 0.0f)];
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
+		[viewController.view setFrame:CGRectOffset(viewController.view.frame, -CGRectGetMaxX(viewController.view.bounds), 0.0f)];
 		[viewController.view setAlpha:0.0f];
 	} completion:^(BOOL finished) {
 		completion();

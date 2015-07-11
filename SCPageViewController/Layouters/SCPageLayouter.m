@@ -27,6 +27,8 @@
 		
 		self.numberOfPagesToPreloadBeforeCurrentPage = 1;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 1;
+		
+		self.interItemSpacing = 50.0f;
 	}
 	
 	return self;
@@ -37,7 +39,7 @@
 	return self.interItemSpacing;
 }
 
-- (CGRect)finalFrameForPageAtIndex:(NSInteger)index
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 				pageViewController:(SCPageViewController *)pageViewController
 {
 	CGRect frame = pageViewController.view.bounds;
@@ -57,11 +59,8 @@
 			  pageViewController:(SCPageViewController *)pageViewController
 					  completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
-	
-	[newViewController.view setFrame:finalFrame];
 	[newViewController.view setAlpha:0.0f];
-	[UIView animateWithDuration:0.25f animations:^{
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
 		[oldViewController.view setAlpha:0.0f];
 		[newViewController.view setAlpha:1.0f];
 	} completion:^(BOOL finished) {
@@ -69,32 +68,42 @@
 	}];
 }
 
-- (void)animatePageInsertionAtIndex:(NSInteger)index
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
+	CGRect frame = viewController.view.frame;
 	
-	[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+	if(self.navigationType == SCPageLayouterNavigationTypeHorizontal) {
+		[viewController.view setFrame:CGRectOffset(frame, 0.0f, CGRectGetHeight(frame))];
+	} else {
+		[viewController.view setFrame:CGRectOffset(frame, CGRectGetWidth(frame), 0.0f)];
+	}
+	
 	[viewController.view setAlpha:0.0f];
-	[UIView animateWithDuration:0.25f animations:^{
-		[viewController.view setFrame:finalFrame];
+	
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
+		[viewController.view setFrame:frame];
 		[viewController.view setAlpha:1.0f];
 	} completion:^(BOOL finished) {
 		completion();
 	}];
 }
 
-- (void)animatePageDeletionAtIndex:(NSInteger)index
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void (^)())completion
 {
-	CGRect finalFrame = [self finalFrameForPageAtIndex:index pageViewController:pageViewController];
-	
-	[UIView animateWithDuration:0.25f animations:^{
-		[viewController.view setFrame:CGRectOffset(finalFrame, 0.0f, CGRectGetHeight(finalFrame))];
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
+		
+		if(self.navigationType == SCPageLayouterNavigationTypeHorizontal) {
+			[viewController.view setFrame:CGRectOffset(viewController.view.frame, 0.0f, CGRectGetHeight(viewController.view.bounds))];
+		} else {
+			[viewController.view setFrame:CGRectOffset(viewController.view.frame, CGRectGetWidth(viewController.view.bounds), 0.0f)];
+		}
+		
 		[viewController.view setAlpha:0.0f];
 	} completion:^(BOOL finished) {
 		completion();
@@ -109,7 +118,7 @@
 {
 	CGRect finalFrame = [self finalFrameForPageAtIndex:toIndex pageViewController:pageViewController];
 	
-	[UIView animateWithDuration:0.25f animations:^{
+	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
 		[viewController.view setFrame:finalFrame];
 	} completion:^(BOOL finished) {
 		completion();

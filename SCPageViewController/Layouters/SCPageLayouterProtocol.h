@@ -60,7 +60,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The frame for the viewController's view
  *
  */
-- (CGRect)finalFrameForPageAtIndex:(NSInteger)index
+- (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 				pageViewController:(SCPageViewController *)pageViewController;
 
 
@@ -97,7 +97,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The frame for the viewController's view
  *
  */
-- (CGRect)currentFrameForPageAtIndex:(NSInteger)index
+- (CGRect)currentFrameForPageAtIndex:(NSUInteger)index
 					   contentOffset:(CGPoint)contentOffset
 						  finalFrame:(CGRect)finalFrame
 				  pageViewController:(SCPageViewController *)pageViewController;
@@ -127,7 +127,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The sublayer transformation to be applied
  *
  */
-- (CATransform3D)sublayerTransformForPageAtIndex:(NSInteger)index
+- (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
 								   contentOffset:(CGPoint)contentOffset
 							  pageViewController:(SCPageViewController *)pageViewController;
 
@@ -173,7 +173,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  *
  */
-- (void)animatePageInsertionAtIndex:(NSInteger)index
+- (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void(^)())completion;
@@ -191,7 +191,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  *
  */
-- (void)animatePageDeletionAtIndex:(NSInteger)index
+- (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
 						completion:(void(^)())completion;
