@@ -225,13 +225,13 @@
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
 	
 	[self.pages removeAllObjects];
-	for(int i = 0; i < self.numberOfPages; i++) {
+	for(NSUInteger i = 0; i < self.numberOfPages; i++) {
 		[self.pages addObject:[NSNull null]];
 	}
 	[self.visibleControllers removeAllObjects];
 	
 	if(oldNumberOfPages >= self.numberOfPages) {
-		NSUInteger index = MAX(0, (int)self.numberOfPages-1);
+		NSUInteger index = MAX(0, (NSInteger)self.numberOfPages - 1);
 		[self navigateToPageAtIndex:index animated:NO completion:nil];
 	} else {
 		[self _updateBoundsAndConstraints];
@@ -258,7 +258,7 @@
 		offset.y -= self.layouterContentInset.top;
 	}
 	
-	offset = CGPointMake((NSInteger)floorf(offset.x), (NSInteger)floorf(offset.y));
+	offset = CGPointMake((NSInteger)floor(offset.x), (NSInteger)floor(offset.y));
 	
 	void(^animationFinishedBlock)() = ^{
 		
@@ -353,7 +353,7 @@
 	}
 	
 	if([self.layouter respondsToSelector:@selector(interItemSpacingForPageViewController:)]) {
-		self.layouterInterItemSpacing = roundf([self.layouter interItemSpacingForPageViewController:self]);
+		self.layouterInterItemSpacing = round([self.layouter interItemSpacingForPageViewController:self]);
 	} else {
 		self.layouterInterItemSpacing = 0.0f;
 	}
@@ -361,10 +361,10 @@
 	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 pageViewController:self];
 	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 		[self.scrollView setContentInset:UIEdgeInsetsMake(self.layouterContentInset.top, 0.0f, self.layouterContentInset.bottom, 0.0f)];
-		[self.scrollView setContentSize:CGSizeMake(0.0f, roundf(MAX(CGRectGetHeight(self.scrollView.bounds), CGRectGetMaxY(frame))))];
+		[self.scrollView setContentSize:CGSizeMake(0.0f, round(MAX(CGRectGetHeight(self.scrollView.bounds), CGRectGetMaxY(frame))))];
 	} else {
 		[self.scrollView setContentInset:UIEdgeInsetsMake(0.0f, self.layouterContentInset.left, 0.0f, self.layouterContentInset.right)];
-		[self.scrollView setContentSize:CGSizeMake(roundf(MAX(CGRectGetWidth(self.scrollView.bounds), CGRectGetMaxX(frame))), 0.0f)];
+		[self.scrollView setContentSize:CGSizeMake(round(MAX(CGRectGetWidth(self.scrollView.bounds), CGRectGetMaxX(frame))), 0.0f)];
 	}
 	
 	[self _updateNavigationContraints];
@@ -575,9 +575,9 @@
 		
 		if(visible) {
 			if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
-				[details setVisiblePercentage:roundf((CGRectGetHeight(intersection) * 1000) / CGRectGetHeight(nextFrame)) / 1000.0f];
+				[details setVisiblePercentage:round((CGRectGetHeight(intersection) * 1000) / CGRectGetHeight(nextFrame)) / 1000.0f];
 			} else {
-				[details setVisiblePercentage:roundf((CGRectGetWidth(intersection) * 1000) / CGRectGetWidth(nextFrame)) / 1000.0f];
+				[details setVisiblePercentage:round((CGRectGetWidth(intersection) * 1000) / CGRectGetWidth(nextFrame)) / 1000.0f];
 			}
 		}
 		
@@ -924,7 +924,7 @@
 		return r1;
 	}
 	
-	float chopAmount = (edge == CGRectMinXEdge || edge == CGRectMaxXEdge) ? CGRectGetWidth(intersection) : CGRectGetHeight(intersection);
+	CGFloat chopAmount = (edge == CGRectMinXEdge || edge == CGRectMaxXEdge) ? CGRectGetWidth(intersection) : CGRectGetHeight(intersection);
 	
 	CGRect remainder, throwaway;
 	CGRectDivide(r1, &throwaway, &remainder, chopAmount, edge);
@@ -951,7 +951,7 @@
 		offset.y -= self.layouterContentInset.top;
 	}
 	
-	offset = CGPointMake((NSInteger)floorf(offset.x), (NSInteger)floorf(offset.y));
+	offset = CGPointMake((NSInteger)floor(offset.x), (NSInteger)floor(offset.y));
 	
 	if(offset.x != (NSInteger)floor(self.scrollView.contentOffset.x) ||
 	   offset.y != (NSInteger)floor(self.scrollView.contentOffset.y)) {

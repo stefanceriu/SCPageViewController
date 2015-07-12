@@ -270,7 +270,7 @@
  *
  * @param pageViewController The calling PageViewController
  * @param controller The view controller that became visible
- * @param position The position where the view controller resides
+ * @param index The view controller index
  *
  * A view controller is visible when any part of it is visible (within the
  * internal scrollView's bounds and not covered by any other view)

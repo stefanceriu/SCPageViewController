@@ -83,7 +83,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 /** Returns the intermediate frame for the given view controller and current
  * offset
  *
- * @param viewController The view controller for which to calculate the frame
  * @param index The index of the view controller
  * @param contentOffset current offset in the PageViewController's scrollView
  * @param pageViewController The calling SCPageViewController
@@ -98,7 +97,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 /** Defines the z position which should be used when laying out the given view controller
  * Defaults to the inverse of the page order
  *
- * @param viewController the view controller to return the position for
  * @param index the page index for the given view controller
  * @param pageViewController the calling page view controller
  * @return the index the view controller we be places at in the view hierarchy
@@ -110,10 +108,8 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 /** Returns the view controller sublayer transformation that should be used
  * for the current offset
  *
- * @param viewController The view controller for which to calculate the frame
  * @param index The index of the view controller in the Stack's children array
- * @param position The position in the stack
- * @param stackViewController The calling StackViewController
+ * @param pageViewController The calling page view controller
  * @return The sublayer transformation to be applied
  */
 - (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
