@@ -15,13 +15,18 @@
  */
 @interface SCPageViewControllerView : UIView
 
+/** The pageViewControllerView's delegate */
 @property (nonatomic, weak) id<SCPageViewControllerViewDelegate> delegate;
 
 @end
 
+/** The pageViewControllerView's delegate protocol */
 @protocol SCPageViewControllerViewDelegate <NSObject>
 
+/** Called when the view's frame is about to be changed */
 - (void)pageViewControllerViewWillChangeFrame:(SCPageViewControllerView *)pageViewControllerView;
+
+/** Called after the view's frame has been changed */
 - (void)pageViewControllerViewDidChangeFrame:(SCPageViewControllerView *)pageViewControllerView;
 
 @end

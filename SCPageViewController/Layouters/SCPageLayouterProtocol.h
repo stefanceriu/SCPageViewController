@@ -19,9 +19,7 @@ typedef NS_ENUM(NSUInteger, SCPageLayouterNavigationType) {
 	SCPageLayouterNavigationTypeVertical,
 };
 
-/** Navigation contraint types that can be used used when continuous
- * navigation is disabled
- */
+/** Navigation contraint types that can be used used when continuous navigation is disabled */
 typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 	SCPageLayouterNavigationContraintTypeNone = 0,
 	SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
@@ -31,12 +29,12 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 
 /**
  * The page layouter protocol specifies the required and optional methods that define
- * how pages are layed out on screen and how they are animated while performing
+ * how pages are laid out on screen and how they are animated while performing
  * incremental updates
  */
 @protocol SCPageLayouterProtocol <NSObject>
 
-/** Defines the direction the pages are layed out */
+/** Defines the direction the pages are laid out */
 @property (nonatomic, assign) SCPageLayouterNavigationType navigationType;
 
 
@@ -56,9 +54,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  *
  * @param index The index of the view controller in the PageViewController's children array
  * @param pageViewController The calling PageViewController
- *
  * @return The frame for the viewController's view
- *
  */
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
 				pageViewController:(SCPageViewController *)pageViewController;
@@ -69,7 +65,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 /** The amount of space in between each page
  *
  * @param pageViewController the calling page view controller
- *
  * @return the spacing to be used
  */
 - (CGFloat)interItemSpacingForPageViewController:(SCPageViewController *)pageViewController;
@@ -80,7 +75,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * left/right)
  *
  * @param pageViewController the calling page view controller
- *
  * @return the insets to be used
  */
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController;
@@ -93,9 +87,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param index The index of the view controller
  * @param contentOffset current offset in the PageViewController's scrollView
  * @param pageViewController The calling SCPageViewController
- *
  * @return The frame for the viewController's view
- *
  */
 - (CGRect)currentFrameForPageAtIndex:(NSUInteger)index
 					   contentOffset:(CGPoint)contentOffset
@@ -109,7 +101,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param viewController the view controller to return the position for
  * @param index the page index for the given view controller
  * @param pageViewController the calling page view controller
- *
  * @return the index the view controller we be places at in the view hierarchy
  */
 - (NSUInteger)zPositionForPageAtIndex:(NSUInteger)index
@@ -123,9 +114,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param index The index of the view controller in the Stack's children array
  * @param position The position in the stack
  * @param stackViewController The calling StackViewController
- *
  * @return The sublayer transformation to be applied
- *
  */
 - (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
 								   contentOffset:(CGPoint)contentOffset
@@ -135,7 +124,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 /** Method that the pageController calls when its scrollView scrolls
  * @param pageViewController The calling PageViewController
  * @param offset The current offset in the PageViewController's scrollView
- *
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
 	   didNavigateToOffset:(CGPoint)offset;
@@ -152,7 +140,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param pageViewController the calling pageViewController
  * @param completion block that lets the pageViewController know that it can
  * proceed with the layout
- *
  */
 - (void)animatePageReloadAtIndex:(NSUInteger)index
 			   oldViewController:(UIViewController *)oldViewController
@@ -171,7 +158,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param pageViewController the calling pageViewController
  * @param completion block that lets the pageViewController know that it can
  * proceed with the layout
- *
  */
 - (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
@@ -189,7 +175,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param pageViewController the calling pageViewController
  * @param completion block that lets the pageViewController know that it can
  * proceed with the layout
- *
  */
 - (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
@@ -208,7 +193,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param pageViewController the calling pageViewController
  * @param completion block that lets the pageViewController know that it can
  * proceed with the layout
- *
  */
 - (void)animatePageMoveFromIndex:(NSUInteger)fromIndex
 						 toIndex:(NSUInteger)toIndex

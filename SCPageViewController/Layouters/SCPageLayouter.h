@@ -10,8 +10,7 @@
 
 /**
  * A page layouter that can show pages side by side, horizontally or vertically.
- * It defines some simple incremental update animations and supports inter item
- * spacings.
+ * It defines simple incremental update animations and supports inter-item spacings.
  */
 @interface SCPageLayouter : NSObject <SCPageLayouterProtocol>
 

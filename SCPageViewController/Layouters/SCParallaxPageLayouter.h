@@ -8,10 +8,7 @@
 
 #import "SCPageLayouter.h"
 
-/**
- * A SCPageLayouter subclass that adds a parallax effect
- * when navigating between pages
- */
+/** A SCPageLayouter subclass that adds a parallax effect when navigating between pages */
 @interface SCParallaxPageLayouter : SCPageLayouter
 
 @end
