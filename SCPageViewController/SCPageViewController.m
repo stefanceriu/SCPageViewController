@@ -361,10 +361,10 @@
 	CGRect frame = [self.layouter finalFrameForPageAtIndex:self.numberOfPages - 1 pageViewController:self];
 	if(self.layouter.navigationType == SCPageLayouterNavigationTypeVertical) {
 		[self.scrollView setContentInset:UIEdgeInsetsMake(self.layouterContentInset.top, 0.0f, self.layouterContentInset.bottom, 0.0f)];
-		[self.scrollView setContentSize:CGSizeMake(0, roundf(CGRectGetMaxY(frame)))];
+		[self.scrollView setContentSize:CGSizeMake(0.0f, roundf(MAX(CGRectGetHeight(self.scrollView.bounds), CGRectGetMaxY(frame))))];
 	} else {
 		[self.scrollView setContentInset:UIEdgeInsetsMake(0.0f, self.layouterContentInset.left, 0.0f, self.layouterContentInset.right)];
-		[self.scrollView setContentSize:CGSizeMake(roundf(CGRectGetMaxX(frame)), 0.0f)];
+		[self.scrollView setContentSize:CGSizeMake(roundf(MAX(CGRectGetWidth(self.scrollView.bounds), CGRectGetMaxX(frame))), 0.0f)];
 	}
 	
 	[self _updateNavigationContraints];
@@ -1185,7 +1185,7 @@
 	}];
 	
 	void(^updateLayout)() = ^{
-		if(shouldAdjustOffset) {
+		if(shouldAdjustOffset && self.pagingEnabled) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage + indexes.count)];
 		}
 		[self _updateBoundsAndConstraints];
@@ -1249,7 +1249,7 @@
 				dispatch_group_leave(animationsDispatchGroup);
 			}];
 			
-			if(shouldAdjustOffset) {
+			if(shouldAdjustOffset && self.pagingEnabled) {
 				dispatch_group_enter(animationsDispatchGroup);
 				[UIView animateWithDuration:self.animationDuration animations:^{
 					
@@ -1272,7 +1272,7 @@
 	
 	// Update the content offset and pages layout
 	void (^updateLayout)() = ^{
-		if(shouldAdjustOffset) {
+		if(shouldAdjustOffset && self.pagingEnabled) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage - indexes.count)];
 		}
 		
@@ -1365,7 +1365,7 @@
 	}
 	
 	// Update the scrollView's offset
-	if(shouldAdjustOffset) {
+	if(shouldAdjustOffset && self.pagingEnabled) {
 		[self _blockContentOffsetOnPageAtIndex:self.currentPage];
 	}
 	
@@ -1384,7 +1384,7 @@
 	
 	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
 		
-		if(shouldAdjustOffset) {
+		if(shouldAdjustOffset && self.pagingEnabled) {
 			if(fromIndex < toIndex) {
 				[self _blockContentOffsetOnPageAtIndex:(self.currentPage - 1)];
 			} else {

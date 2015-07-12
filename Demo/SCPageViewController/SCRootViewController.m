@@ -16,7 +16,6 @@
 #import "SCSlidingPageLayouter.h"
 #import "SCParallaxPageLayouter.h"
 #import "SCCardsPageLayouter.h"
-#import "SCSafariPageLayouter.h"
 
 #import "UIColor+RandomColors.h"
 
@@ -95,8 +94,7 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 		typeToLayouter = (@{@(SCPageLayouterTypePlain)    : [SCPageLayouter class],
 							@(SCPageLayouterTypeSliding)  : [SCSlidingPageLayouter class],
 							@(SCPageLayouterTypeParallax) : [SCParallaxPageLayouter class],
-							@(SCPageLayouterTypeCards)    : [SCCardsPageLayouter class],
-							@(SCPageLayouterTypeSafari)   : [SCSafariPageLayouter class]});
+							@(SCPageLayouterTypeCards)    : [SCCardsPageLayouter class]});
 	});
 	
 	id<SCPageLayouterProtocol> pageLayouter = [[typeToLayouter[@(mainViewController.layouterType)] alloc] init];
@@ -199,8 +197,7 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 			layouterToType = (@{NSStringFromClass([SCPageLayouter class])         : @(SCPageLayouterTypePlain),
 								NSStringFromClass([SCSlidingPageLayouter class])  : @(SCPageLayouterTypeSliding),
 								NSStringFromClass([SCParallaxPageLayouter class]) : @(SCPageLayouterTypeParallax),
-								NSStringFromClass([SCCardsPageLayouter class])    : @(SCPageLayouterTypeCards),
-								NSStringFromClass([SCSafariPageLayouter class])   : @(SCPageLayouterTypeSafari)});
+								NSStringFromClass([SCCardsPageLayouter class])    : @(SCPageLayouterTypeCards)});
 		});
 		
 		[controller setLayouterType:(SCPageLayouterType)[layouterToType[NSStringFromClass([self.pageViewController.layouter class])] unsignedIntegerValue]];

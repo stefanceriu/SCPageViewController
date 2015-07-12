@@ -15,7 +15,6 @@ typedef enum {
 	SCPageLayouterTypeSliding,
 	SCPageLayouterTypeParallax,
 	SCPageLayouterTypeCards,
-	SCPageLayouterTypeSafari,
 	SCPageLayouterTypeCount
 } SCPageLayouterType;
 
