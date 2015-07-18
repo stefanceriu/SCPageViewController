@@ -8,6 +8,8 @@
 
 @import UIKit;
 
+@class SCScrollView;
+
 @protocol SCPageViewControllerDataSource;
 @protocol SCPageViewControllerDelegate;
 @protocol SCPageLayouterProtocol;
@@ -127,17 +129,20 @@
 @property (nonatomic, weak) id<SCPageViewControllerDelegate> delegate;
 
 
+/** The internal scroll view */
+@property (nonatomic, strong, readonly) SCScrollView *scrollView;
+
 
 /** The current page in the page view controller */
 @property (nonatomic, readonly) NSUInteger currentPage;
 
 
-/** The current content offset in the page view controller's scroll view */
-@property (nonatomic, readonly) CGPoint contentOffset;
-
-
 /** The total number of pages the page view controllers holds at any given time */
 @property (nonatomic, readonly) NSUInteger numberOfPages;
+
+
+/** Whether the page controller's view is visible or not */
+@property (nonatomic, readonly) BOOL visible;
 
 
 /** An array of currently loaded view controllers in the page view controller */
@@ -146,35 +151,6 @@
 
 /** An array of currently visible view controllers in the page view controller */
 @property (nonatomic, readonly) NSArray *visibleViewControllers;
-
-
-
-/** UIBezierPath inside which the pageController's scrollView doesn't respond to touch events */
-@property (nonatomic, strong) UIBezierPath *touchRefusalArea;
-
-
-/** Boolean value that controls whether the pageController's scrollView bounces past the
- *  edge of content and back again
- *
- * Default value is set to true
- */
-@property (nonatomic, assign) BOOL bounces;
-
-
-/** A Boolean value that determines whether scrolling is enabled for the pageController's
- * scrollView.
- *
- * Default value is set to true
- */
-@property (nonatomic, assign) BOOL scrollEnabled;
-
-
-/** A Boolean value that controls whether the pageController's scrollView indicators are
- * visible.
- *
- * Default value is set to false
- */
-@property (nonatomic, assign) BOOL showsScrollIndicators;
 
 
 /** A Boolean value that determines whether paging is enabled for the pageController's
@@ -203,20 +179,6 @@
 @property (nonatomic, assign) BOOL shouldLayoutPagesOnRest;
 
 
-/** The minimum number of fingers that can be touching the view for this gesture to be recognized.
- *
- * Default value is set to 1
- */
-@property (nonatomic, assign) NSUInteger minimumNumberOfTouches;
-
-
-/** The maximum number of fingers that can be touching the view for this gesture to be recognized.
- *
- * Default value is set to NSUIntegerMax
- */
-@property (nonatomic, assign) NSUInteger maximumNumberOfTouches;
-
-
 /** Timing function used when navigating beteen pages
  *
  * Default value is set to SCEasingFunctionTypeSineEaseInOut
@@ -229,13 +191,6 @@
  * Default value is set to 0.25f
  */
 @property (nonatomic, assign) NSTimeInterval animationDuration;
-
-
-/** The pageViewController's scroll view deceleration rate
- *
- * Defaults to UIScrollViewDecelerationRateFast
- */
-@property (nonatomic, assign) CGFloat decelerationRate;
 
 
 @end

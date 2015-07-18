@@ -60,14 +60,6 @@
 @end
 
 @implementation SCPageViewController
-@dynamic contentOffset;
-@dynamic bounces;
-@dynamic touchRefusalArea;
-@dynamic showsScrollIndicators;
-@dynamic minimumNumberOfTouches;
-@dynamic maximumNumberOfTouches;
-@dynamic scrollEnabled;
-@dynamic decelerationRate;
 
 - (void)dealloc
 {
@@ -104,6 +96,14 @@
 	
 	self.layouterContentInset = UIEdgeInsetsZero;
 	self.layouterInterItemSpacing = 0.0f;
+	
+	self.scrollView = [[SCScrollView alloc] init];
+	self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.scrollView.showsVerticalScrollIndicator = NO;
+	self.scrollView.showsHorizontalScrollIndicator = NO;
+	self.scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
+	self.scrollView.delegate = self;
+	self.scrollView.clipsToBounds = NO;
 }
 
 - (void)loadView
@@ -118,14 +118,7 @@
 	
 	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	
-	self.scrollView = [[SCScrollView alloc] initWithFrame:self.view.bounds];
-	self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	self.scrollView.showsVerticalScrollIndicator = NO;
-	self.scrollView.showsHorizontalScrollIndicator = NO;
-	self.scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
-	self.scrollView.delegate = self;
-	self.scrollView.clipsToBounds = NO;
-	
+	[self.scrollView setFrame:self.view.bounds];
 	[self.view addSubview:self.scrollView];
 	
 	[self reloadData];
@@ -167,12 +160,14 @@
 		}
 	}];
 	
-	if(animated) {
-		[UIView animateWithDuration:self.animationDuration delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction animations:^{
-			[self navigateToPageAtIndex:pageIndex animated:NO completion:nil];
-		} completion:nil];
-	} else {
-		[self navigateToPageAtIndex:pageIndex animated:animated completion:nil];
+	if(!self.scrollView.isRunningAnimation) {
+		if(animated) {
+			[UIView animateWithDuration:self.animationDuration delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction animations:^{
+				[self navigateToPageAtIndex:pageIndex animated:NO completion:nil];
+			} completion:nil];
+		} else {		
+			[self navigateToPageAtIndex:pageIndex animated:animated completion:nil];
+		}
 	}
 }
 
@@ -243,6 +238,8 @@
 					 animated:(BOOL)animated
 				   completion:(void(^)())completion
 {
+	NSUInteger previousCurrentPage = self.currentPage;
+	
 	if(pageIndex >= self.numberOfPages) {
 		return;
 	}
@@ -264,7 +261,7 @@
 		
 		[self _updateNavigationContraints];
 		
-		if(!animated && [self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
+		if(!animated && previousCurrentPage != self.currentPage && [self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 			[self.delegate pageViewController:self didNavigateToPageAtIndex:pageIndex];
 		}
 		
@@ -340,6 +337,11 @@
 	}
 	
 	return pageIndex;
+}
+
+- (BOOL)visible
+{
+	return self.isViewVisible;
 }
 
 #pragma mark - Navigational Constraints
@@ -626,31 +628,6 @@
 	return NO;
 }
 
-#pragma mark - Properties and forwarding
-
-- (BOOL)showsScrollIndicators
-{
-	return [self.scrollView showsHorizontalScrollIndicator] && [self.scrollView showsVerticalScrollIndicator];
-}
-
-- (void)setShowsScrollIndicators:(BOOL)showsScrollIndicators
-{
-	[self.scrollView setShowsHorizontalScrollIndicator:showsScrollIndicators];
-	[self.scrollView setShowsVerticalScrollIndicator:showsScrollIndicators];
-}
-
-- (id)forwardingTargetForSelector:(SEL)aSelector
-{
-	if([self.scrollView respondsToSelector:aSelector]) {
-		return self.scrollView;
-	} else if([self.scrollView.panGestureRecognizer respondsToSelector:aSelector]) {
-		return self.scrollView.panGestureRecognizer;
-	} else {
-		[NSException raise:@"SCPageViewControllerUnrecognizedSelectorException" format:@"Unrecognized selector %@", NSStringFromSelector(aSelector)];
-		return nil;
-	}
-}
-
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -819,10 +796,10 @@
 	} else if(velocity.x > 0.0f) {
 		nextStepOffset.x = (NSInteger)CGRectGetMaxX(finalFrame);
 	} else if(velocity.y < 0.0f) {
-		CGFloat maxOffset = self.scrollView.contentSize.height - CGRectGetHeight(self.scrollView.bounds) + self.layouterContentInset.top + self.layouterContentInset.bottom;
+		CGFloat maxOffset = MAX(self.scrollView.contentSize.height, CGRectGetHeight(self.scrollView.bounds)) - CGRectGetHeight(self.scrollView.bounds) + self.layouterContentInset.top + self.layouterContentInset.bottom;
 		nextStepOffset.y = MIN(maxOffset, (NSInteger)CGRectGetMinY(finalFrame));
 	} else if(velocity.x < 0.0f) {
-		CGFloat maxOffset = self.scrollView.contentSize.width - CGRectGetWidth(self.scrollView.bounds) + self.layouterContentInset.left + self.layouterContentInset.right;
+		CGFloat maxOffset = MAX(self.scrollView.contentSize.width, CGRectGetWidth(self.scrollView.bounds)) - CGRectGetWidth(self.scrollView.bounds) + self.layouterContentInset.left + self.layouterContentInset.right;
 		nextStepOffset.x = MIN(maxOffset, (NSInteger)CGRectGetMinX(finalFrame));
 	}
 	
