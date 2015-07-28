@@ -761,8 +761,7 @@
 			SCPageViewControllerPageDetails *newDetails = [[SCPageViewControllerPageDetails alloc] init];
 			NSUInteger zPosition = pages.count - i - 1;
 			if([self.layouter respondsToSelector:@selector(zPositionForPageAtIndex:pageViewController:)]) {
-				zPosition = [self.layouter zPositionForPageAtIndex:i
-												pageViewController:self];
+				zPosition = [self.layouter zPositionForPageAtIndex:i pageViewController:self];
 			}
 			
 			[newDetails setZPosition:zPosition];
@@ -778,7 +777,7 @@
 		NSUInteger pageIndex = [pages indexOfObject:sortedPages[i]];
 		
 		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
-		CGPoint centerOffset = [self.view convertPoint:CGPointMake(CGRectGetMidX(self.view.bounds), CGRectGetMidY(self.view.bounds)) toView:self.scrollView];
+		CGPoint centerOffset = [self.view convertPoint:self.scrollView.center toView:self.scrollView];
 		
 		if(CGRectContainsPoint(frame, centerOffset)) {
 			return pageIndex;
