@@ -260,6 +260,7 @@
 	void(^animationFinishedBlock)() = ^{
 		
 		[self _updateNavigationContraints];
+		[self _tilePages];
 		
 		if(!animated && previousCurrentPage != self.currentPage && [self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 			[self.delegate pageViewController:self didNavigateToPageAtIndex:pageIndex];
@@ -270,7 +271,7 @@
 		}
 	};
 	
-	[self.scrollView setContentOffset:offset  easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
+	[self.scrollView setContentOffset:offset easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
 }
 
 - (NSArray *)loadedViewControllers
@@ -477,10 +478,7 @@
 	}
 	
 	for (NSUInteger pageIndex = firstNeededPageIndex; pageIndex <= lastNeededPageIndex; pageIndex++) {
-		if([self.insertionIndexes containsIndex:pageIndex]) {
-			continue;
-		}
-		
+
 		UIViewController *page = [self viewControllerForPageAtIndex:pageIndex];
 		if (!page) {
 			[self _createAndInsertNewPageAtIndex:pageIndex];
