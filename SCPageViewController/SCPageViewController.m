@@ -79,6 +79,16 @@
 	return self;
 }
 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil
+						 bundle:(NSBundle *)nibBundleOrNil
+{
+	if(self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+		[self _commonSetup];
+	}
+
+	return self;
+}
+
 - (void)awakeFromNib
 {
 	[super awakeFromNib];
