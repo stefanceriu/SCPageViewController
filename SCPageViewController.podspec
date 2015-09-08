@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
 
   s.summary  = 'SCPageViewController is a container view controller similar to UIPageViewController which provies more control and is much more customizable'
   s.description = <<-DESC
-                  SCPageViewController is a container view controller similar to UIPageViewController but which provies more control, is much more customizable and, arguably, has a better overall design. 
+                  SCPageViewController is a container view controller similar to UIPageViewController but which provies more control, is much more customizable and, arguably, has a better overall design.
                   It supports the following features:
 
                   - Customizable transitions and animations (through layouters and custom easing functions)

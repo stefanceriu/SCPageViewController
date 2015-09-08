@@ -16,7 +16,7 @@
 
 @protocol SCEasingFunctionProtocol;
 
-/** SCPageViewController is a container view controller which allows 
+/** SCPageViewController is a container view controller which allows
  * you to paginate other view controllers and build custom transitions
  * between them while providing correct physics and appearance calls.
  */
@@ -28,8 +28,8 @@
  * @param completion the block to be called when the transition is over
  */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
-		   animated:(BOOL)animated
-		 completion:(void(^)())completion;
+           animated:(BOOL)animated
+         completion:(void(^)())completion;
 
 
 /** Sets the layouter and also focuses on the given index
@@ -39,9 +39,9 @@
  * @param completion the block to be called when the transition is over
  */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
-	andFocusOnIndex:(NSUInteger)pageIndex
-		   animated:(BOOL)animated
-		 completion:(void(^)())completion;
+    andFocusOnIndex:(NSUInteger)pageIndex
+           animated:(BOOL)animated
+         completion:(void(^)())completion;
 
 
 /** Reloads and re-lays out all the pages */
@@ -87,8 +87,8 @@
  * @param completion the block to be called when the navigation finished
  */
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
-					 animated:(BOOL)animated
-				   completion:(void(^)())completion;
+                     animated:(BOOL)animated
+                   completion:(void(^)())completion;
 
 
 /**
@@ -192,6 +192,11 @@
  */
 @property (nonatomic, assign) NSTimeInterval animationDuration;
 
+/**
+ * @param BOOL The desired scroll value
+ */
+
+- (void)setScrollEnabled:(BOOL)scrollEnabled;
 
 @end
 
@@ -231,8 +236,8 @@
  * internal scrollView's bounds and not covered by any other view)
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	 didShowViewController:(UIViewController *)controller
-				   atIndex:(NSUInteger)index;
+     didShowViewController:(UIViewController *)controller
+                   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when a view controller is hidden
@@ -244,8 +249,8 @@
  * scrollView bounds or when it is fully overlapped by other views
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	 didHideViewController:(UIViewController *)controller
-				   atIndex:(NSUInteger)index;
+     didHideViewController:(UIViewController *)controller
+                   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when its scrollView scrolls
@@ -253,7 +258,7 @@
  * @param offset The current offset in the PageViewController's scrollView
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	   didNavigateToOffset:(CGPoint)offset;
+       didNavigateToOffset:(CGPoint)offset;
 
 
 /** Delegate method that the pageController calls when its scrollView rests
