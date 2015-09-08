@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
 
   s.summary  = 'SCPageViewController is a container view controller similar to UIPageViewController which provies more control and is much more customizable'
   s.description = <<-DESC
-                  SCPageViewController is a container view controller similar to UIPageViewController but which provies more control, is much more customizable and, arguably, has a better overall design. 
+                  SCPageViewController is a container view controller similar to UIPageViewController but which provies more control, is much more customizable and, arguably, has a better overall design.
                   It supports the following features:
 
                   - Customizable transitions and animations (through layouters and custom easing functions)
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/stefanceriu/SCPageViewController'
   s.author   = { 'Stefan Ceriu' => 'stefan.ceriu@yahoo.com' }
   s.social_media_url = 'https://twitter.com/stefanceriu'
-  s.source   = { :git => 'https://github.com/stefanceriu/SCPageViewController.git', :tag => "v#{s.version}" }
+  s.source   = { :git => 'https://github.com/ipavlidakis/SCPageViewController.git', :tag => "v#{s.version}" }
   s.license      = { :type => 'MIT License', :file => 'LICENSE' }
   s.source_files = 'SCPageViewController/*', 'SCPageViewController/Layouters/*'
   s.requires_arc = true
