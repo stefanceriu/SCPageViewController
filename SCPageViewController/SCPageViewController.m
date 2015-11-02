@@ -797,11 +797,9 @@
 	} else if(velocity.x > 0.0f) {
 		nextStepOffset.x = (NSInteger)CGRectGetMaxX(finalFrame);
 	} else if(velocity.y < 0.0f) {
-		CGFloat maxOffset = MAX(self.scrollView.contentSize.height, CGRectGetHeight(self.scrollView.bounds)) - CGRectGetHeight(self.scrollView.bounds) + self.layouterContentInset.top + self.layouterContentInset.bottom;
-		nextStepOffset.y = MIN(maxOffset, (NSInteger)CGRectGetMinY(finalFrame));
+        nextStepOffset.y = (NSInteger)CGRectGetMinY(finalFrame);
 	} else if(velocity.x < 0.0f) {
-		CGFloat maxOffset = MAX(self.scrollView.contentSize.width, CGRectGetWidth(self.scrollView.bounds)) - CGRectGetWidth(self.scrollView.bounds) + self.layouterContentInset.left + self.layouterContentInset.right;
-		nextStepOffset.x = MIN(maxOffset, (NSInteger)CGRectGetMinX(finalFrame));
+		nextStepOffset.x = (NSInteger)CGRectGetMinX(finalFrame);
 	}
 	
 	return nextStepOffset;
