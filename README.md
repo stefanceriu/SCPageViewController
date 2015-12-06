@@ -67,11 +67,13 @@ SCPageViewController relies on page layouters to know where to place each of the
     [self.pageViewController setBounces:NO];
 
     // Customize how many number of touches are required to interact with the pages
-    [self.pageViewController setMinimumNumberOfTouches:2];
-    [self.pageViewController setMaximumNumberOfTouches:1];
+    [self.pageViewController.scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
+    [self.pageViewController.scrollView setMaximumNumberOfTouches:1];
     
     // Allow interaction only in the specified area
-    [self.pageViewController setTouchRefusalArea:[UIBezierPath bezierPathWithRect:CGRectInset(self.view.bounds, 50, 50)]];
+    //SCScrollViewTouchApprovalArea *touchApprovalArea = [[SCScrollViewTouchApprovalArea alloc] init];
+    //[touchApprovalArea setPath:[UIBezierPath bezierPathWithRect:someFrame]];
+    //[self.pageViewController.scrollView addTouchApprovalArea:touchApprovalArea];
     
     //Use different easing functions for animations and navigation
     [self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];

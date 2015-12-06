@@ -47,7 +47,7 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 	
 	[self.pageViewController setLayouter:[[SCPageLayouter alloc] init] animated:NO completion:nil];
 	[self.pageViewController setEasingFunction:[SCEasingFunction easingFunctionWithType:SCEasingFunctionTypeLinear]];
-	
+    
 	[self addChildViewController:self.pageViewController];
 	[self.pageViewController.view setFrame:self.view.bounds];
 	[self.view addSubview:self.pageViewController.view];
