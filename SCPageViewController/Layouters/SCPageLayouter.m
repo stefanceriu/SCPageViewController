@@ -91,6 +91,11 @@
 	}];
 }
 
+- (BOOL)shouldPreserveOffsetForInsertionAtIndex:(NSUInteger)index pageViewController:(SCPageViewController *)pageViewController
+{
+    return YES;
+}
+
 - (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController

@@ -160,6 +160,16 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 				 pageViewController:(SCPageViewController *)pageViewController
 						 completion:(void(^)())completion;
 
+/** Called bue the pageViewController when inserting a new page that
+ * would affect the current content offset
+ *
+ * @param index The index where a new page will be inserted
+ * @param pageViewController the calling pageViewController
+ * @return a boolean indicating whether the current offset should be kept
+ */
+- (BOOL)shouldPreserveOffsetForInsertionAtIndex:(NSUInteger)index
+                             pageViewController:(SCPageViewController *)pageViewController;
+
 
 /** Called by the pageViewController when it receives a delete page animated
  * request.

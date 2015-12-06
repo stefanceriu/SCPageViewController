@@ -1101,7 +1101,13 @@
 	
 	__block BOOL shouldAdjustOffset = NO;
 	[indexes enumerateIndexesUsingBlock:^(NSUInteger pageIndex, BOOL *stop) {
-		if(pageIndex <= self.currentPage) {
+        
+        BOOL shouldKeepCurrentPage = YES;
+        if([self.layouter respondsToSelector:@selector(shouldPreserveOffsetForInsertionAtIndex:pageViewController:)]) {
+            shouldKeepCurrentPage = [self.layouter shouldPreserveOffsetForInsertionAtIndex:pageIndex pageViewController:self];
+        }
+        
+		if((shouldKeepCurrentPage && pageIndex <= self.currentPage) || (!shouldKeepCurrentPage && pageIndex < self.currentPage)) {
 			shouldAdjustOffset = YES;
 			*stop = YES;
 		}
