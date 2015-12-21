@@ -21,7 +21,7 @@
 		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
 		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
 		
-		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeNone;
+		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
 		
 		self.pagePercentage = 0.5f;
 	}
