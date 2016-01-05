@@ -1030,12 +1030,16 @@
 	[viewController.view removeFromSuperview];
 	[self _setAnimatableSublayerTransform:CATransform3DIdentity forViewController:viewController];
 	[viewController removeFromParentViewController];
-	
-	if([self.visibleControllers containsObject:viewController]) {
-		[viewController endAppearanceTransition];
-	}
-	
-	[self.visibleControllers removeObject:viewController];
+    
+    if([self.visibleControllers containsObject:viewController]) {
+        [viewController endAppearanceTransition];
+        
+        [self.visibleControllers removeObject:viewController];
+        
+        if([self.delegate respondsToSelector:@selector(pageViewController:didHideViewController:atIndex:)]) {
+            [self.delegate pageViewController:self didHideViewController:viewController atIndex:pageIndex];
+        }
+    }
 }
 
 #pragma mark - Private - Incremental Updates
