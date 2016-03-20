@@ -1052,7 +1052,10 @@
 	
 	[indexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger pageIndex, BOOL *stop) {
 		UIViewController *oldViewController = [self viewControllerForPageAtIndex:pageIndex];
-		[removedViewControllers addObject:oldViewController];
+        
+        if(oldViewController) {
+            [removedViewControllers addObject:oldViewController];
+        }
 		
 		[oldViewController willMoveToParentViewController:nil];
 		if([self.visibleViewControllers containsObject:oldViewController]) {
@@ -1061,6 +1064,10 @@
 		
 		[self.pages replaceObjectAtIndex:pageIndex withObject:[NSNull null]];
 		UIViewController *newViewController = [self _createAndInsertNewPageAtIndex:pageIndex];
+        
+        if([newViewController isEqual:oldViewController]) {
+            [removedViewControllers removeObject:newViewController];
+        }
 		
 		if(animated && [self.layouter respondsToSelector:@selector(animatePageReloadAtIndex:oldViewController:newViewController:pageViewController:completion:)]) {
 			dispatch_group_enter(animationsDispatchGroup);
