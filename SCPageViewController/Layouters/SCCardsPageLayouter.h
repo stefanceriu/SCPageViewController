@@ -15,6 +15,8 @@
  */
 @interface SCCardsPageLayouter : SCPageLayouter
 
+- (instancetype)initWithPagePercentage:(CGFloat)pagePercentage;
+
 @property (nonatomic, assign) CGFloat pagePercentage;
 
 @end

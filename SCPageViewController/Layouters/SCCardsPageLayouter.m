@@ -16,17 +16,21 @@
 
 - (instancetype)init
 {
-	if(self = [super init]) {
-		
-		self.numberOfPagesToPreloadBeforeCurrentPage = 3;
-		self.numberOfPagesToPreloadAfterCurrentPage  = 3;
-		
-		self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
-		
-		self.pagePercentage = 0.5f;
-	}
-	
-	return self;
+    return [self initWithPagePercentage:0.5];
+}
+
+- (instancetype)initWithPagePercentage:(CGFloat)pagePercentage {
+    if(self = [super init]) {
+        
+        self.numberOfPagesToPreloadBeforeCurrentPage = 3;
+        self.numberOfPagesToPreloadAfterCurrentPage  = 3;
+        
+        self.navigationConstraintType = SCPageLayouterNavigationContraintTypeForward | SCPageLayouterNavigationContraintTypeReverse;
+        
+        self.pagePercentage = pagePercentage;
+    }
+    
+    return self;
 }
 
 - (UIEdgeInsets)contentInsetForPageViewController:(SCPageViewController *)pageViewController
