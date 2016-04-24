@@ -586,9 +586,7 @@
 		}
 		
 		remainder = [self _subtractRect:intersection fromRect:remainder withEdge:edge];
-		
-		[self _setAnimatableSublayerTransform:CATransform3DIdentity forViewController:viewController];
-		
+				
 		// Finally, trigger appearance callbacks and new frame
 		if(visible && ![self.visibleControllers containsObject:viewController]) {
 			[self.visibleControllers addObject:viewController];
@@ -614,15 +612,14 @@
 			[viewController.view setFrame:nextFrame];
 		}
 		
-		CATransform3D transform = CATransform3DIdentity;
-		if([self.layouter respondsToSelector:@selector(sublayerTransformForPageAtIndex:contentOffset:pageViewController:)]) {
-			transform = [self.layouter sublayerTransformForPageAtIndex:pageIndex
-														 contentOffset:self.scrollView.contentOffset
-													pageViewController:self];
-		}
-		
-		[self _setAnimatableSublayerTransform:transform forViewController:viewController];
-	}];
+        if([self.layouter respondsToSelector:@selector(sublayerTransformForPageAtIndex:contentOffset:pageViewController:)]) {
+            CATransform3D transform = [self.layouter sublayerTransformForPageAtIndex:pageIndex
+                                                                       contentOffset:self.scrollView.contentOffset
+                                                                  pageViewController:self];
+            
+            [self _setAnimatableSublayerTransform:transform forViewController:viewController];
+        }
+    }];
 }
 
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods
@@ -1028,7 +1025,6 @@
 	
 	[viewController willMoveToParentViewController:nil];
 	[viewController.view removeFromSuperview];
-	[self _setAnimatableSublayerTransform:CATransform3DIdentity forViewController:viewController];
 	[viewController removeFromParentViewController];
     
     if([self.visibleControllers containsObject:viewController]) {
