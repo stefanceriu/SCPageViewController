@@ -776,7 +776,10 @@
 		NSUInteger pageIndex = [pages indexOfObject:sortedPages[i]];
 		
 		CGRect frame = [self.layouter finalFrameForPageAtIndex:pageIndex pageViewController:self];
-		CGPoint centerOffset = [self.view convertPoint:self.scrollView.center toView:self.scrollView];
+		
+        CGPoint centerOffset = self.scrollView.contentOffset;
+        centerOffset.x += CGRectGetWidth(self.scrollView.bounds) / 2.0f;
+        centerOffset.y += CGRectGetHeight(self.scrollView.bounds) / 2.0f;
 		
 		if(CGRectContainsPoint(frame, centerOffset)) {
 			return pageIndex;
