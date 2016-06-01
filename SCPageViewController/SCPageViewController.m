@@ -98,7 +98,7 @@
 	self.layouterInterItemSpacing = 0.0f;
 	
 	self.scrollView = [[SCScrollView alloc] init];
-	self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	self.scrollView.showsVerticalScrollIndicator = NO;
 	self.scrollView.showsHorizontalScrollIndicator = NO;
 	self.scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
@@ -119,7 +119,13 @@
 	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	
 	[self.scrollView setFrame:self.view.bounds];
-	[self.view addSubview:self.scrollView];
+    
+    // Prevents _adjustContentOffsetIfNecessary from triggering
+    UIView *scrollViewWrapper = [[UIView alloc] initWithFrame:self.view.bounds];
+    [scrollViewWrapper setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [scrollViewWrapper addSubview:self.scrollView];
+    
+	[self.view addSubview:scrollViewWrapper];
 	
 	[self reloadData];
 }
