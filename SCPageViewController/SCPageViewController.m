@@ -1177,7 +1177,7 @@
 	}];
 	
 	void(^updateLayout)() = ^{
-		if(shouldAdjustOffset && self.pagingEnabled) {
+		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage + indexes.count)];
 		}
 		[self _updateBoundsAndConstraints];
@@ -1247,7 +1247,7 @@
 				dispatch_group_leave(animationsDispatchGroup);
 			}];
 			
-			if(shouldAdjustOffset && self.pagingEnabled) {
+			if(shouldAdjustOffset) {
 				dispatch_group_enter(animationsDispatchGroup);
 				[UIView animateWithDuration:self.animationDuration animations:^{
 					
@@ -1270,7 +1270,7 @@
 	
 	// Update the content offset and pages layout
 	void (^updateLayout)() = ^{
-		if(shouldAdjustOffset && self.pagingEnabled) {
+		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage - indexes.count)];
 		}
 		
@@ -1365,7 +1365,7 @@
 	}
 	
 	// Update the scrollView's offset
-	if(shouldAdjustOffset && self.pagingEnabled) {
+	if(shouldAdjustOffset) {
 		[self _blockContentOffsetOnPageAtIndex:self.currentPage];
 	}
 	
@@ -1384,7 +1384,7 @@
 	
 	dispatch_group_notify(animationsDispatchGroup, dispatch_get_main_queue(), ^{
 		
-		if(shouldAdjustOffset && self.pagingEnabled) {
+		if(shouldAdjustOffset) {
 			if(fromIndex < toIndex) {
 				[self _blockContentOffsetOnPageAtIndex:(self.currentPage - 1)];
 			} else {
