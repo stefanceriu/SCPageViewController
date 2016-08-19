@@ -1268,7 +1268,9 @@
 					dispatch_group_leave(animationsDispatchGroup);
 				}];
 			}
-		}
+        } else {
+            [viewController.view removeFromSuperview];
+        }
 		
 		// Update page indexes
 		[self.pages removeObjectAtIndex:pageIndex];
