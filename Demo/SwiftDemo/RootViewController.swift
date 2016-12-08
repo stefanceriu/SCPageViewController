@@ -17,13 +17,12 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
         
         super.viewDidLoad()
         
-        for(var i = 0 ; i<5; i++) {
+        for _ in 1...5 {
             viewControllers.append(nil);
-            
         }
         
         self.pageViewController.setLayouter(SCPageLayouter(), animated: false, completion: nil)
-        self.pageViewController.easingFunction = SCEasingFunction(type: SCEasingFunctionType.Linear)
+        self.pageViewController.easingFunction = SCEasingFunction(type: SCEasingFunctionType.linear)
         
         //self.pageViewController.scrollView.maximumNumberOfTouches = 1;
         //self.pageViewController.scrollView.panGestureRecognizer.minimumNumberOfTouches = 2;
@@ -34,16 +33,16 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
         self.addChildViewController(self.pageViewController)
         self.pageViewController.view.frame = self.view.bounds
         self.view.addSubview(self.pageViewController.view)
-        self.pageViewController.didMoveToParentViewController(self)
+        self.pageViewController.didMove(toParentViewController: self)
     }
     
     //MARK: - SCPageViewControllerDataSource
     
-    func numberOfPagesInPageViewController(pageViewController: SCPageViewController!) -> UInt {
+    func numberOfPages(in pageViewController: SCPageViewController!) -> UInt {
         return UInt(self.viewControllers.count)
     }
     
-    func pageViewController(pageViewController: SCPageViewController!, viewControllerForPageAtIndex pageIndex: UInt) -> UIViewController! {
+    func pageViewController(_ pageViewController: SCPageViewController!, viewControllerForPageAt pageIndex: UInt) -> UIViewController! {
 
         
         if let viewController = self.viewControllers[Int(pageIndex)] {
@@ -69,22 +68,22 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
     
     //MARK: - SCPageViewControllerDelegate
     
-    func pageViewController(pageViewController: SCPageViewController!, didNavigateToOffset offset: CGPoint) {
-        
+    func pageViewController(_ pageViewController: SCPageViewController!, didNavigateToOffset offset: CGPoint) {
+
         func layouterToType(layouter: SCPageLayouterProtocol) -> PageLayouterType {
             switch layouter {
             case is SCSlidingPageLayouter:
-                return PageLayouterType.Sliding
+                return PageLayouterType.sliding
             case is SCParallaxPageLayouter:
-                return PageLayouterType.Parallax
+                return PageLayouterType.parallax
             case is SCCardsPageLayouter:
-                return PageLayouterType.Cards
+                return PageLayouterType.cards
             default:
-                return PageLayouterType.Plain
+                return PageLayouterType.plain
             }
         }
         
-        let layouterType = layouterToType(self.pageViewController.layouter!);
+        let layouterType = layouterToType(layouter: self.pageViewController.layouter!);
         
         for optionalValue in self.viewControllers {
             if(optionalValue != nil) {
@@ -97,15 +96,15 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
     
     //MARK: - MainViewControllerDelegate
     
-    func mainViewControllerDidChangeLayouterType(mainViewController: MainViewController) {
+    func mainViewControllerDidChangeLayouterType(_ mainViewController: MainViewController) {
         switch(mainViewController.layouterType!) {
-        case .Plain:
+        case .plain:
             self.pageViewController.setLayouter(SCPageLayouter(), animated: false, completion: nil)
-        case .Sliding:
+        case .sliding:
             self.pageViewController.setLayouter(SCSlidingPageLayouter(), animated: true, completion: nil)
-        case .Parallax:
+        case .parallax:
             self.pageViewController.setLayouter(SCParallaxPageLayouter(), animated: true, completion: nil)
-        case .Cards:
+        case .cards:
             self.pageViewController.setLayouter(SCCardsPageLayouter(), animated: true, completion: nil)
         }
     }

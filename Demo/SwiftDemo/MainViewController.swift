@@ -9,11 +9,11 @@
 import UIKit
 
 protocol MainViewControllerDelegate {
-    func mainViewControllerDidChangeLayouterType(mainViewController: MainViewController)
+    func mainViewControllerDidChangeLayouterType(_ mainViewController: MainViewController)
 }
 
 enum PageLayouterType : Int {
-    case Plain, Sliding, Parallax, Cards
+    case plain, sliding, parallax, cards
 }
 
 class MainViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -31,30 +31,30 @@ class MainViewController: UIViewController, UIPickerViewDataSource, UIPickerView
         super.viewDidLoad()
     }
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return 4
     }
     
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 
         let layouterType = PageLayouterType.init(rawValue: row)!
         switch(layouterType) {
-        case .Plain:
+        case .plain:
             return "Plain"
-        case .Sliding:
+        case .sliding:
             return "Sliding"
-        case .Parallax:
+        case .parallax:
             return "Parallax"
-        case .Cards:
+        case .cards:
             return "Cards"
         }
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         layouterType = PageLayouterType.init(rawValue: row)!
         delegate?.mainViewControllerDidChangeLayouterType(self)
     }
