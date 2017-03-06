@@ -19,7 +19,7 @@ and more..
 
 #### Screenshots
 
-![](https://dl.dropboxusercontent.com/u/12748201/Recordings/SCPageViewController/2.0/SCPageViewController%202.0.gif)
+![](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltodU5jcGZYTkFuNTA)
 
 ## Implementation details
 
@@ -100,13 +100,13 @@ SCPageViewController also supports incremental updates and all the animations ar
 SCPageViewController can work with custom easing functions defined through the SCEasingFunctionProtocol. It comes bundled with 31 different ones (thanks to AHEasing) and new ones can be created with ease.
 
 * Ease In Out Back
-![Plain+BackEaseInOut](https://dl.dropboxusercontent.com/u/12748201/Recordings/SCPageViewController/BackEaseInOut-Page.gif)
+![Plain+BackEaseInOut](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltoMTVJcHhNY0haZlU)
 
 * Ease Out Bounce
-![Plain+BounceEaseOut](https://dl.dropboxusercontent.com/u/12748201/Recordings/SCPageViewController/BounceEaseOut-Page.gif)
+![Plain+BounceEaseOut](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltoQmlzWm5FSUMyZmc)
     
 * Ease Out Elastic
-![Plain+ElasticEaseOut](https://dl.dropboxusercontent.com/u/12748201/Recordings/SCPageViewController/ElasticEaseOut-Page.gif)
+![Plain+ElasticEaseOut](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltoOVdWQ0VIWk9jOWM)
 
 ##### For more usage examples please have a look at the included demo project (or `pod try SCPageViewController`)
 
