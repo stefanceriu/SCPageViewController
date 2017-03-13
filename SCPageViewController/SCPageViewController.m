@@ -195,6 +195,8 @@
 		
 		[self _sortSubviewsByZPosition];
 		[self _tilePages];
+        
+        [self.view layoutIfNeeded];
 	};
 	
 	if(animated) {

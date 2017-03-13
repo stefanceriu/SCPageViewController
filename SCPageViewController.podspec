@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'SCPageViewController'
-  s.version  = '2.0.9'
+  s.version  = '2.0.10'
   s.platform = :ios
   s.ios.deployment_target = '5.0'
 
