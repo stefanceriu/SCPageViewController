@@ -854,7 +854,7 @@
 		if(CGRectContainsPoint(adjustedFrame, adjustedOffset)) {
 			
 			// Jump to the closest navigation step if the velocity is zero
-			if(CGPointEqualToPoint(CGPointZero, velocity)) {
+			if(CGPointEqualToPoint(CGPointZero, velocity) || self.continuousNavigationEnabled) {
 				if(self.layouter.navigationType == SCPageLayouterNavigationTypeHorizontal) {
 					CGPoint previousStepOffset = [self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(-1.0f, 0.0f)];
 					CGPoint nextStepOffset = [self _nextStepOffsetForFrame:frame withVelocity:CGPointMake(1.0f, 0.0f)];
