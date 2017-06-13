@@ -61,7 +61,7 @@ SCPageViewController relies on page layouters to know where to place each of the
     [self.pageViewController setContinuousNavigationEnabled:YES];
 
     // Have the page view controller come to a rest slower
-    [self.pageViewController setDecelerationRate:UIScrollViewDecelerationRateNormal];
+    [self.pageViewController.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
 
     // Disable bouncing
     [self.pageViewController.scrollView setBounces:NO];
