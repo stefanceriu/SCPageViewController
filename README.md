@@ -64,7 +64,7 @@ SCPageViewController relies on page layouters to know where to place each of the
     [self.pageViewController setDecelerationRate:UIScrollViewDecelerationRateNormal];
 
     // Disable bouncing
-    [self.pageViewController setBounces:NO];
+    [self.pageViewController.scrollView setBounces:NO];
 
     // Customize how many number of touches are required to interact with the pages
     [self.pageViewController.scrollView.panGestureRecognizer setMinimumNumberOfTouches:2];
