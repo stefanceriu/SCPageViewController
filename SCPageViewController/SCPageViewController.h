@@ -29,7 +29,7 @@
  */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
 		   animated:(BOOL)animated
-		 completion:(void(^)())completion;
+		 completion:(void(^)(void))completion;
 
 
 /** Sets the layouter and also focuses on the given index
@@ -41,7 +41,7 @@
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
 	andFocusOnIndex:(NSUInteger)pageIndex
 		   animated:(BOOL)animated
-		 completion:(void(^)())completion;
+		 completion:(void(^)(void))completion;
 
 
 /** Reloads and re-lays out all the pages */
@@ -53,7 +53,7 @@
  * @param animated whether the reload should be animated
  * @param completion the block to be called when the pages have been reloaded
  */
-- (void)reloadPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
+- (void)reloadPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion;
 
 
 /** Inserts new pages at the given indexes
@@ -61,7 +61,7 @@
  * @param animated whether the insertions should be animated
  * @param completion the block to be called when the pages have been inserted
  */
-- (void)insertPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
+- (void)insertPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion;
 
 
 /** Removes the pages from the given indexes
@@ -69,7 +69,7 @@
  * @param animated whether the deletions should be animated
  * @param completion the block to be called when the pages have been deleted
  */
-- (void)deletePagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion;
+- (void)deletePagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion;
 
 
 /** Moves a page from one index to another
@@ -78,7 +78,7 @@
  * @param animated whether the move should be animated
  * @param completion the block to be called when the page has been moved
  */
-- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)())completion;
+- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)(void))completion;
 
 
 /** Navigates to the given page index
@@ -88,7 +88,7 @@
  */
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
 					 animated:(BOOL)animated
-				   completion:(void(^)())completion;
+				   completion:(void(^)(void))completion;
 
 
 /**

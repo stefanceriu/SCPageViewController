@@ -57,7 +57,7 @@
 			   oldViewController:(UIViewController *)oldViewController
 			   newViewController:(UIViewController *)newViewController
 			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void (^)())completion
+					  completion:(void (^)(void))completion
 {
 	[newViewController.view setAlpha:0.0f];
 	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
@@ -71,7 +71,7 @@
 - (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
-						 completion:(void (^)())completion
+						 completion:(void (^)(void))completion
 {
 	CGRect frame = viewController.view.frame;
 	
@@ -99,7 +99,7 @@
 - (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
-						completion:(void (^)())completion
+						completion:(void (^)(void))completion
 {
 	[UIView animateWithDuration:pageViewController.animationDuration delay:0.0f options:UIViewAnimationOptionAllowUserInteraction animations:^{
 		
@@ -119,7 +119,7 @@
 						 toIndex:(NSUInteger)toIndex
 				  viewController:(UIViewController *)viewController
 			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void (^)())completion
+					  completion:(void (^)(void))completion
 {
 	CGRect finalFrame = [self finalFrameForPageAtIndex:toIndex pageViewController:pageViewController];
 	

@@ -158,7 +158,7 @@
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
 	andFocusOnIndex:(NSUInteger)pageIndex
 		   animated:(BOOL)animated
-		 completion:(void(^)())completion
+		 completion:(void(^)(void))completion
 {
 	[self setLayouter:layouter animated:animated completion:^{
 		if(completion) {
@@ -179,7 +179,7 @@
 
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
 		   animated:(BOOL)animated
-		 completion:(void (^)())completion
+		 completion:(void (^)(void))completion
 {
 	self.previousLayouter = self.layouter;
 	self.layouter = layouter;
@@ -188,7 +188,7 @@
 		return; // Will attempt tiling on viewDidLoad
 	}
 	
-	void(^updateLayout)() = ^{
+	void(^updateLayout)(void) = ^{
 		[self _blockContentOffsetOnPageAtIndex:self.currentPage];
 		[self _updateBoundsAndConstraints];
 		[self _unblockContentOffset];
@@ -244,7 +244,7 @@
 
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
 					 animated:(BOOL)animated
-				   completion:(void(^)())completion
+				   completion:(void(^)(void))completion
 {
 	NSUInteger previousCurrentPage = self.currentPage;
 	
@@ -265,7 +265,7 @@
 	
 	offset = CGPointMake((NSInteger)floor(offset.x), (NSInteger)floor(offset.y));
 	
-	void(^animationFinishedBlock)() = ^{
+	void(^animationFinishedBlock)(void) = ^{
 		
 		[self _updateNavigationContraints];
 		[self _tilePages];
@@ -1056,7 +1056,7 @@
 
 #pragma mark - Private - Incremental Updates
 
-- (void)reloadPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion
+- (void)reloadPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion
 {
 	NSMutableArray *removedViewControllers = [NSMutableArray array];
 	
@@ -1111,7 +1111,7 @@
 	});
 }
 
-- (void)insertPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion
+- (void)insertPagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion
 {
 	NSInteger oldNumberOfPages = self.numberOfPages;
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
@@ -1189,7 +1189,7 @@
 		}
 	}];
 	
-	void(^updateLayout)() = ^{
+	void(^updateLayout)(void) = ^{
 		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage + indexes.count)];
 		}
@@ -1220,7 +1220,7 @@
 	});
 }
 
-- (void)deletePagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)())completion
+- (void)deletePagesAtIndexes:(NSIndexSet *)indexes animated:(BOOL)animated completion:(void(^)(void))completion
 {
 	NSInteger oldNumberOfPages = self.numberOfPages;
 	self.numberOfPages = [self.dataSource numberOfPagesInPageViewController:self];
@@ -1284,7 +1284,7 @@
 	}];
 	
 	// Update the content offset and pages layout
-	void (^updateLayout)() = ^{
+	void (^updateLayout)(void) = ^{
 		if(shouldAdjustOffset) {
 			[self _blockContentOffsetOnPageAtIndex:(self.currentPage - indexes.count)];
 		}
@@ -1326,7 +1326,7 @@
 	});
 }
 
-- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)())completion
+- (void)movePageAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated completion:(void(^)(void))completion
 {
 	NSAssert(fromIndex < self.numberOfPages, @"Index out of bounds");
 	NSAssert(toIndex < self.numberOfPages, @"Index out of bounds");

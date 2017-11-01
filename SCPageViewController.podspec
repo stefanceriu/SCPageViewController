@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
   s.name     = 'SCPageViewController'
-  s.version  = '2.0.10'
+  s.version  = '2.0.11'
   s.platform = :ios
-  s.ios.deployment_target = '5.0'
+  s.ios.deployment_target = '6.0'
 
   s.summary  = 'SCPageViewController is a container view controller similar to UIPageViewController which provies more control and is much more customizable'
   s.description = <<-DESC

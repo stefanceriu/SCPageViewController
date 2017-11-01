@@ -141,7 +141,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 			   oldViewController:(UIViewController *)oldViewController
 			   newViewController:(UIViewController *)newViewController
 			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void(^)())completion;
+					  completion:(void(^)(void))completion;
 
 
 /** Called by the pageViewController when it receives an insert page animated
@@ -158,7 +158,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 - (void)animatePageInsertionAtIndex:(NSUInteger)index
 					 viewController:(UIViewController *)viewController
 				 pageViewController:(SCPageViewController *)pageViewController
-						 completion:(void(^)())completion;
+						 completion:(void(^)(void))completion;
 
 /** Called bue the pageViewController when inserting a new page that
  * would affect the current content offset
@@ -185,7 +185,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 - (void)animatePageDeletionAtIndex:(NSUInteger)index
 					viewController:(UIViewController *)viewController
 				pageViewController:(SCPageViewController *)pageViewController
-						completion:(void(^)())completion;
+						completion:(void(^)(void))completion;
 
 
 /** Called by the pageViewController when it receives an move page animated
@@ -204,6 +204,6 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
 						 toIndex:(NSUInteger)toIndex
 				  viewController:(UIViewController *)viewController
 			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void(^)())completion;
+					  completion:(void(^)(void))completion;
 
 @end
