@@ -213,6 +213,13 @@
  */
 - (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex;
 
+/**
+ * @param pageViewController The calling PageViewController
+ * @return The initial page that should be load. Otherwise the first is chosen.
+ */
+@optional
+- (NSUInteger)initialPageInPageViewController:(SCPageViewController *)pageViewController;
+
 @end
 
 

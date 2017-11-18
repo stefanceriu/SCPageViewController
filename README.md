@@ -49,6 +49,7 @@ SCPageViewController relies on page layouters to know where to place each of the
 - (NSUInteger)numberOfPagesInPageViewController:(SCPageViewController *)pageViewController;
 
 - (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex;
+- (NSUInteger)initialPageInPageViewController:(SCPageViewController *)pageViewController;
 ```
 
 - Optionally, modify the following properties to your liking

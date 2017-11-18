@@ -42,6 +42,9 @@
 
 @property (nonatomic, assign) NSUInteger currentPage;
 
+@property (nonatomic, assign) NSUInteger initialPage;
+@property (nonatomic, assign) BOOL finishedLoadingInitialPage;
+
 @property (nonatomic, strong) NSMutableArray *visibleControllers;
 
 @property (nonatomic, assign) BOOL isContentOffsetBlocked;
@@ -126,14 +129,21 @@
     [scrollViewWrapper addSubview:self.scrollView];
     
 	[self.view addSubview:scrollViewWrapper];
-	
+
+	if([self.dataSource respondsToSelector:@selector(initialPageInPageViewController:)]) {
+		self.initialPage = [self.dataSource initialPageInPageViewController:self];
+		self.currentPage = self.initialPage;
+		self.finishedLoadingInitialPage = false;
+	} else {
+        self.finishedLoadingInitialPage = true;
+	}
+
 	[self reloadData];
 }
 
 - (void)viewWillLayoutSubviews
 {
 	[super viewWillLayoutSubviews];
-	
 	[self setLayouter:self.layouter andFocusOnIndex:self.currentPage animated:NO completion:nil];
 }
 
@@ -172,7 +182,7 @@
 				[self navigateToPageAtIndex:pageIndex animated:NO completion:nil];
 			} completion:nil];
 		} else {		
-			[self navigateToPageAtIndex:pageIndex animated:animated completion:nil];
+			[self navigateToPageAtIndex:pageIndex animated:animated completion:nil]; //HERE
 		}
 	}
 }
@@ -277,6 +287,10 @@
 		if(completion) {
 			completion();
 		}
+
+        if(!self.finishedLoadingInitialPage &&  pageIndex == self.initialPage) {
+            self.finishedLoadingInitialPage = true;
+        }
 	};
 	
 	[self.scrollView setContentOffset:offset easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
@@ -457,9 +471,11 @@
 	if(self.numberOfPages == 0) {
 		return;
 	}
-	
-	self.currentPage = [self _calculateCurrentPage];
-	
+
+	if(self.finishedLoadingInitialPage) {
+		self.currentPage = [self _calculateCurrentPage];
+	}
+
 	NSInteger firstNeededPageIndex = self.currentPage - [self.layouter numberOfPagesToPreloadBeforeCurrentPage];
 	firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
 	
@@ -666,7 +682,7 @@
 		}
 		
 		[self _updateNavigationContraints];
-		
+
 		if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 			[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
 		}
@@ -680,7 +696,7 @@
 	}
 	
 	[self _updateNavigationContraints];
-	
+
 	if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 		[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
 	}
@@ -693,7 +709,7 @@
 	}
 	
 	[self _updateNavigationContraints];
-	
+
 	if([self.delegate respondsToSelector:@selector(pageViewController:didNavigateToPageAtIndex:)]) {
 		[self.delegate pageViewController:self didNavigateToPageAtIndex:self.currentPage];
 	}
@@ -765,7 +781,6 @@
 - (NSUInteger)_calculateCurrentPage
 {
 	NSMutableArray *pages = [self.pages mutableCopy];
-	
 	for(NSUInteger i = 0; i < pages.count; i++) {
 		SCPageViewControllerPageDetails *details = pages[i];
 		
