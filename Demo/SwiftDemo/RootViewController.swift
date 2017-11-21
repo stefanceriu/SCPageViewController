@@ -29,7 +29,7 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
         
         self.pageViewController.dataSource = self;
         self.pageViewController.delegate = self;
-
+        
         self.addChildViewController(self.pageViewController)
         self.pageViewController.view.frame = self.view.bounds
         self.view.addSubview(self.pageViewController.view)
@@ -43,7 +43,7 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
     }
     
     func pageViewController(_ pageViewController: SCPageViewController!, viewControllerForPageAt pageIndex: UInt) -> UIViewController! {
-
+        
         
         if let viewController = self.viewControllers[Int(pageIndex)] {
             return viewController
@@ -69,7 +69,7 @@ class RootViewController : UIViewController , SCPageViewControllerDataSource, SC
     //MARK: - SCPageViewControllerDelegate
     
     func pageViewController(_ pageViewController: SCPageViewController!, didNavigateToOffset offset: CGPoint) {
-
+        
         func layouterToType(layouter: SCPageLayouterProtocol) -> PageLayouterType {
             switch layouter {
             case is SCSlidingPageLayouter:
