@@ -43,12 +43,13 @@ SCPageViewController relies on page layouters to know where to place each of the
     [self.pageViewController setLayouter:[[SCPageLayouter alloc] init] animated:NO completion:nil];
 ```
 
-- Implement the SCPageViewControllerDataSource which defines the total number of pages and the view controllers to be used for each of them.
+- Implement the SCPageViewControllerDataSource to define the total number of pages, the view controllers to be used for each of them and which one show be displayed first.
 
 ```objc
 - (NSUInteger)numberOfPagesInPageViewController:(SCPageViewController *)pageViewController;
 
 - (UIViewController *)pageViewController:(SCPageViewController *)pageViewController viewControllerForPageAtIndex:(NSUInteger)pageIndex;
+
 - (NSUInteger)initialPageInPageViewController:(SCPageViewController *)pageViewController;
 ```
 

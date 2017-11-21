@@ -42,9 +42,6 @@
 
 @property (nonatomic, assign) NSUInteger currentPage;
 
-@property (nonatomic, assign) NSUInteger initialPage;
-@property (nonatomic, assign) BOOL finishedLoadingInitialPage;
-
 @property (nonatomic, strong) NSMutableArray *visibleControllers;
 
 @property (nonatomic, assign) BOOL isContentOffsetBlocked;
@@ -59,6 +56,8 @@
 @property (nonatomic, assign) NSUInteger blockedPageIndex;
 
 @property (nonatomic, strong) NSIndexSet *insertionIndexes;
+
+@property (nonatomic, strong) NSNumber *initialPageIndex;
 
 @end
 
@@ -129,21 +128,19 @@
     [scrollViewWrapper addSubview:self.scrollView];
     
 	[self.view addSubview:scrollViewWrapper];
-
-	if([self.dataSource respondsToSelector:@selector(initialPageInPageViewController:)]) {
-		self.initialPage = [self.dataSource initialPageInPageViewController:self];
-		self.currentPage = self.initialPage;
-		self.finishedLoadingInitialPage = false;
-	} else {
-        self.finishedLoadingInitialPage = true;
-	}
-
+    
+    if([self.dataSource respondsToSelector:@selector(initialPageInPageViewController:)]) {
+        self.initialPageIndex = @([self.dataSource initialPageInPageViewController:self]);
+        self.currentPage = self.initialPageIndex.unsignedIntegerValue;
+    }
+    
 	[self reloadData];
 }
 
 - (void)viewWillLayoutSubviews
 {
 	[super viewWillLayoutSubviews];
+    
 	[self setLayouter:self.layouter andFocusOnIndex:self.currentPage animated:NO completion:nil];
 }
 
@@ -153,6 +150,13 @@
 	
 	self.isViewVisible = YES;
 	[self _tilePages];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    self.initialPageIndex = nil;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -287,10 +291,6 @@
 		if(completion) {
 			completion();
 		}
-
-        if(!self.finishedLoadingInitialPage &&  pageIndex == self.initialPage) {
-            self.finishedLoadingInitialPage = true;
-        }
 	};
 	
 	[self.scrollView setContentOffset:offset easingFunction:self.easingFunction duration:(animated ? self.animationDuration : 0.0f) completion:animationFinishedBlock];
@@ -472,9 +472,9 @@
 		return;
 	}
 
-	if(self.finishedLoadingInitialPage) {
-		self.currentPage = [self _calculateCurrentPage];
-	}
+    if(!self.initialPageIndex) {
+        self.currentPage = [self _calculateCurrentPage];
+    }
 
 	NSInteger firstNeededPageIndex = self.currentPage - [self.layouter numberOfPagesToPreloadBeforeCurrentPage];
 	firstNeededPageIndex = MAX(firstNeededPageIndex, 0);

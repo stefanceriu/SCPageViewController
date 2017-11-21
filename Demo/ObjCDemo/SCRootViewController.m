@@ -52,6 +52,8 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 	[self.pageViewController.view setFrame:self.view.bounds];
 	[self.view addSubview:self.pageViewController.view];
 	[self.pageViewController didMoveToParentViewController:self];
+    
+    [self _updateViewControllerDetails];
 }
 
 #pragma mark - SCPageViewControllerDataSource
@@ -75,6 +77,11 @@ static const NSUInteger kDefaultNumberOfPages = 5;
 	}
 	
 	return viewController;
+}
+
+- (NSUInteger)initialPageInPageViewController:(SCPageViewController *)pageViewController
+{
+    return 4;
 }
 
 #pragma mark - SCPageViewControllerDelegate
