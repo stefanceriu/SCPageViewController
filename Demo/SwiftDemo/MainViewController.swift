@@ -17,7 +17,7 @@ enum PageLayouterType : Int {
 }
 
 class MainViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
-
+    
     @IBOutlet var pickerView:UIPickerView!
     
     var delegate:MainViewControllerDelegate?
@@ -40,7 +40,7 @@ class MainViewController: UIViewController, UIPickerViewDataSource, UIPickerView
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-
+        
         let layouterType = PageLayouterType.init(rawValue: row)!
         switch(layouterType) {
         case .plain:

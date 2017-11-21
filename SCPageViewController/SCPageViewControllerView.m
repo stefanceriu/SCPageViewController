@@ -12,11 +12,11 @@
 
 - (void)setFrame:(CGRect)frame
 {
-	[self.delegate pageViewControllerViewWillChangeFrame:self];
-	
-	super.frame = frame;
-	
-	[self.delegate pageViewControllerViewDidChangeFrame:self];
+    [self.delegate pageViewControllerViewWillChangeFrame:self];
+    
+    super.frame = frame;
+    
+    [self.delegate pageViewControllerViewDidChangeFrame:self];
 }
 
 @end

@@ -15,15 +15,15 @@
  */
 
 typedef NS_ENUM(NSUInteger, SCPageLayouterNavigationType) {
-	SCPageLayouterNavigationTypeHorizontal,
-	SCPageLayouterNavigationTypeVertical,
+    SCPageLayouterNavigationTypeHorizontal,
+    SCPageLayouterNavigationTypeVertical,
 };
 
 /** Navigation contraint types that can be used used when continuous navigation is disabled */
 typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
-	SCPageLayouterNavigationContraintTypeNone = 0,
-	SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
-	SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
+    SCPageLayouterNavigationContraintTypeNone = 0,
+    SCPageLayouterNavigationContraintTypeForward = 1 << 0, /** Scroll view bounces on page bounds only when navigating forward*/
+    SCPageLayouterNavigationContraintTypeReverse = 1 << 1  /** Scroll view bounces on page bounds only when navigating backwards*/
 };
 
 
@@ -57,7 +57,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The frame for the viewController's view
  */
 - (CGRect)finalFrameForPageAtIndex:(NSUInteger)index
-				pageViewController:(SCPageViewController *)pageViewController;
+                pageViewController:(SCPageViewController *)pageViewController;
 
 
 @optional
@@ -89,9 +89,9 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The frame for the viewController's view
  */
 - (CGRect)currentFrameForPageAtIndex:(NSUInteger)index
-					   contentOffset:(CGPoint)contentOffset
-						  finalFrame:(CGRect)finalFrame
-				  pageViewController:(SCPageViewController *)pageViewController;
+                       contentOffset:(CGPoint)contentOffset
+                          finalFrame:(CGRect)finalFrame
+                  pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Defines the z position which should be used when laying out the given view controller
@@ -102,7 +102,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return the index the view controller we be places at in the view hierarchy
  */
 - (NSUInteger)zPositionForPageAtIndex:(NSUInteger)index
-				   pageViewController:(SCPageViewController *)pageViewController;
+                   pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Returns the view controller sublayer transformation that should be used
@@ -113,8 +113,8 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @return The sublayer transformation to be applied
  */
 - (CATransform3D)sublayerTransformForPageAtIndex:(NSUInteger)index
-								   contentOffset:(CGPoint)contentOffset
-							  pageViewController:(SCPageViewController *)pageViewController;
+                                   contentOffset:(CGPoint)contentOffset
+                              pageViewController:(SCPageViewController *)pageViewController;
 
 
 /** Method that the pageController calls when its scrollView scrolls
@@ -122,7 +122,7 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * @param offset The current offset in the PageViewController's scrollView
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	   didNavigateToOffset:(CGPoint)offset;
+       didNavigateToOffset:(CGPoint)offset;
 
 
 /** Called by the pageViewController when it receives a reload page animated
@@ -138,10 +138,10 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  */
 - (void)animatePageReloadAtIndex:(NSUInteger)index
-			   oldViewController:(UIViewController *)oldViewController
-			   newViewController:(UIViewController *)newViewController
-			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void(^)(void))completion;
+               oldViewController:(UIViewController *)oldViewController
+               newViewController:(UIViewController *)newViewController
+              pageViewController:(SCPageViewController *)pageViewController
+                      completion:(void(^)(void))completion;
 
 
 /** Called by the pageViewController when it receives an insert page animated
@@ -156,9 +156,9 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  */
 - (void)animatePageInsertionAtIndex:(NSUInteger)index
-					 viewController:(UIViewController *)viewController
-				 pageViewController:(SCPageViewController *)pageViewController
-						 completion:(void(^)(void))completion;
+                     viewController:(UIViewController *)viewController
+                 pageViewController:(SCPageViewController *)pageViewController
+                         completion:(void(^)(void))completion;
 
 /** Called bue the pageViewController when inserting a new page that
  * would affect the current content offset
@@ -183,9 +183,9 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  */
 - (void)animatePageDeletionAtIndex:(NSUInteger)index
-					viewController:(UIViewController *)viewController
-				pageViewController:(SCPageViewController *)pageViewController
-						completion:(void(^)(void))completion;
+                    viewController:(UIViewController *)viewController
+                pageViewController:(SCPageViewController *)pageViewController
+                        completion:(void(^)(void))completion;
 
 
 /** Called by the pageViewController when it receives an move page animated
@@ -201,9 +201,9 @@ typedef NS_OPTIONS(NSUInteger, SCPageLayouterNavigationContraintType) {
  * proceed with the layout
  */
 - (void)animatePageMoveFromIndex:(NSUInteger)fromIndex
-						 toIndex:(NSUInteger)toIndex
-				  viewController:(UIViewController *)viewController
-			  pageViewController:(SCPageViewController *)pageViewController
-					  completion:(void(^)(void))completion;
+                         toIndex:(NSUInteger)toIndex
+                  viewController:(UIViewController *)viewController
+              pageViewController:(SCPageViewController *)pageViewController
+                      completion:(void(^)(void))completion;
 
 @end

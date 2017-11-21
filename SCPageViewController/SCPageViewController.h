@@ -28,8 +28,8 @@
  * @param completion the block to be called when the transition is over
  */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
-		   animated:(BOOL)animated
-		 completion:(void(^)(void))completion;
+           animated:(BOOL)animated
+         completion:(void(^)(void))completion;
 
 
 /** Sets the layouter and also focuses on the given index
@@ -39,9 +39,9 @@
  * @param completion the block to be called when the transition is over
  */
 - (void)setLayouter:(id<SCPageLayouterProtocol>)layouter
-	andFocusOnIndex:(NSUInteger)pageIndex
-		   animated:(BOOL)animated
-		 completion:(void(^)(void))completion;
+    andFocusOnIndex:(NSUInteger)pageIndex
+           animated:(BOOL)animated
+         completion:(void(^)(void))completion;
 
 
 /** Reloads and re-lays out all the pages */
@@ -87,8 +87,8 @@
  * @param completion the block to be called when the navigation finished
  */
 - (void)navigateToPageAtIndex:(NSUInteger)pageIndex
-					 animated:(BOOL)animated
-				   completion:(void(^)(void))completion;
+                     animated:(BOOL)animated
+                   completion:(void(^)(void))completion;
 
 
 /**
@@ -238,8 +238,8 @@
  * internal scrollView's bounds and not covered by any other view)
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	 didShowViewController:(UIViewController *)controller
-				   atIndex:(NSUInteger)index;
+     didShowViewController:(UIViewController *)controller
+                   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when a view controller is hidden
@@ -251,8 +251,8 @@
  * scrollView bounds or when it is fully overlapped by other views
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	 didHideViewController:(UIViewController *)controller
-				   atIndex:(NSUInteger)index;
+     didHideViewController:(UIViewController *)controller
+                   atIndex:(NSUInteger)index;
 
 
 /** Delegate method that the pageController calls when its scrollView scrolls
@@ -260,7 +260,7 @@
  * @param offset The current offset in the PageViewController's scrollView
  */
 - (void)pageViewController:(SCPageViewController *)pageViewController
-	   didNavigateToOffset:(CGPoint)offset;
+       didNavigateToOffset:(CGPoint)offset;
 
 
 /** Delegate method that the pageController calls when its scrollView rests
