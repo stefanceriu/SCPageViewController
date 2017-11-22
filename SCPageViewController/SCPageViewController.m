@@ -58,7 +58,6 @@
 @property (nonatomic, strong) NSIndexSet *insertionIndexes;
 
 @property (nonatomic, strong) NSNumber *initialPageIndex;
-
 @end
 
 @implementation SCPageViewController
@@ -186,7 +185,7 @@
                 [self navigateToPageAtIndex:pageIndex animated:NO completion:nil];
             } completion:nil];
         } else {		
-            [self navigateToPageAtIndex:pageIndex animated:animated completion:nil]; //HERE
+            [self navigateToPageAtIndex:pageIndex animated:animated completion:nil];
         }
     }
 }
