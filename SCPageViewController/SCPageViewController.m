@@ -58,7 +58,6 @@
 @property (nonatomic, strong) NSIndexSet *insertionIndexes;
 
 @property (nonatomic, strong) NSNumber *initialPageIndex;
-
 @end
 
 @implementation SCPageViewController
