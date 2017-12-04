@@ -129,11 +129,6 @@
     
     [self.view addSubview:scrollViewWrapper];
     
-    if([self.dataSource respondsToSelector:@selector(initialPageInPageViewController:)]) {
-        self.initialPageIndex = @([self.dataSource initialPageInPageViewController:self]);
-        self.currentPage = self.initialPageIndex.unsignedIntegerValue;
-    }
-    
     [self reloadData];
 }
 
@@ -234,6 +229,11 @@
 
 - (void)reloadData
 {
+    if([self.dataSource respondsToSelector:@selector(initialPageInPageViewController:)]) {
+        self.initialPageIndex = @([self.dataSource initialPageInPageViewController:self]);
+        self.currentPage = self.initialPageIndex.unsignedIntegerValue;
+    }
+    
     [self.pages enumerateObjectsUsingBlock:^(id obj, NSUInteger pageIndex, BOOL *stop) {
         [self _removePageAtIndex:pageIndex];
     }];
